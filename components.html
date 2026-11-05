@@ -32,7 +32,7 @@
   <div class="nav"><a href="index.html">← 연수 허브</a><a href="deck-9-10.html">9~10차시 교안</a></div>
   <h1>컴포넌트 견본집</h1>
   <p class="intro">
-    컴포넌트.png와 본문 컴포넌트.png를 CSS로 다시 만든 부품입니다. 아래 미리보기는 슬라이드(1920×1080) 크기의 절반으로 줄여 보여 줍니다.<br>
+    new컴포넌트.png를 CSS로 다시 만든 부품입니다(얇은 선 + 파스텔). 아래 미리보기는 슬라이드(1920×1080) 크기의 절반으로 줄여 보여 줍니다.<br>
     코드를 복사해 <code>deck-9-10.html</code>의 슬라이드 안에 붙이면 됩니다. 색은 <code>c-blue</code> · <code>c-green</code> · <code>c-purple</code> · <code>c-yellow</code> 를 붙여 바꿉니다.
     아이콘 이름은 <code>assets/js/icons.js</code>에 있습니다.
   </p>
@@ -45,60 +45,45 @@
 
   <section class="demo">
     <h2>제목 바 · pill</h2>
-    <p class="desc">왼쪽에 사선 아이콘 탭이 있는 바. 외곽선 있는 기본형과 <code>pill--soft</code>(외곽선 없음), <code>pill--sm</code>(작게).</p>
-    <div class="demo__live">
-<div class="row" style="flex-wrap:wrap;gap:30px">
-  <div class="pill c-blue"><span class="pill__tab"><svg class="i"><use href="#i-doc"/></svg></span><span class="pill__text">문제 상황</span></div>
-  <div class="pill c-green"><span class="pill__tab"><svg class="i"><use href="#i-gear"/></svg></span><span class="pill__text">준비물</span></div>
-  <div class="pill c-purple sparkle"><span class="pill__tab"><svg class="i"><use href="#i-bulb"/></svg></span><span class="pill__text">아이디어</span></div>
-  <div class="pill c-yellow"><span class="pill__tab"><svg class="i"><use href="#i-code"/></svg></span><span class="pill__text">코딩</span></div>
-</div>
-<div class="row" style="flex-wrap:wrap;gap:30px">
-  <div class="pill pill--soft c-blue"><span class="pill__tab"><svg class="i"><use href="#i-target"/></svg></span><span class="pill__text">학습 목표</span></div>
-  <div class="pill pill--soft c-green"><span class="pill__tab"><svg class="i"><use href="#i-binoculars"/></svg></span><span class="pill__text">살펴보기</span></div>
-  <div class="pill pill--soft c-purple"><span class="pill__tab"><svg class="i"><use href="#i-flag"/></svg></span><span class="pill__text">성공 기준</span></div>
-  <div class="pill pill--soft c-yellow"><span class="pill__tab"><svg class="i"><use href="#i-megaphone"/></svg></span><span class="pill__text">발표하기</span></div>
-</div>
-    </div>
-  </section>
-
-  <section class="demo">
-    <h2>브라우저 창 · window</h2>
-    <p class="desc">화면·코드·웹앱 안내에. <code>window__bar</code>에 제목을 넣습니다.</p>
-    <div class="demo__live">
-<div class="window" style="width:900px">
-  <div class="window__bar">MakeCode</div>
-  <div class="window__body t-md">창 안에 넣을 내용</div>
-</div>
-    </div>
-  </section>
-
-  <section class="demo">
-    <h2>클립보드 카드 · clip</h2>
-    <p class="desc">조건·준비물·체크리스트에. 집게 색은 c-green(기본) / c-blue / c-purple / c-yellow.</p>
+    <p class="desc">왼쪽에 진한 사선 칸이 있는 바. 아이콘은 넣어도 되고 빼도 됩니다(<code>&lt;span class="pill__tab"&gt;&lt;/span&gt;</code>). 흰 바 <code>pill--white</code>, 연한 바 <code>pill--sky</code>, 작게 <code>pill--sm</code>.</p>
     <div class="demo__live">
 <div class="grid-2">
-  <div class="clip"><div class="t-lg">공통 조건</div><p class="t-sm" style="margin:8px 0 0">카드 안 내용</p></div>
-  <div class="clip c-yellow"><div class="t-lg">준비할 것</div><p class="t-sm" style="margin:8px 0 0">카드 안 내용</p></div>
+  <div class="pill c-blue"><span class="pill__tab"><svg class="i"><use href="#i-doc"/></svg></span><span class="pill__text">문제 상황</span></div>
+  <div class="pill c-green"><span class="pill__tab"><svg class="i"><use href="#i-gear"/></svg></span><span class="pill__text">준비물</span></div>
+  <div class="pill c-purple"><span class="pill__tab"></span><span class="pill__text">아이디어</span></div>
+  <div class="pill c-yellow"><span class="pill__tab"></span><span class="pill__text">코딩</span></div>
+  <div class="pill pill--white"><span class="pill__text" style="padding-left:30px">흰 바</span></div>
+  <div class="pill pill--sky"><span class="pill__text" style="padding-left:30px">연한 바</span></div>
 </div>
     </div>
   </section>
 
   <section class="demo">
-    <h2>점선 카드 · 기본 카드 · 말풍선</h2>
-    <p class="desc"><code>dashed</code>는 활동·빈칸, <code>card</code>는 일반 상자(<code>card--soft</code>는 연한 색), <code>bubble</code>은 말풍선(<code>bubble--right</code>, <code>bubble--white</code>). <code>sparkle</code>을 붙이면 노란 반짝이.</p>
+    <h2>카드 · 브라우저 창 · 점선 카드</h2>
+    <p class="desc"><code>card</code>(흰 상자, <code>card--soft</code>는 연한 색), <code>window</code>(창, <code>window__bar</code>에 제목), <code>dashed</code>(활동·빈칸).</p>
     <div class="demo__live">
 <div class="grid-3" style="align-items:start">
+  <div class="card t-md">카드</div>
+  <div class="window"><div class="window__bar">MakeCode</div><div class="window__body t-md">창 안 내용</div></div>
   <div class="dashed t-md">점선 카드</div>
-  <div class="card card--soft c-green t-md">연한 카드</div>
-  <div class="bubble sparkle">말풍선입니다</div>
+</div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>말풍선 · 메모</h2>
+    <p class="desc"><code>bubble</code>(흰 말풍선, <code>bubble--sky</code> 연한 파랑, <code>bubble--right</code> 꼬리 오른쪽), <code>note</code>(접힌 귀퉁이 메모).</p>
+    <div class="demo__live">
+<div class="grid-2" style="align-items:start">
+  <div class="bubble">말풍선입니다</div>
+  <div class="note"><div class="t-lg">메모</div><p class="t-sm" style="margin:8px 0 0">아이디어나 준비물을 적어 둡니다.</p></div>
 </div>
     </div>
   </section>
 
   <section class="demo">
     <h2>번호 화살표 · steps</h2>
-    <p class="desc">순서·흐름에. 3~5칸까지 자연스럽습니다.</p>
+    <p class="desc">순서·흐름에. 3~5칸까지 자연스럽습니다. 번호는 흰 동그라미에 들어갑니다.</p>
     <div class="demo__live">
 <div class="steps">
   <div class="step c-blue"><span class="step__num">1</span><div class="step__title">떠올리기</div><div class="step__text">설명 한 줄</div></div>
@@ -110,7 +95,40 @@
   </section>
 
   <section class="demo">
-    <h2>원형 아이콘 · icon-badge</h2>
+    <h2>동그라미 · 리본</h2>
+    <p class="desc"><code>circle</code>(번호·아이콘, <code>circle--sm</code>), <code>ribbon</code>(양쪽이 파인 띠, 섹션 이름 등).</p>
+    <div class="demo__live">
+<div class="row" style="align-items:center;flex-wrap:wrap">
+  <span class="circle c-blue">1</span><span class="circle c-green">2</span><span class="circle c-purple"><svg class="i"><use href="#i-bulb"/></svg></span><span class="circle c-yellow"><svg class="i"><use href="#i-flag"/></svg></span>
+  <span class="ribbon c-blue">PART 1</span><span class="ribbon c-purple">공통 조건</span>
+</div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>체크 목록 · 입력칸 바</h2>
+    <p class="desc">체크된 줄은 <code>li class="is-done"</code>, 전부 체크는 <code>checklist--done</code>. <code>field-bar</code>는 입력칸처럼 보이는 흰 바.</p>
+    <div class="demo__live">
+<div class="grid-2" style="align-items:start">
+<ul class="checklist">
+  <li class="is-done"><span class="box"><svg class="i"><use href="#i-check"/></svg></span><span class="bar">끝낸 일</span></li>
+  <li><span class="box"></span><span class="bar">아직 남은 일</span></li>
+</ul>
+<div class="col"><div class="field-bar">https://makecode.microbit.org/_…</div><div class="panel t-md">연한 파랑 패널</div></div>
+</div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>표</h2>
+    <p class="desc">머리 칸은 차례로 파랑·보라·초록·노랑이 됩니다.</p>
+    <div class="demo__live">
+<table class="table"><thead><tr><th>도전과제</th><th>교과</th><th>수업 아이디어</th></tr></thead><tbody><tr><td>손짓 오케스트라</td><td>음악</td><td>손짓 신호로 리듬 합주</td></tr><tr><td>분류 챌린지</td><td>과학</td><td>기준을 정해 나누기</td></tr></tbody></table>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>원형 아이콘 그림 · icon-badge</h2>
     <p class="desc">assets/img/icons/ 의 7개: microbit, laptop, robot-arm, 3d-printer, ai-chip, vr, sprout. 크기는 <code>icon-badge--sm</code> / 기본 / <code>icon-badge--lg</code>.</p>
     <div class="demo__live">
 <div class="row">
@@ -126,19 +144,8 @@
   </section>
 
   <section class="demo">
-    <h2>체크 목록 · checklist</h2>
-    <p class="desc">체크된 줄은 <code>li class="is-done"</code>, 전부 체크는 <code>checklist--done</code>.</p>
-    <div class="demo__live">
-<ul class="checklist" style="width:900px">
-  <li class="is-done"><span class="box"><svg class="i"><use href="#i-check"/></svg></span><span class="bar">끝낸 일</span></li>
-  <li><span class="box"></span><span class="bar">아직 남은 일</span></li>
-</ul>
-    </div>
-  </section>
-
-  <section class="demo">
     <h2>태그 · 버튼</h2>
-    <p class="desc"><code>tag</code>(연한), <code>tag--solid</code>(진한). 버튼은 <code>btn</code>, <code>btn--ghost</code>, <code>btn--green</code>, <code>btn--sm</code>.</p>
+    <p class="desc"><code>tag</code>(연한), <code>tag--solid</code>(조금 진한). 버튼은 <code>btn</code>, <code>btn--ghost</code>, <code>btn--green</code>, <code>btn--sm</code>.</p>
     <div class="demo__live">
 <div class="row" style="flex-wrap:wrap;align-items:center">
   <span class="tag c-blue"><span class="dot"></span>핸드포즈</span>
@@ -178,7 +185,7 @@
 '</section>';
   // 색 견본
   var cs = getComputedStyle(document.documentElement);
-  ['blue','blue-mid','blue-soft','green','green-mid','green-soft','purple','purple-mid','purple-soft','yellow','yellow-mid','yellow-soft','navy','sky','red'].forEach(function (k) {
+  ['blue-tab','blue-mid','blue-soft','green-tab','green-mid','green-soft','purple-tab','purple-mid','purple-soft','yellow-tab','yellow-mid','yellow-soft','navy','blue','note-fold'].forEach(function (k) {
     var v = cs.getPropertyValue('--' + k).trim();
     document.getElementById('swatches').insertAdjacentHTML('beforeend', '<div class="sw"><i style="background:' + v + '"></i><span><b>--' + k + '</b><br>' + v + '</span></div>');
   });

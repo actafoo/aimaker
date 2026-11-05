@@ -1,6 +1,6 @@
 /* =========================================================
    디자인 토큰 — 색·폰트·간격
-   색 값은 컴포넌트.png / 본문 슬라이드.png에서 추출했습니다.
+   색 값은 new컴포넌트.png / 본문 슬라이드.png에서 추출했습니다.
    ========================================================= */
 
 /* Paperlogy: 로컬 파일 먼저, 없으면 CDN */
@@ -18,53 +18,59 @@
        url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2'); }
 
 :root {
-  /* 4가지 주색 */
+  /* 글자·강조용 진한 색 */
   --blue: #0B57D8;
   --blue-deep: #0040B8;
-  --blue-mid: #A8CCFC;
-  --blue-soft: #DCE8FD;
-  --blue-bar: #94C0F8;
-
   --green: #2CB054;
   --green-deep: #1E8F42;
-  --green-mid: #CCF0D8;
-  --green-soft: #DCF8E0;
-  --mint: #A0F498;
-
   --purple: #8B72E0;
   --purple-deep: #6B52C8;
-  --purple-mid: #D8D4F8;
-  --purple-soft: #ECE8FD;
-
   --yellow: #F8C000;
-  --yellow-tab: #FCD840;
-  --yellow-mid: #FCF0BC;
-  --yellow-soft: #FDF6DE;
+
+  /* 부품 채움색 — new컴포넌트.png 에서 뽑은 파스텔 */
+  --blue-tab: #74ACF8;     /* 제목 바 왼쪽 사선, 진한 칸 */
+  --blue-mid: #A4D4F8;     /* 기본 채움 */
+  --blue-soft: #DCF0FC;    /* 연한 바 */
+  --blue-panel: #D0E8FC;   /* 패널 */
+  --blue-bar: #A4D4F8;     /* 창 위쪽 막대 */
+  --green-tab: #80D898;
+  --green-mid: #BCECCC;
+  --green-soft: #E4F7EA;
+  --mint: #BCECCC;
+  --purple-tab: #B490E4;
+  --purple-mid: #D4C4F8;
+  --purple-soft: #EFE9FC;
+  --yellow-tab: #F8D870;
+  --yellow-mid: #FCE8A8;
+  --yellow-soft: #FDF4E0;  /* 메모 */
+  --note-fold: #FCE494;    /* 메모 접힌 귀퉁이 */
 
   /* 선·글자 */
-  --navy: #0B1F55;
+  --navy: #0B1A4E;
   --ink: #14224A;
   --muted: #55628A;
-  --line: #C9D6EE;
-  --sky: #ECF4FC;
+  --line: #CBD6EA;
+  --sky: #EEF6FD;
   --paper: #FFFFFF;
-  --red: #E84838;
-  --dot-yellow: #F0C008;
-  --dot-green: #28A850;
+  --red: #E05A4E;
+  --dot-red: #F48494;
+  --dot-yellow: #F8E08C;
+  --dot-green: #9CE4B4;
 
-  /* 모양 */
-  --stroke: 4px;
-  --r-xl: 36px;
-  --r-lg: 28px;
-  --r-md: 20px;
-  --r-sm: 12px;
-  --pop: 0 6px 0 rgba(11, 31, 85, .14);
+  /* 모양 — 선은 얇게, 그림자는 거의 없이 */
+  --stroke: 2px;
+  --r-xl: 28px;
+  --r-lg: 20px;
+  --r-md: 16px;
+  --r-sm: 10px;
+  --pop: 0 4px 16px rgba(11, 26, 78, .06);
 
   --font: 'Paperlogy', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
 }
 
-/* 색 테마 묶음: 부품에 .c-blue / .c-green / .c-purple / .c-yellow 를 붙이면 --c, --c-mid, --c-soft 가 바뀝니다 */
-.c-blue   { --c: var(--blue);   --c-deep: var(--blue-deep);   --c-mid: var(--blue-mid);   --c-soft: var(--blue-soft); }
-.c-green  { --c: var(--green);  --c-deep: var(--green-deep);  --c-mid: var(--green-mid);  --c-soft: var(--green-soft); }
-.c-purple { --c: var(--purple); --c-deep: var(--purple-deep); --c-mid: var(--purple-mid); --c-soft: var(--purple-soft); }
-.c-yellow { --c: var(--yellow-tab); --c-deep: #B88A00;        --c-mid: var(--yellow-mid); --c-soft: var(--yellow-soft); }
+/* 색 테마 묶음: 부품에 .c-blue / .c-green / .c-purple / .c-yellow 를 붙이면
+   --c(진한 글자색) --c-tab(진한 칸) --c-mid(기본 채움) --c-soft(연한 채움) 가 바뀝니다 */
+.c-blue   { --c: var(--blue);   --c-deep: var(--blue-deep);   --c-tab: var(--blue-tab);   --c-mid: var(--blue-mid);   --c-soft: var(--blue-soft); }
+.c-green  { --c: var(--green);  --c-deep: var(--green-deep);  --c-tab: var(--green-tab);  --c-mid: var(--green-mid);  --c-soft: var(--green-soft); }
+.c-purple { --c: var(--purple); --c-deep: var(--purple-deep); --c-tab: var(--purple-tab); --c-mid: var(--purple-mid); --c-soft: var(--purple-soft); }
+.c-yellow { --c: #D9A800;       --c-deep: #9A7400;            --c-tab: var(--yellow-tab); --c-mid: var(--yellow-mid); --c-soft: var(--yellow-soft); }

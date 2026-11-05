@@ -1,179 +1,203 @@
 /* =========================================================
-   컴포넌트 — 컴포넌트.png를 CSS로 다시 만든 부품
+   컴포넌트 — new컴포넌트.png 를 CSS로 다시 만든 부품
+   얇은 남색 선(2px) + 파스텔 채움 + 그림자 거의 없음
    크기는 1920×1080 슬라이드 기준(px)입니다.
    견본과 사용법: components.html
    ========================================================= */
 
 .i { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor;
-  stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.14em; }
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.14em; }
 
-/* ---------- 반짝이 장식 (노란 세 줄) ---------- */
-.sparkle { position: relative; }
-.sparkle::after {
-  content: ''; position: absolute; top: -34px; right: -34px; width: 58px; height: 58px; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 58 58'%3E%3Cg stroke='%23F8C000' stroke-width='6' stroke-linecap='round'%3E%3Cpath d='M14 6 18 20'/%3E%3Cpath d='M38 10 28 24'/%3E%3Cpath d='M52 30 36 32'/%3E%3C/g%3E%3C/svg%3E") no-repeat center / contain;
-}
-.sparkle--left::after { right: auto; left: -34px; transform: scaleX(-1); }
+/* 예전 노란 반짝이 장식은 쓰지 않습니다 (클래스는 남겨 두어도 아무것도 그리지 않음) */
+.sparkle::after { content: none; }
+
+/* ---------- 선으로 테두리를 그린 모양 (화살표·리본) ----------
+   --shape 에 다각형을 넣으면 바깥(남색)과 안쪽(채움) 두 겹으로 그려 얇은 테두리를 만듭니다 */
+.shape, .step, .ribbon, .divider__part { position: relative; isolation: isolate; }
+.shape::before, .shape::after, .step::before, .step::after, .ribbon::before, .ribbon::after, .divider__part::before, .divider__part::after { content: ''; position: absolute; clip-path: var(--shape); }
+.shape::before, .step::before, .ribbon::before, .divider__part::before { inset: 0; background: var(--navy); z-index: -2; }
+.shape::after, .step::after, .ribbon::after, .divider__part::after { inset: var(--stroke); background: var(--fill, var(--c-mid, var(--blue-mid))); z-index: -1; }
 
 /* ---------- 제목 바 (pill) ----------
-   <div class="pill c-blue"><span class="pill__tab"><svg class="i"><use href="#i-doc"/></svg></span><span class="pill__text">문제 상황</span></div> */
+   <div class="pill c-blue"><span class="pill__tab"><svg class="i"><use href="#i-doc"/></svg></span><span class="pill__text">문제 상황</span></div>
+   아이콘 없이 <span class="pill__tab"></span> 만 두어도 됩니다 */
 .pill {
-  --c: var(--blue); --c-soft: var(--blue-soft);
-  display: inline-flex; align-items: center; min-height: 72px; max-width: 100%;
-  border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--paper);
+  display: inline-flex; align-items: center; min-height: 60px; max-width: 100%;
+  border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--c-mid, var(--blue-mid));
   overflow: hidden; color: var(--navy);
 }
-.pill.c-green, .pill.c-purple, .pill.c-yellow { background: var(--c-soft); }
 .pill__tab {
-  align-self: stretch; flex: none; width: 104px; display: grid; place-items: center; padding-right: 22px;
-  background: var(--c); color: #fff; font-size: 38px;
-  clip-path: polygon(0 0, 100% 0, 74% 100%, 0 100%);
+  align-self: stretch; flex: none; width: 92px; display: grid; place-items: center; padding-right: 22px;
+  background: var(--c-tab, var(--blue-tab)); color: var(--navy); font-size: 28px;
+  clip-path: polygon(0 0, 100% 0, 58% 100%, 0 100%);
 }
-.pill.c-yellow .pill__tab { color: var(--navy); }
-.pill__text { padding: 8px 40px 8px 6px; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
-/* 외곽선 없는 부드러운 바 (아래 줄 스타일) */
-.pill--soft { border: 0; background: var(--c-soft) !important; }
-.pill--soft .pill__tab { width: 96px; }
-.pill--sm { min-height: 54px; }
-.pill--sm .pill__tab { width: 78px; font-size: 28px; padding-right: 16px; }
-.pill--sm .pill__text { font-size: 25px; padding: 6px 28px 6px 4px; }
+.pill__text { padding: 6px 36px 6px 2px; font-size: 29px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
+.pill--white { background: var(--paper); }
+.pill--sky { background: var(--blue-soft); }
+.pill--soft { } /* 예전 이름 (지금은 기본과 같음) */
+.pill--sm { min-height: 50px; }
+.pill--sm .pill__tab { width: 72px; font-size: 24px; padding-right: 16px; }
+.pill--sm .pill__text { font-size: 24px; padding: 4px 26px 4px 0; }
 
-/* ---------- 브라우저 창 카드 ---------- */
+/* ---------- 기본 카드 · 패널 · 점선 카드 ---------- */
+.card {
+  border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper);
+  padding: 26px 30px;
+}
+.card--soft { background: var(--c-soft, var(--sky)); }
+.card--pop { box-shadow: var(--pop); }
+.panel {
+  border: var(--stroke) solid var(--navy); border-radius: var(--r-lg);
+  background: linear-gradient(180deg, #DDEFFD 0%, var(--blue-panel) 100%); padding: 26px 30px;
+}
+.dashed {
+  border: var(--stroke) dashed var(--navy); border-radius: var(--r-lg); background: var(--paper);
+  padding: 26px 30px;
+}
+
+/* ---------- 브라우저 창 ---------- */
 .window {
   border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper);
   overflow: hidden; display: flex; flex-direction: column;
 }
 .window__bar {
-  flex: none; height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 22px;
+  flex: none; height: 46px; display: flex; align-items: center; gap: 12px; padding: 0 20px;
   background: var(--blue-bar); border-bottom: var(--stroke) solid var(--navy);
-  font-size: 22px; font-weight: 600; color: var(--navy);
+  font-size: 20px; font-weight: 700; color: var(--navy);
 }
 .window__bar::before {
-  content: ''; width: 18px; height: 18px; border-radius: 50%; background: var(--red);
-  box-shadow: 28px 0 0 var(--dot-yellow), 56px 0 0 var(--dot-green); margin-right: 64px; flex: none;
+  content: ''; flex: none; width: 70px; height: 18px; margin-right: 6px;
+  background:
+    radial-gradient(circle at 9px 9px, var(--dot-red) 0 6.5px, var(--navy) 7px 8.5px, transparent 9px),
+    radial-gradient(circle at 35px 9px, var(--dot-yellow) 0 6.5px, var(--navy) 7px 8.5px, transparent 9px),
+    radial-gradient(circle at 61px 9px, var(--dot-green) 0 6.5px, var(--navy) 7px 8.5px, transparent 9px);
 }
-.window__body { flex: 1; padding: 26px 30px; min-height: 0; }
+.window__body { flex: 1; padding: 24px 28px; min-height: 0; }
 .window__body--flush { padding: 0; }
 
-/* ---------- 클립보드 카드 ---------- */
-/* 본문 컴포넌트.png 모양: 둥근 막대 집게 + 가운데 둥근 손잡이(구멍) */
-.clip {
-  --clip: var(--mint);
-  position: relative; margin-top: 64px;
-  border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper);
-  padding: 46px 36px 30px;
+/* ---------- 메모 (접힌 귀퉁이) ---------- */
+.note {
+  position: relative; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--yellow-soft);
+  padding: 26px 30px; clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);
 }
-.clip::before { /* 집게 막대 */
-  content: ''; position: absolute; left: 50%; top: -24px; transform: translateX(-50%); z-index: 1;
-  width: 250px; height: 46px; border: var(--stroke) solid var(--navy); border-radius: 23px; background: var(--clip);
+.note::after {
+  content: ''; position: absolute; top: calc(-1 * var(--stroke)); right: calc(-1 * var(--stroke)); width: 44px; height: 44px;
+  border-left: var(--stroke) solid var(--navy); border-bottom: var(--stroke) solid var(--navy); border-bottom-left-radius: 8px;
+  background: linear-gradient(to bottom left, transparent calc(50% - 1.2px), var(--navy) calc(50% - 1.2px), var(--navy) calc(50% + 1.2px), var(--note-fold) calc(50% + 1.2px));
 }
-.clip::after { /* 손잡이 + 구멍 */
-  content: ''; position: absolute; left: 50%; top: -62px; transform: translateX(-50%); z-index: 2;
-  width: 78px; height: 46px; border: var(--stroke) solid var(--navy); border-bottom: 0; border-radius: 39px 39px 0 0;
-  background: radial-gradient(circle at 50% 62%, var(--paper) 0 7px, var(--navy) 7.5px 12px, var(--clip) 12.5px);
-}
-.clip.c-blue   { --clip: var(--blue-mid); }
-.clip.c-purple { --clip: var(--purple-mid); }
-.clip.c-yellow { --clip: var(--yellow-tab); }
-
-/* ---------- 점선 카드 ---------- */
-.dashed {
-  border: var(--stroke) dashed #3B4E86; border-radius: var(--r-lg); background: var(--sky);
-  padding: 28px 32px;
-}
-
-/* ---------- 기본 카드 ---------- */
-.card {
-  border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper);
-  padding: 28px 32px;
-}
-.card--soft { background: var(--c-soft, var(--sky)); }
-.card--pop { box-shadow: var(--pop); }
+/* 예전 클립보드 카드 이름은 기본 카드처럼 보입니다 */
+.clip { border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); padding: 26px 30px; }
 
 /* ---------- 말풍선 ---------- */
 .bubble {
-  --bb: var(--sky);
-  position: relative; border: var(--stroke) solid var(--navy); border-radius: 60px; background: var(--bb);
-  padding: 30px 44px; font-size: 28px; font-weight: 600; color: var(--navy); line-height: 1.45;
+  --bb: var(--paper);
+  position: relative; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--bb);
+  padding: 24px 32px; font-size: 27px; font-weight: 600; color: var(--navy); line-height: 1.45;
 }
-.bubble::before { /* 꼬리: 돌린 사각형의 아래 두 변만 선을 그림 */
-  content: ''; position: absolute; left: 58px; bottom: -21px; width: 36px; height: 36px;
+.bubble::before { /* 꼬리 */
+  content: ''; position: absolute; left: 46px; bottom: -15px; width: 26px; height: 26px;
   background: var(--bb); border-right: var(--stroke) solid var(--navy); border-bottom: var(--stroke) solid var(--navy);
-  border-bottom-right-radius: 6px; transform: rotate(45deg);
+  transform: rotate(45deg) skew(8deg, 8deg); border-bottom-right-radius: 3px;
 }
-.bubble--right::before { left: auto; right: 58px; }
+.bubble--right::before { left: auto; right: 46px; }
 .bubble--white { --bb: var(--paper); }
+.bubble--sky { --bb: var(--blue-soft); }
+
+/* ---------- 리본 ---------- */
+.ribbon {
+  --shape: polygon(0 0, 100% 0, calc(100% - 24px) 50%, 100% 100%, 0 100%, 24px 50%);
+  --fill: var(--c-mid, var(--blue-mid));
+  display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 6px 64px;
+  font-size: 26px; font-weight: 800; color: var(--navy); letter-spacing: .02em;
+}
 
 /* ---------- 번호 화살표 단계 ---------- */
-.steps { display: flex; gap: 0; }
+.steps { display: flex; }
 .step {
-  --c: var(--blue); --c-mid: var(--blue-mid);
-  position: relative; flex: 1; min-width: 0; padding: 50px 64px 34px 66px; margin-right: -18px;
-  background: var(--c-mid); min-height: 210px;
-  clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 50%, calc(100% - 44px) 100%, 0 100%, 44px 50%);
+  --shape: polygon(0 0, calc(100% - 40px) 0, 100% 50%, calc(100% - 40px) 100%, 0 100%, 40px 50%);
+  --fill: var(--c-mid, var(--blue-mid));
+  flex: 1; min-width: 0; min-height: 200px; padding: 26px 62px 26px 66px; margin-right: -30px;
 }
-.step:first-child { clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 50%, calc(100% - 44px) 100%, 0 100%); padding-left: 38px; }
+.step:last-child { margin-right: 0; }
 .step__num {
-  position: absolute; left: 50px; top: 14px; width: 48px; height: 48px; border-radius: 50%;
-  display: grid; place-items: center; background: var(--c-deep, var(--c)); color: #fff;
-  font-size: 28px; font-weight: 800;
+  display: inline-grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
+  border: var(--stroke) solid var(--navy); background: var(--paper); color: var(--navy); font-size: 24px; font-weight: 800;
 }
-.step:first-child .step__num { left: 22px; }
-.step.c-yellow .step__num { background: #E6B000; }
-.step__title { margin-top: 26px; font-size: 32px; font-weight: 800; color: var(--navy); line-height: 1.2; }
-.step__text { margin-top: 10px; font-size: 23px; font-weight: 500; color: var(--ink); line-height: 1.4; }
-.step__meta { margin-top: 10px; font-size: 22px; font-weight: 800; color: var(--c-deep, var(--navy)); }
+.step__title { margin-top: 12px; font-size: 31px; font-weight: 800; color: var(--navy); line-height: 1.2; }
+.step__text { margin-top: 8px; font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.4; }
+.step__meta { margin-top: 8px; font-size: 22px; font-weight: 800; color: var(--navy); }
 
-/* ---------- 원형 아이콘 ---------- */
-.icon-badge { width: 132px; height: 132px; flex: none; object-fit: contain; display: block; }
-.icon-badge--sm { width: 92px; height: 92px; }
-.icon-badge--lg { width: 180px; height: 180px; }
+/* ---------- 동그라미 ---------- */
+.circle {
+  display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; flex: none;
+  border: var(--stroke) solid var(--navy); background: var(--c-mid, var(--blue-mid)); color: var(--navy);
+  font-size: 26px; font-weight: 800;
+}
+.circle .i { font-size: 28px; }
+.circle--sm { width: 42px; height: 42px; font-size: 20px; }
+.circle--sm .i { font-size: 22px; }
 
-/* ---------- 체크 목록 ---------- */
-.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
-.checklist li { display: flex; align-items: center; gap: 18px; }
+/* ---------- 원형 아이콘 그림 ---------- */
+.icon-badge { width: 120px; height: 120px; flex: none; object-fit: contain; display: block; }
+.icon-badge--sm { width: 88px; height: 88px; }
+.icon-badge--lg { width: 170px; height: 170px; }
+
+/* ---------- 체크 목록 (흰 줄 + 작은 네모) ---------- */
+.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.checklist li {
+  display: flex; align-items: center; gap: 16px; padding: 12px 22px;
+  border: var(--stroke) solid var(--navy); border-radius: 14px; background: var(--paper);
+}
 .checklist .box {
-  flex: none; width: 46px; height: 46px; border: var(--stroke) solid var(--navy); border-radius: 10px;
-  background: #D9E1EE; display: grid; place-items: center; color: var(--paper);
+  flex: none; width: 30px; height: 30px; border: var(--stroke) solid var(--navy); border-radius: 8px;
+  background: var(--paper); display: grid; place-items: center; color: var(--navy);
 }
-.checklist .is-done .box, .checklist--done .box { background: var(--green); }
-.checklist .box .i { width: 30px; height: 30px; stroke-width: 3.4; }
-.checklist .bar {
-  flex: 1; min-height: 50px; border-radius: 999px; background: var(--blue-soft);
-  display: flex; align-items: center; padding: 8px 28px; font-size: 26px; font-weight: 600; color: var(--navy); line-height: 1.35;
-}
-.checklist .is-done .bar, .checklist--done .bar { background: var(--green-soft); }
+.checklist .is-done .box, .checklist--done .box { background: var(--green-mid); }
+.checklist .box .i { width: 20px; height: 20px; stroke-width: 3; }
+.checklist .bar { flex: 1; font-size: 25px; font-weight: 600; color: var(--navy); line-height: 1.4; }
+
+/* ---------- 입력칸 모양 바 ---------- */
+.field-bar { display: flex; align-items: center; min-height: 64px; padding: 10px 24px; border: var(--stroke) solid var(--navy); border-radius: 14px; background: var(--paper); font-size: 24px; color: var(--navy); }
 
 /* ---------- 작은 표지(태그) ---------- */
 .tag {
-  display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px;
-  border: 3px solid var(--navy); border-radius: 999px; background: var(--c-soft, var(--sky));
-  font-size: 22px; font-weight: 800; color: var(--navy); white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px;
+  border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--c-soft, var(--sky));
+  font-size: 21px; font-weight: 800; color: var(--navy); white-space: nowrap;
 }
-.tag .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c, var(--blue)); }
-.tag--solid { background: var(--c); color: #fff; }
-.tag--solid.c-yellow { color: var(--navy); }
+.tag .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c-tab, var(--blue-tab)); border: 1.5px solid var(--navy); }
+.tag--solid { background: var(--c-mid, var(--blue-mid)); color: var(--navy); }
 
 /* ---------- 버튼 (슬라이드 안) ---------- */
 .btn {
-  --c: var(--blue);
+  --bfill: var(--blue-tab);
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  height: 64px; padding: 0 32px; border: var(--stroke) solid var(--navy); border-radius: 999px;
-  background: var(--c); color: #fff; font: 800 26px/1 var(--font); cursor: pointer; white-space: nowrap;
-  box-shadow: 0 6px 0 var(--navy); transform: translateY(-3px); transition: transform .08s, box-shadow .08s;
-  text-decoration: none;
+  height: 60px; padding: 0 30px; border: var(--stroke) solid var(--navy); border-radius: 999px;
+  background: var(--bfill); color: var(--navy); font: 800 25px/1 var(--font); cursor: pointer; white-space: nowrap;
+  transition: background-color .12s, transform .08s; text-decoration: none;
 }
-.btn:hover { filter: brightness(1.06); }
-.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--navy); }
-.btn:disabled, .btn[aria-disabled='true'] { background: #C8D0E0; color: #5B6788; cursor: not-allowed; box-shadow: 0 3px 0 #8E9AB8; transform: none; }
-.btn--ghost { background: var(--paper); color: var(--navy); }
-.btn--green { --c: var(--green); }
-.btn--purple { --c: var(--purple); }
-.btn--yellow { --c: var(--yellow-tab); color: var(--navy); }
-.btn--sm { height: 50px; padding: 0 22px; font-size: 21px; box-shadow: 0 4px 0 var(--navy); }
-.btn--danger { --c: var(--red); }
+.btn:hover { filter: brightness(1.04) saturate(1.05); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled, .btn[aria-disabled='true'] { background: #EDF0F6; color: #7C87A6; border-color: #B7C0D6; cursor: not-allowed; transform: none; filter: none; }
+.btn--ghost { --bfill: var(--paper); }
+.btn--green { --bfill: var(--green-tab); }
+.btn--purple { --bfill: var(--purple-tab); }
+.btn--yellow { --bfill: var(--yellow-tab); }
+.btn--danger { --bfill: var(--dot-red); }
+.btn--sm { height: 46px; padding: 0 20px; font-size: 20px; }
 .btn .i { font-size: 1.1em; }
 
 /* ---------- 텍스트 링크 ---------- */
-.link { color: var(--blue); font-weight: 800; text-decoration: none; border-bottom: 3px solid var(--blue-mid); }
+.link { color: var(--blue); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--blue-mid); }
 .link:hover { border-bottom-color: var(--blue); }
+
+/* ---------- 표 ---------- */
+.table { width: 100%; border-collapse: separate; border-spacing: 0; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); overflow: hidden; background: var(--paper); }
+.table th, .table td { padding: 16px 24px; text-align: left; font-size: 24px; line-height: 1.4; vertical-align: top; border-bottom: 1.5px solid var(--line); border-right: var(--stroke) solid var(--navy); }
+.table th:last-child, .table td:last-child { border-right: 0; }
+.table th { font-weight: 800; color: var(--navy); font-size: 23px; border-bottom: var(--stroke) solid var(--navy); background: var(--blue-mid); }
+.table th:nth-child(2) { background: var(--purple-mid); }
+.table th:nth-child(3) { background: var(--green-mid); }
+.table th:nth-child(4) { background: var(--yellow-mid); }
+.table tr:last-child td { border-bottom: 0; }
+.table td:first-child { font-weight: 800; color: var(--navy); white-space: nowrap; }

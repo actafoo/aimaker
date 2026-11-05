@@ -222,7 +222,7 @@ window.MK = window.MK || {};
       '<div class="apply__count">' + n + '<small> / ' + cap + '명</small></div>' + seatDots(n, cap).replace('class="seats"', 'class="seats seats--lg"') +
       '<div class="apply__names">' + (n ? nameChips(list) : '<span class="apply__empty">아직 신청한 사람이 없어요.<br>첫 번째 도전자가 되어 보세요.</span>') + '</div>' +
       (isMine ? '<div class="apply__state">내가 신청한 도전과제입니다.</div>' : mine ? '<div class="apply__state">지금 신청: ' + esc(MK.challengeById(mine.challengeId).title) + '</div>' : '') +
-      btn + '</div>';
+      btn + '<button class="apply__back" data-goto="s-overview">' + ic('left') + ' 다른 도전과제 보기</button></div>';
   };
 
   /* 신청 현황판 */
@@ -344,7 +344,7 @@ window.MK = window.MK || {};
     if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mine ? ' · ' + esc(MK.challengeById(mine.challengeId).title) : ' · 신청 전') + '</span>' +
       '<button class="ghost" data-act="switch">바꾸기</button>';
     else h += '<span class="me__text">신청하려면 이름을 등록하세요</span><button data-act="identify">이름 등록</button>';
-    if (admin) h += '<button data-act="edit" style="background:var(--green)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy)">' + ic('lock') + ' 관리자</button>';
+    if (admin) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff">' + ic('lock') + ' 관리자</button>';
     box.innerHTML = h;
   }
 
@@ -384,7 +384,8 @@ window.MK = window.MK || {};
     return MK.challenges.map(function (c, i) {
       var cat = MK.catOf(c), guide = MK.guideUrl(c.ref);
       return '<section class="slide slide--body c-' + cat.color + '" id="ch-' + c.id + '" data-section="1. 도전과제 고르기" data-title="도전과제 ' + (i + 1) + ' · ' + esc(c.title) + '">' +
-        '<div class="ch-head"><div class="ch-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span><span class="tag">도전과제 ' + (i + 1) + ' / ' + MK.challenges.length + '</span><span class="tag">개인 도전</span></div>' +
+        '<div class="ch-head"><div class="ch-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span><span class="tag">도전과제 ' + (i + 1) + ' / ' + MK.challenges.length + '</span><span class="tag">개인 도전</span>' +
+        '<button class="btn btn--ghost btn--sm ch-back" data-goto="s-overview">' + ic('left') + ' 도전과제 목록</button></div>' +
         '<h2 class="ch-head__title" data-field="ch:' + c.id + ':title">' + esc(c.title) + '</h2><p class="ch-head__q" data-field="ch:' + c.id + ':question">' + esc(c.question) + '</p></div>' +
         '<div class="ch-grid">' +
           '<div class="col">' +
@@ -394,7 +395,7 @@ window.MK = window.MK || {};
           '<div class="col" style="gap:22px">' +
             '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-blue">' + ic('doc') + '</span>문제 상황</div><p data-field="ch:' + c.id + ':problem">' + esc(c.problem) + '</p></div>' +
             '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-purple">' + ic('flag') + '</span>성공 기준</div><p data-field="ch:' + c.id + ':success">' + esc(c.success) + '</p></div>' +
-            (c.start ? '<div class="bubble bubble--white ch-hint sparkle"><b>이렇게 시작해 보세요</b><br><span data-field="ch:' + c.id + ':start">' + c.start + '</span></div>' : '') +
+            (c.start ? '<div class="bubble ch-hint"><b>이렇게 시작해 보세요</b><br><span data-field="ch:' + c.id + ':start">' + c.start + '</span></div>' : '') +
           '</div>' +
           '<div class="col">' +
             '<div data-widget="apply-panel" data-challenge="' + c.id + '"></div>' +

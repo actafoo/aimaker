@@ -21,8 +21,8 @@
 }
 .dock button:hover { background: var(--blue-soft); }
 .dock .dock__count { min-width: 64px; text-align: center; font-size: 14px; font-weight: 800; color: var(--navy); font-variant-numeric: tabular-nums; }
-.dock .dock__primary { background: var(--blue); color: #fff; }
-.dock .dock__primary:hover { background: var(--blue-deep); }
+.dock .dock__primary { background: var(--blue-tab); color: var(--navy); }
+.dock .dock__primary:hover { background: var(--blue-mid); }
 
 /* ---------- 오른쪽 위: 내 정보 칩 ---------- */
 .me {
@@ -32,7 +32,7 @@
 }
 .me__text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .me__text b { font-weight: 800; }
-.me button { height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--blue); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.me button { height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--blue-tab); color: var(--navy); font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; }
 .me button.ghost { background: var(--sky); color: var(--navy); }
 .me.is-hidden { display: none; }
 
@@ -61,7 +61,7 @@
 /* ---------- 입력 창 (모달) ---------- */
 .modal { border: 0; padding: 0; background: transparent; max-width: none; max-height: none; overflow: visible; }
 .modal::backdrop { background: rgba(11, 31, 85, .42); }
-.modal__box { position: relative; width: min(560px, 92vw); max-height: 88vh; overflow: auto; padding: 28px 28px 24px; border: 3px solid var(--navy); border-radius: 24px; background: #fff; box-shadow: 0 6px 0 var(--navy); font-family: var(--font); color: var(--ink); }
+.modal__box { position: relative; width: min(560px, 92vw); max-height: 88vh; overflow: auto; padding: 28px 28px 24px; border: 2px solid var(--navy); border-radius: 24px; background: #fff; box-shadow: 0 24px 60px rgba(11, 26, 78, .22); font-family: var(--font); color: var(--ink); }
 .modal__box--wide { width: min(760px, 94vw); }
 .modal__close { position: absolute; right: 14px; top: 14px; }
 .modal__kicker { font-size: 13px; font-weight: 800; color: var(--blue); }
@@ -88,17 +88,17 @@
 .modal__wait.is-on { display: block; }
 .modal__note { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--sky); font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-.ubtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 42px; padding: 0 18px; border: 2px solid var(--navy); border-radius: 999px; background: var(--blue); color: #fff; font: 800 15px/1 var(--font); cursor: pointer; box-shadow: 0 3px 0 var(--navy); white-space: nowrap; text-decoration: none; }
+.ubtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 42px; padding: 0 18px; border: 2px solid var(--navy); border-radius: 999px; background: var(--blue-tab); color: var(--navy); font: 800 15px/1 var(--font); cursor: pointer; white-space: nowrap; text-decoration: none; }
 .ubtn:hover { filter: brightness(1.06); }
-.ubtn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--navy); }
-.ubtn:disabled { background: #C8D0E0; color: #5B6788; box-shadow: none; cursor: not-allowed; }
+.ubtn:active { transform: translateY(1px); }
+.ubtn:disabled { background: #EDF0F6; color: #7C87A6; border-color: #B7C0D6; cursor: not-allowed; }
 .ubtn--ghost { background: #fff; color: var(--navy); }
-.ubtn--danger { background: var(--red); }
-.ubtn--green { background: var(--green); }
-.ubtn--sm { height: 32px; padding: 0 12px; font-size: 13px; box-shadow: 0 2px 0 var(--navy); }
+.ubtn--danger { background: var(--dot-red); }
+.ubtn--green { background: var(--green-tab); }
+.ubtn--sm { height: 32px; padding: 0 12px; font-size: 13px; }
 
 /* ---------- 관리자 서랍 (오른쪽) ---------- */
-.admin { position: fixed; right: 0; top: 0; bottom: 0; z-index: 45; width: min(560px, 94vw); transform: translateX(104%); transition: transform .22s ease; background: #F7F9FD; border-left: 3px solid var(--navy); box-shadow: -8px 0 28px rgba(11,31,85,.2); display: flex; flex-direction: column; font-family: var(--font); }
+.admin { position: fixed; right: 0; top: 0; bottom: 0; z-index: 45; width: min(560px, 94vw); transform: translateX(104%); transition: transform .22s ease; background: #F7F9FD; border-left: 2px solid var(--navy); box-shadow: -8px 0 28px rgba(11,31,85,.2); display: flex; flex-direction: column; font-family: var(--font); }
 .admin.is-open { transform: none; }
 .admin__head { display: flex; align-items: center; gap: 10px; padding: 16px 18px; background: var(--navy); color: #fff; }
 .admin__head b { flex: 1; font-size: 17px; font-weight: 800; }
@@ -122,7 +122,7 @@
 .switch { position: relative; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--navy); cursor: pointer; user-select: none; }
 .switch input { appearance: none; width: 40px; height: 22px; border-radius: 999px; background: #C8D0E0; position: relative; cursor: pointer; transition: background .15s; margin: 0; }
 .switch input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
-.switch input:checked { background: var(--green); }
+.switch input:checked { background: var(--green-tab); }
 .switch input:checked::after { transform: translateX(18px); }
 .mini-select { height: 30px; border: 2px solid var(--line); border-radius: 8px; font: 600 13px var(--font); color: var(--navy); background: #fff; max-width: 200px; }
 .admin h4 { margin: 18px 0 8px; font-size: 13px; font-weight: 800; color: var(--blue); letter-spacing: .04em; }

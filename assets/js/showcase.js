@@ -67,7 +67,7 @@ window.MK = window.MK || {};
         '<div class="sv-grid">' +
           '<div class="window sv-media"><div class="window__bar">작동 영상' + (MK.isHttpUrl(s.videoUrl) ? '<a class="sv-open" href="' + esc(s.videoUrl) + '" target="_blank" rel="noopener">새 창에서 열기 ' + ic('external') + '</a>' : '') + '</div><div class="window__body window__body--flush" style="aspect-ratio:16/9">' + media(s) + '</div></div>' +
           '<div class="sv-side">' +
-            '<div class="bubble sv-desc sparkle"' + (long ? ' style="font-size:22px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +
+            '<div class="bubble sv-desc"' + (long ? ' style="font-size:22px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +
             '<div class="sv-links">' +
               (mcId ? '<a class="btn btn--ghost btn--sm" href="' + esc(s.makecodeUrl) + '" target="_blank" rel="noopener">' + ic('code') + ' MakeCode 열기</a><button class="btn btn--sm" data-code="' + esc(mcId) + '" data-title="' + esc(s.title) + '">' + ic('box') + ' 블록 보기</button>' : '<span class="t-sm t-muted">MakeCode 주소 없음</span>') +
             '</div>' +
