@@ -17,7 +17,7 @@ MK.config = {
   shareUrl: 'https://actafoo.github.io/aimaker/910/',
 
   // 온라인 저장소(구글 시트 Apps Script 웹 앱) 주소. 비워 두면 이 브라우저에만 저장하는 데모 모드입니다.
-  apiUrl: 'https://script.google.com/macros/s/AKfycbzCoRr6nCIM7CCrP2a3L7h3XRAqcFKSY3FkIiJynYYHK-zNvxhAUWG6cJwHdbCzdv2y/exec',
+  apiUrl: 'https://script.google.com/macros/s/AKfycbw7sm3uzVGkmfLkHtfmGcurtYaklgWFF4taYoBIDclS43XbxbH3VceRWc6_gtGQABCE/exec',
   pollSeconds: 10,                     // 현황판·도전과제 쪽을 보고 있을 때 다시 받아 오는 간격(초)
 
   // 데모 모드 전용 관리자 비밀번호. 온라인 저장소를 쓰면 비밀번호는 Code.gs에서 확인하므로 여기는 비워 둡니다.
