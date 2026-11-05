@@ -60,18 +60,19 @@ window.MK = window.MK || {};
     items.forEach(function (s, i) {
       var ch = MK.challengeById(s.challengeId) || MK.challenges[0], cat = MK.catOf(ch);
       var mcId = MK.parseMakecode(s.makecodeUrl);
-      var long = (s.desc || '').length > 150;
+      var long = (s.desc || '').length > 170;
       h += '<section class="slide slide--body c-' + cat.color + '" id="show-' + s.id + '" data-section="' + sec + '" data-title="' + (i + 1) + '. ' + esc(s.title) + '">' +
         '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(ch.category) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
         '<h2 class="sv-head__title">' + esc(s.title) + '</h2><p class="sv-head__who">' + esc(s.name) + ' · ' + esc(ch.title) + '</p></div>' +
         '<div class="sv-grid">' +
           '<div class="window sv-media"><div class="window__bar">작동 영상' + (MK.isHttpUrl(s.videoUrl) ? '<a class="sv-open" href="' + esc(s.videoUrl) + '" target="_blank" rel="noopener">새 창에서 열기 ' + ic('external') + '</a>' : '') + '</div><div class="window__body window__body--flush" style="aspect-ratio:16/9">' + media(s) + '</div></div>' +
-          '<div class="sv-side">' +
-            '<div class="bubble sv-desc"' + (long ? ' style="font-size:22px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +
-            '<div class="sv-links">' +
-              (mcId ? '<a class="btn btn--ghost btn--sm" href="' + esc(s.makecodeUrl) + '" target="_blank" rel="noopener">' + ic('code') + ' MakeCode 열기</a><button class="btn btn--sm" data-code="' + esc(mcId) + '" data-title="' + esc(s.title) + '">' + ic('box') + ' 블록 보기</button>' : '<span class="t-sm t-muted">MakeCode 주소 없음</span>') +
-            '</div>' +
-          '</div>' +
+          '<div class="window sv-code"><div class="window__bar">MakeCode 블록' +
+            (mcId ? '<a class="sv-open" href="' + esc(s.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode에서 열기 ' + ic('external') + '</a>' : '') + '</div>' +
+            '<div class="window__body window__body--flush sv-code__body">' +
+              (mcId ? '<button class="sv-code__view" data-mc="' + esc(mcId) + '" data-title="' + esc(s.title) + '" title="눌러서 크게 보기"><span class="sv-code__msg">블록을 불러오는 중…</span></button>'
+                    : '<div class="sv-code__view is-empty"><span class="sv-code__msg">' + (s.sample ? '샘플 결과물 · MakeCode 주소가 없습니다' : 'MakeCode 주소가 없습니다') + '</span></div>') +
+            '</div></div>' +
+          '<div class="bubble sv-desc"' + (long ? ' style="font-size:19px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +
         '</div></section>';
     });
     return h;
@@ -89,16 +90,98 @@ window.MK = window.MK || {};
     $$('iframe[data-src], video[data-src]', e.detail.slide).forEach(function (f) { f.removeAttribute('src'); if (f.tagName === 'VIDEO') f.load(); });
   });
 
-  /* ---------- 블록 보기: MakeCode 코드 임베드 ---------- */
+  /* =========================================================
+     MakeCode 블록 그림
+     1) 공유 주소의 코드를 MakeCode에서 받아 오고 (api/<id>/text)
+     2) MakeCode 공식 블록 렌더러(--docs?render=1)에 보내 블록 그림(PNG)을 받습니다
+     한 번 그린 그림은 이 창을 닫을 때까지 기억합니다.
+     ========================================================= */
+  var MC = 'https://makecode.microbit.org';
+  MK.mcBlocks = (function () {
+    var frame = null, ready = false, queue = [], pending = {}, cache = {};
+    function ensure() {
+      if (frame) return;
+      frame = document.createElement('iframe');
+      frame.setAttribute('aria-hidden', 'true'); frame.tabIndex = -1;
+      frame.style.cssText = 'position:fixed;left:-20px;top:-20px;width:10px;height:10px;border:0;opacity:0;pointer-events:none';
+      frame.src = MC + '/--docs?render=1&lang=ko';
+      document.body.appendChild(frame);
+    }
+    function send(job) { frame.contentWindow.postMessage({ type: 'renderblocks', id: job.id, code: job.code, options: { packageId: job.id } }, MC + '/'); }
+    window.addEventListener('message', function (ev) {
+      var m = ev.data;
+      if (!m || m.source !== 'makecode') return;
+      if (m.type === 'renderready') { ready = true; queue.splice(0).forEach(send); }
+      if (m.type === 'renderblocks' && pending[m.id]) {
+        var p = pending[m.id]; delete pending[m.id];
+        if (m.error || !m.uri) p.reject(new Error('블록을 그리지 못했어요'));
+        else { cache[m.id] = { uri: m.uri, w: m.width, h: m.height }; p.resolve(cache[m.id]); }
+      }
+    });
+    function render(id) {
+      if (cache[id]) return Promise.resolve(cache[id]);
+      if (pending[id]) return pending[id].promise;
+      ensure();
+      var p = {}; p.promise = new Promise(function (res, rej) { p.resolve = res; p.reject = rej; });
+      pending[id] = p;
+      fetch(MC + '/api/' + encodeURIComponent(id) + '/text').then(function (r) { if (!r.ok) throw new Error('공유 주소를 찾을 수 없어요'); return r.json(); })
+        .then(function (files) {
+          var job = { id: id, code: files['main.ts'] || '' };
+          if (ready) send(job); else queue.push(job);
+        })
+        .catch(function (err) { if (pending[id] === p) { delete pending[id]; p.reject(err); } });
+      setTimeout(function () { if (pending[id] === p) { delete pending[id]; p.reject(new Error('시간이 오래 걸려 멈췄어요')); } }, 40000);
+      return p.promise;
+    }
+    return { render: render, cached: function (id) { return cache[id] || null; } };
+  })();
+
+  /* 창 안에 블록 전체가 들어가게, 원래 크기의 1.5배까지만 키움 */
+  var MAX_UP = 1.5, PAD = 18;
+  function fitSize(r, boxW, boxH) {
+    var w = r.w || 400, h = r.h || 300;
+    var k = Math.min(MAX_UP, (boxW - PAD * 2) / w, (boxH - PAD * 2) / h);
+    return { w: Math.round(w * k), h: Math.round(h * k) };
+  }
+  function blockImg(r, boxW, boxH) {
+    var f = fitSize(r, boxW, boxH);
+    return '<span class="sv-code__img" role="img" aria-label="MakeCode 블록" style="background-image:url(\'' + r.uri + '\');background-size:' + f.w + 'px ' + f.h + 'px"></span>';
+  }
+  function fillBlocks(el) {
+    var id = el.getAttribute('data-mc'); if (!id) return;
+    var hit = MK.mcBlocks.cached(id);
+    var put = function (r) {
+      var bw = el.clientWidth || 748, bh = el.clientHeight || 392;
+      el.innerHTML = blockImg(r, bw, bh) + '<span class="sv-code__zoom">' + ic('expand') + ' 크게 보기</span>';
+      el.classList.add('is-ready');
+    };
+    if (hit) return put(hit);
+    MK.mcBlocks.render(id).then(put, function (err) {
+      el.classList.add('is-error');
+      el.innerHTML = '<span class="sv-code__msg">' + esc(err.message || '블록을 불러오지 못했어요') + '<br><small>위의 \'MakeCode에서 열기\'로 볼 수 있어요</small></span>';
+    });
+  }
+  // 발표회에 들어오면 모든 작품의 블록을 미리 그려 둡니다 (한 장씩 넘길 때 바로 보이도록)
+  function prefetchAll() {
+    Array.prototype.forEach.call(document.querySelectorAll('.sv-code__view[data-mc]'), function (el) { MK.mcBlocks.render(el.getAttribute('data-mc')).catch(function () {}); });
+  }
+  document.addEventListener('deck:enter', function (e) {
+    var sl = e.detail.slide;
+    if (!/^(s-show|show-)/.test(sl.id)) return;
+    prefetchAll();
+    $$('.sv-code__view[data-mc]:not(.is-ready)', sl).forEach(fillBlocks);
+  });
+
+  /* 크게 보기 */
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-code]'); if (!b) return;
-    var id = b.getAttribute('data-code');
+    var b = e.target.closest('.sv-code__view.is-ready'); if (!b) return;
+    var r = MK.mcBlocks.cached(b.getAttribute('data-mc')); if (!r) return;
     var d = document.createElement('dialog');
     d.className = 'modal ui';
-    d.innerHTML = '<div class="modal__box" style="width:min(1100px,94vw);height:min(760px,90vh);display:flex;flex-direction:column;padding:20px">' +
+    d.innerHTML = '<div class="modal__box" style="width:min(1500px,96vw);max-height:92vh;display:flex;flex-direction:column;padding:20px">' +
       '<button type="button" class="icon-btn modal__close" aria-label="닫기">' + ic('x') + '</button>' +
       '<div class="modal__kicker">MakeCode 블록</div><h3 class="modal__title">' + esc(b.getAttribute('data-title')) + '</h3>' +
-      '<iframe style="flex:1;width:100%;border:2px solid var(--line);border-radius:12px" src="https://makecode.microbit.org/---codeembed#pub:' + encodeURIComponent(id) + '" sandbox="allow-popups allow-forms allow-scripts allow-same-origin" title="MakeCode 블록"></iframe></div>';
+      '<div style="flex:1;min-height:0;overflow:auto;border:2px solid var(--line);border-radius:12px;background:#fff;padding:12px"><img src="' + r.uri + '" alt="MakeCode 블록" style="display:block;max-width:100%;height:auto;margin:0 auto"></div></div>';
     document.body.appendChild(d);
     d.querySelector('.modal__close').onclick = function () { d.close(); };
     d.addEventListener('click', function (ev) { if (ev.target === d) d.close(); });
@@ -132,7 +215,12 @@ window.MK = window.MK || {};
     if (!MK.showcase.items(st).length) return Promise.reject(new Error('발표에 넣은 작품이 없습니다.'));
     if (location.protocol === 'file:') return Promise.reject(new Error('파일을 직접 연 상태에서는 저장할 수 없습니다. 로컬 서버나 배포 주소로 열어 주세요.'));
     var holder = document.createElement('div'); holder.innerHTML = generate(st);
-    Array.prototype.forEach.call(holder.querySelectorAll('[data-code]'), function (b) { b.remove(); }); // 블록 보기는 교안에서만
+    var views = Array.prototype.slice.call(holder.querySelectorAll('.sv-code__view[data-mc]'));
+    return Promise.all(views.map(function (v) {
+      return MK.mcBlocks.render(v.getAttribute('data-mc')).then(function (r) {
+        v.outerHTML = '<div class="sv-code__view is-ready">' + blockImg(r, 748, 392) + '</div>';
+      }, function () { v.outerHTML = '<div class="sv-code__view is-empty"><span class="sv-code__msg">블록을 불러오지 못했어요</span></div>'; });
+    })).then(function () {
     var slidesHtml = holder.innerHTML;
     var imgs = []; slidesHtml.replace(/url\((assets\/img\/[^)]+)\)/g, function (m, u) { if (imgs.indexOf(u) < 0) imgs.push(u); });
     return Promise.all([
@@ -157,6 +245,7 @@ window.MK = window.MK || {};
       var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '작품발표회-' + new Date().toISOString().slice(0, 10) + '.html';
       document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 3000);
       return true;
+    });
     });
   };
 })();

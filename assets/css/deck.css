@@ -252,8 +252,8 @@ body.deck-page { overflow: hidden; background: #E6ECF7; font-family: var(--font)
 .sv-head__tags { display: flex; gap: 12px; align-items: center; }
 .sv-head__title { margin: 14px 0 0; font-size: 56px; font-weight: 800; line-height: 1.15; letter-spacing: -0.035em; color: var(--navy); }
 .sv-head__who { margin: 8px 0 0; font-size: 28px; font-weight: 700; color: var(--muted); }
-.sv-grid { position: absolute; left: 150px; right: 290px; top: 290px; bottom: 170px; display: grid; grid-template-columns: 900px 1fr; gap: 40px; }
-.sv-media { height: 100%; }
+.sv-grid { position: absolute; left: 150px; right: 290px; top: 278px; bottom: 150px; display: grid; grid-template-columns: 700px 1fr; grid-template-rows: auto 1fr; gap: 24px 28px; align-content: start; }
+.sv-media { align-self: start; }
 .sv-media .window__bar { justify-content: flex-start; }
 .sv-open { margin-left: auto; font-size: 19px; font-weight: 800; color: var(--blue-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .sv-open:hover { text-decoration: underline; }
@@ -263,11 +263,16 @@ body.deck-page { overflow: hidden; background: #E6ECF7; font-family: var(--font)
 .sv-media__fallback::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,.55); }
 .sv-media__fallback > * { position: relative; }
 .sv-media__note { font-size: 22px; font-weight: 700; color: var(--navy); }
-.sv-side { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
-.sv-desc { font-size: 26px !important; font-weight: 500 !important; line-height: 1.55 !important; white-space: pre-line; }
-.sv-links { display: flex; gap: 14px; flex-wrap: wrap; }
-.sv-code { flex: 1; min-height: 0; }
-.sv-code iframe { width: 100%; height: 100%; border: 0; }
+/* MakeCode 블록 그림 */
+.sv-code { align-self: stretch; min-width: 0; }
+.sv-code__body { position: relative; background: #F3F6FB; }
+.sv-code__view { position: absolute; inset: 0; width: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; border: 0; background: none; font: inherit; color: inherit; cursor: zoom-in; }
+.sv-code__view.is-empty, .sv-code__view.is-error { cursor: default; }
+.sv-code__img { position: absolute; inset: 0; background: center / contain no-repeat; }
+.sv-code__msg { font-size: 20px; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.5; }
+.sv-code__msg small { font-size: 16px; font-weight: 600; }
+.sv-code__zoom { position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .94); border: var(--stroke) solid var(--navy); font-size: 16px; font-weight: 800; color: var(--navy); }
+.sv-desc { grid-column: 1 / -1; align-self: start; max-width: 1240px; font-size: 22px !important; font-weight: 500 !important; line-height: 1.5 !important; white-space: pre-line; padding: 16px 28px !important; }
 .sample-flag { display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; background: var(--yellow-tab); border: var(--stroke) solid var(--navy); font-size: 18px; font-weight: 800; color: var(--navy); }
 
 /* 관리자에게만 보이는 것 */
