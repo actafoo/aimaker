@@ -395,7 +395,7 @@ window.MK = window.MK || {};
           '<div class="col" style="gap:22px">' +
             '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-blue">' + ic('doc') + '</span>문제 상황</div><p data-field="ch:' + c.id + ':problem">' + esc(c.problem) + '</p></div>' +
             '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-purple">' + ic('flag') + '</span>성공 기준</div><p data-field="ch:' + c.id + ':success">' + esc(c.success) + '</p></div>' +
-            (c.start ? '<div class="bubble ch-hint"><b>이렇게 시작해 보세요</b><br><span data-field="ch:' + c.id + ':start">' + c.start + '</span></div>' : '') +
+            (c.start ? '<div class="callout ch-hint"><b>이렇게 시작해 보세요</b><br><span data-field="ch:' + c.id + ':start">' + c.start + '</span></div>' : '') +
           '</div>' +
           '<div class="col">' +
             '<div data-widget="apply-panel" data-challenge="' + c.id + '"></div>' +

@@ -75,33 +75,20 @@
 .window__body { flex: 1; padding: 24px 28px; min-height: 0; }
 .window__body--flush { padding: 0; }
 
-/* ---------- 메모 (접힌 귀퉁이) ---------- */
-.note {
-  position: relative; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--yellow-soft);
-  padding: 26px 30px; clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 0 100%);
-}
-.note::after {
-  content: ''; position: absolute; top: calc(-1 * var(--stroke)); right: calc(-1 * var(--stroke)); width: 44px; height: 44px;
-  border-left: var(--stroke) solid var(--navy); border-bottom: var(--stroke) solid var(--navy); border-bottom-left-radius: 8px;
-  background: linear-gradient(to bottom left, transparent calc(50% - 1.2px), var(--navy) calc(50% - 1.2px), var(--navy) calc(50% + 1.2px), var(--note-fold) calc(50% + 1.2px));
-}
+/* ---------- 메모 상자 (연한 노랑, 일반 테두리) ---------- */
+.note { border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--yellow-soft); padding: 26px 30px; }
 /* 예전 클립보드 카드 이름은 기본 카드처럼 보입니다 */
 .clip { border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); padding: 26px 30px; }
 
-/* ---------- 말풍선 ---------- */
-.bubble {
-  --bb: var(--paper);
-  position: relative; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--bb);
+/* ---------- 강조 상자 (callout) ----------
+   한두 줄 안내·설명을 크게 보여 줄 때. 일반 테두리 상자에 글자만 조금 큽니다.
+   <div class="callout">…</div>   연한 파랑: callout--sky
+   (예전 이름 bubble 도 같은 모양으로 보입니다) */
+.callout, .bubble {
+  border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper);
   padding: 24px 32px; font-size: 27px; font-weight: 600; color: var(--navy); line-height: 1.45;
 }
-.bubble::before { /* 꼬리 */
-  content: ''; position: absolute; left: 46px; bottom: -15px; width: 26px; height: 26px;
-  background: var(--bb); border-right: var(--stroke) solid var(--navy); border-bottom: var(--stroke) solid var(--navy);
-  transform: rotate(45deg) skew(8deg, 8deg); border-bottom-right-radius: 3px;
-}
-.bubble--right::before { left: auto; right: 46px; }
-.bubble--white { --bb: var(--paper); }
-.bubble--sky { --bb: var(--blue-soft); }
+.callout--sky, .bubble--sky { background: var(--blue-soft); }
 
 /* ---------- 리본 ---------- */
 .ribbon {

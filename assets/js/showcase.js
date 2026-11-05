@@ -72,7 +72,7 @@ window.MK = window.MK || {};
               (mcId ? '<button class="sv-code__view" data-mc="' + esc(mcId) + '" data-title="' + esc(s.title) + '" title="눌러서 크게 보기"><span class="sv-code__msg">블록을 불러오는 중…</span></button>'
                     : '<div class="sv-code__view is-empty"><span class="sv-code__msg">' + (s.sample ? '샘플 결과물 · MakeCode 주소가 없습니다' : 'MakeCode 주소가 없습니다') + '</span></div>') +
             '</div></div>' +
-          '<div class="bubble sv-desc"' + (long ? ' style="font-size:19px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +
+          '<div class="callout sv-desc"' + (long ? ' style="font-size:19px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +
         '</div></section>';
     });
     return h;
