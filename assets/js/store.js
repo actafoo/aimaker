@@ -285,6 +285,14 @@ window.MK = window.MK || {};
     return d;
   }
 
+  function isLiveView() {
+    if (document.querySelector('#admin.is-open')) return true;
+    var sl = document.querySelector('.slide.is-active');
+    if (!sl) return true;
+    if (/^(s-show|show-)/.test(sl.id)) return true;
+    return !!sl.querySelector('[data-widget="apply-panel"], [data-widget="seat-board"], [data-widget="submit-board"], [data-widget="challenge-overview"], [data-widget="my-submission"]');
+  }
+
   function RemoteStore(url) {
     var self = this;
     this.url = url; this.listeners = []; this.online = null; this.loaded = false; this.lastJson = '';
@@ -293,8 +301,14 @@ window.MK = window.MK || {};
     if (cached) this.lastJson = JSON.stringify(this.state);
     window.addEventListener('storage', function (e) { if (e.key === ME_KEY) self._emit(); });
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') self.refresh(); });
-    var every = Math.max(4, cfg.pollSeconds || 8) * 1000;
-    setInterval(function () { if (document.visibilityState === 'visible') self.refresh(); }, every);
+    // 살아 있는 현황을 보여 주는 쪽에서만 자주(기본 10초), 나머지는 1분마다 받아 옵니다
+    this.lastFetch = 0;
+    var every = Math.max(4, cfg.pollSeconds || 10) * 1000;
+    setInterval(function () {
+      if (document.visibilityState !== 'visible') return;
+      if (isLiveView() || Date.now() - self.lastFetch > 60000) self.refresh();
+    }, every);
+    document.addEventListener('deck:enter', function () { if (isLiveView() && Date.now() - self.lastFetch > 5000) self.refresh(); });
     setTimeout(function () { self.refresh(); }, 0);
   }
 
@@ -332,6 +346,7 @@ window.MK = window.MK || {};
     refresh: function () {
       var self = this;
       if (this._busy) return this._busy;
+      this.lastFetch = Date.now();
       this._busy = this._fetch(null).then(function (j) { if (j.ok && j.state) self._setState(j.state); }, function () {})
         .then(function () { self._busy = null; });
       return this._busy;

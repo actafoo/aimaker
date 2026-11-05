@@ -59,18 +59,21 @@ window.MK = window.MK || {};
       ta.addEventListener('input', upd); upd();
     });
     var first = d.querySelector('input:not([type=hidden]):not([value]), input[value=""], textarea:empty') || d.querySelector('input, textarea');
-    if (first) setTimeout(function () { first.focus(); }, 30);
+    if (first) first.focus(); // 바로 첫 빈칸으로 (늦게 옮기면 빠르게 입력하는 중에 커서를 빼앗음)
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var vals = {};
       $$('input, textarea, select', form).forEach(function (el) { if (el.name) vals[el.name] = el.type === 'checkbox' ? el.checked : el.value; });
-      var btn = form.querySelector('[type=submit]'); btn.disabled = true;
+      var btn = form.querySelector('[type=submit]'), label = btn.textContent;
+      if (btn.disabled) return;
+      btn.disabled = true;
+      var slow = setTimeout(function () { btn.textContent = '처리 중…'; }, 300); // 서버를 기다리는 동안
       msg.classList.remove('is-on');
       Promise.resolve().then(function () { return o.onSubmit(vals, d); }).then(function (r) {
-        btn.disabled = false;
+        clearTimeout(slow); btn.disabled = false; btn.textContent = label;
         if (r !== false) d.close();
       }, function (err) {
-        btn.disabled = false;
+        clearTimeout(slow); btn.disabled = false; btn.textContent = label;
         msg.textContent = (err && err.message) || '처리하지 못했습니다.'; msg.classList.add('is-on');
       });
     });
