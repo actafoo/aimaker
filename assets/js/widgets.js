@@ -48,10 +48,11 @@ window.MK = window.MK || {};
       } else f += fieldHtml(x);
     }
     f += '<div class="modal__msg" role="alert"></div>';
+    f += '<div class="modal__wait" role="status">사람이 몰려 차례대로 처리하는 중이에요. 창을 닫지 말고 잠시만 기다려 주세요.</div>';
     if (o.note) f += '<div class="modal__note">' + o.note + '</div>';
     f += '<div class="modal__actions">' + (o.extra || '') + '<button type="button" class="ubtn ubtn--ghost" data-cancel>취소</button><button type="submit" class="ubtn' + (o.danger ? ' ubtn--danger' : '') + '">' + esc(o.submitText || '확인') + '</button></div></form>';
     var d = dialog(f, o.wide);
-    var form = d.querySelector('form'), msg = d.querySelector('.modal__msg');
+    var form = d.querySelector('form'), msg = d.querySelector('.modal__msg'), wait = d.querySelector('.modal__wait');
     d.querySelector('[data-cancel]').onclick = function () { d.close(); };
     $$('textarea[maxlength]', d).forEach(function (ta) {
       var c = ta.parentNode.querySelector('.count');
@@ -68,12 +69,13 @@ window.MK = window.MK || {};
       if (btn.disabled) return;
       btn.disabled = true;
       var slow = setTimeout(function () { btn.textContent = '처리 중…'; }, 300); // 서버를 기다리는 동안
+      var crowd = setTimeout(function () { wait.classList.add('is-on'); }, 5000); // 오래 걸리면 안내
       msg.classList.remove('is-on');
       Promise.resolve().then(function () { return o.onSubmit(vals, d); }).then(function (r) {
-        clearTimeout(slow); btn.disabled = false; btn.textContent = label;
+        clearTimeout(slow); clearTimeout(crowd); wait.classList.remove('is-on'); btn.disabled = false; btn.textContent = label;
         if (r !== false) d.close();
       }, function (err) {
-        clearTimeout(slow); btn.disabled = false; btn.textContent = label;
+        clearTimeout(slow); clearTimeout(crowd); wait.classList.remove('is-on'); btn.disabled = false; btn.textContent = label;
         msg.textContent = (err && err.message) || '처리하지 못했습니다.'; msg.classList.add('is-on');
       });
     });

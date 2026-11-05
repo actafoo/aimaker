@@ -84,6 +84,8 @@
 .modal__actions { position: sticky; bottom: -24px; display: flex; gap: 10px; justify-content: flex-end; margin: 18px -28px -24px; padding: 14px 28px 18px; flex-wrap: wrap; background: #fff; border-top: 1.5px solid var(--line); border-radius: 0 0 22px 22px; }
 .modal__msg { margin-top: 12px; padding: 10px 14px; border-radius: 12px; background: #FFECEA; color: #B42318; font-size: 14px; font-weight: 700; display: none; }
 .modal__msg.is-on { display: block; }
+.modal__wait { margin-top: 12px; padding: 10px 14px; border-radius: 12px; background: var(--yellow-soft); color: #6A5000; font-size: 14px; font-weight: 700; display: none; }
+.modal__wait.is-on { display: block; }
 .modal__note { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--sky); font-size: 13px; color: var(--muted); line-height: 1.6; }
 
 .ubtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 42px; padding: 0 18px; border: 2px solid var(--navy); border-radius: 999px; background: var(--blue); color: #fff; font: 800 15px/1 var(--font); cursor: pointer; box-shadow: 0 3px 0 var(--navy); white-space: nowrap; text-decoration: none; }

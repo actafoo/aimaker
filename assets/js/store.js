@@ -358,14 +358,31 @@ window.MK = window.MK || {};
         if (!pw) return fail('관리자만 할 수 있습니다.');
         body.pw = pw;
       }
-      return this._fetch(body).then(function (j) {
-        if (j.state) self._setState(j.state);
-        if (!j.ok) {
-          if (j.code === 'not_admin') { try { sessionStorage.removeItem(PW_KEY); } catch (e) {} self._emit(); }
-          throw new Error(j.error || '처리하지 못했습니다.');
-        }
-        return j.result || {};
-      });
+      // 사람이 몰려 실패하면 자동으로 다시 보냄 (두 번 보내도 결과가 같은 요청만)
+      var canRetry = action !== 'moveSubmission';
+      var waits = [1500, 3500], attempt = 0, sentOnce = false;
+      function once() {
+        return self._fetch(body).then(function (j) {
+          if (j.state) self._setState(j.state);
+          if (!j.ok) {
+            if (j.code === 'not_admin') { try { sessionStorage.removeItem(PW_KEY); } catch (e) {} self._emit(); }
+            if (canRetry && /잠시 밀렸어요/.test(j.error || '') && attempt < waits.length) return again();
+            // 앞서 보낸 취소가 실제로는 처리됐던 경우
+            if (action === 'cancel' && sentOnce && /신청한 도전과제가 없습니다/.test(j.error || '')) { self._busy = null; self.refresh(); return {}; }
+            throw new Error(j.error || '처리하지 못했습니다.');
+          }
+          return j.result || {};
+        }, function (err) {
+          sentOnce = true;
+          if (canRetry && attempt < waits.length) return again();
+          throw err;
+        });
+      }
+      function again() {
+        var ms = waits[attempt++];
+        return new Promise(function (res) { setTimeout(res, ms); }).then(once);
+      }
+      return once();
     },
 
     getState: function () { return Promise.resolve(copy(this.state)); },
