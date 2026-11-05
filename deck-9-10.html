@@ -64,10 +64,10 @@
         <div class="chain__desc">move 1은 P0, move 2는 P1<br>서보를 움직인다</div>
       </div>
     </div>
-    <div class="grid-3 mt-l" style="align-items:start">
+    <div class="grid-3 mt-l">
       <div class="card card--soft c-green"><div class="t-lg">가져온 장비</div><p class="t-sm" style="margin:8px 0 0">장치 이름표가 붙은 마이크로비트·링비트·서보 2개, 골판지와 마스킹테이프</p></div>
       <div class="note"><div class="t-lg">아이디어 카드</div><p class="t-sm" style="margin:8px 0 0">문장 틀로 쓴 아이디어 한 장. 오늘 <b>자유발명</b> 과제로 이어서 만들 수 있어요.</p></div>
-      <div class="callout callout--sky">보낼 땐 끄고,<br>움직일 땐 켠다</div>
+      <div class="callout callout--sky v-center">보낼 땐 끄고,<br>움직일 땐 켠다</div>
     </div>
   </div>
 </section>
@@ -99,7 +99,7 @@
         <span style="flex:10">16:00</span><span style="flex:10">16:10</span><span style="flex:30">16:20</span><span style="flex:10">16:50</span><span style="flex:10">17:00</span><span style="flex:10">17:10</span><span style="flex:20">17:20</span><span style="flex:10">17:40 ~ 17:50</span>
       </div>
     </div>
-    <div class="row mt-l" style="align-items:center;gap:24px">
+    <div class="callout callout--sky mt-l" style="display:flex;align-items:center;gap:24px;padding:14px 28px;font-weight:500">
       <img class="icon-badge icon-badge--sm" src="assets/img/icons/sprout.png" alt="">
       <div class="t-md"><b class="t-strong">마지막 10분</b>은 우리 반 수업으로 가져가는 방법을 함께 이야기합니다.</div>
     </div>
@@ -111,11 +111,11 @@
     <div class="slide__kicker">모든 도전과제에 똑같이</div>
     <h2 class="slide__title">공통 도전 조건</h2>
   </div>
-  <div class="slide__body" style="display:grid;grid-template-columns:1.45fr 1fr;gap:44px;align-items:start">
+  <div class="slide__body" style="display:grid;grid-template-columns:1.45fr 1fr;gap:40px;bottom:210px">
     <div data-widget="common-notice"></div>
-    <div class="col" style="gap:30px">
-      <div class="callout t-md" style="font-size:27px"><span data-widget="design-freedom"></span></div>
-      <div class="card" style="margin-top:20px">
+    <div class="stretch-col">
+      <div class="callout grow v-center" style="font-size:29px;gap:18px"><span class="circle c-yellow"><svg class="i"><use href="#i-bulb"></use></svg></span><span data-widget="design-freedom"></span></div>
+      <div class="card">
         <div class="t-sm t-muted" style="font-weight:800">예: 인식 2가지 → 행동 2가지</div>
         <div class="col mt-s" style="gap:14px">
           <div class="row" style="gap:14px;align-items:center"><span class="tag c-blue">주먹 · ID1</span>→<span class="tag tag--solid c-blue">P0 서보가 북 치기</span></div>
@@ -147,7 +147,7 @@
     </div>
     <div class="row mt-l" style="align-items:center;gap:30px">
       <button class="btn" data-act="identify"><svg class="i"><use href="#i-user"></use></svg> 지금 이름 등록하기</button>
-      <div class="t-sm t-muted"><span class="kbd">←</span> <span class="kbd">→</span> 키나 오른쪽 아래 버튼으로 넘기고, <b class="t-strong">목차</b>로 원하는 쪽에 바로 갑니다.</div>
+      <div class="callout callout--sky t-sm" style="flex:1;padding:14px 26px;font-size:23px;font-weight:500"><span class="kbd">←</span> <span class="kbd">→</span> 키나 오른쪽 아래 버튼으로 넘기고, <b class="t-strong">목차</b>로 원하는 쪽에 바로 갑니다.</div>
     </div>
   </div>
 </section>
@@ -164,7 +164,7 @@
 </section>
 
 <section class="slide slide--body" id="s-overview" data-section="1. 도전과제 고르기" data-title="도전과제 한눈에 보기">
-  <div class="slide__head" style="right:300px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+  <div class="slide__head" style="right:var(--safe-r);display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
     <div>
       <div class="slide__kicker">하나를 골라 신청</div>
       <h2 class="slide__title">도전과제 한눈에 보기</h2>
@@ -243,7 +243,7 @@
     </div>
     <div class="row" style="grid-column:1 / -1;align-items:center;gap:28px">
       <img class="icon-badge icon-badge--sm" src="assets/img/icons/microbit.png" alt="">
-      <div class="callout" style="padding:20px 36px">코드를 보낼 땐 링비트 스위치를 <b class="t-blue">끄고</b>, 움직일 땐 <b class="t-blue">켭니다</b>.</div>
+      <div class="callout" style="flex:1;padding:20px 36px">코드를 보낼 땐 링비트 스위치를 <b class="t-blue">끄고</b>, 움직일 땐 <b class="t-blue">켭니다</b>.</div>
     </div>
   </div>
 </section>
@@ -280,17 +280,17 @@
     <div class="slide__kicker">막혔을 때</div>
     <h2 class="slide__title">안 될 때 다섯 가지 확인</h2>
   </div>
-  <div class="slide__body" style="display:grid;grid-template-columns:1.5fr 1fr;gap:44px;align-items:start">
-    <ul class="checklist">
+  <div class="slide__body" style="display:grid;grid-template-columns:1.5fr 1fr;gap:40px;bottom:210px">
+    <ul class="checklist fill-rows">
       <li><span class="box"></span><span class="bar"><span><b>1 · AI 연결용 코드가 들어갔나?</b> <span class="t-muted" style="font-size:22px">장치 이름 확인 코드와 헷갈리기 쉬워요</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>2 · 내 장치 이름에 연결했나?</b> <span class="t-muted" style="font-size:22px">이름표의 다섯 글자와 같은지</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>3 · ID 글자가 같은가?</b> <span class="t-muted" style="font-size:22px">코드와 웹앱, 대소문자까지</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>4 · ‘시작’을 눌렀나?</b> <span class="t-muted" style="font-size:22px">인식을 시작해야 글자가 갑니다</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>5 · 링비트 전원을 켰나?</b> <span class="t-muted" style="font-size:22px">보낼 땐 끄고, 움직일 땐 켠다</span></span></span></li>
     </ul>
-    <div class="col" style="gap:40px">
-      <div class="callout">그래도 안 되면<br>손을 들어 주세요.<br><span class="t-blue">분임강사가 갑니다.</span></div>
-      <div class="card c-purple card--soft" style="margin-top:10px"><div class="t-sm"><b class="t-strong">얼굴인식은?</b> ID 대신 숫자가 옵니다. 3번은 <b>몇 번째 자리</b>를 꺼냈는지로 확인합니다.</div></div>
+    <div class="stretch-col">
+      <div class="callout grow v-center" style="font-size:34px;gap:20px;line-height:1.4"><span class="circle c-blue"><svg class="i"><use href="#i-hand"></use></svg></span><span>그래도 안 되면<br>손을 들어 주세요.<br><span class="t-blue">분임강사가 갑니다.</span></span></div>
+      <div class="card c-purple card--soft"><div class="t-sm"><b class="t-strong">얼굴인식은?</b> ID 대신 숫자가 옵니다. 3번은 <b>몇 번째 자리</b>를 꺼냈는지로 확인합니다.</div></div>
     </div>
   </div>
 </section>
@@ -311,8 +311,8 @@
     <div class="slide__kicker">작동 영상</div>
     <h2 class="slide__title">30초 시연 영상 찍기</h2>
   </div>
-  <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
-    <ul class="checklist">
+  <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;gap:40px">
+    <ul class="checklist fill-rows">
       <li><span class="box"></span><span class="bar"><b>가로로</b>&nbsp;찍는다</span></li>
       <li><span class="box"></span><span class="bar">웹앱 화면과 작품이&nbsp;<b>함께</b>&nbsp;나오게</span></li>
       <li><span class="box"></span><span class="bar">인식 1 → 행동 1, 인식 2 → 행동 2</span></li>
@@ -363,7 +363,7 @@
     </div>
     <div class="row mt-l" style="align-items:center;gap:28px">
       <img class="icon-badge icon-badge--sm" src="assets/img/icons/laptop.png" alt="">
-      <div class="callout" style="padding:20px 36px">장치 이름 확인 코드 말고, <b class="t-blue">오늘 만든 작품 코드</b>의 주소인지 한 번 더 확인!</div>
+      <div class="callout" style="flex:1;padding:20px 36px">장치 이름 확인 코드 말고, <b class="t-blue">오늘 만든 작품 코드</b>의 주소인지 한 번 더 확인!</div>
     </div>
   </div>
 </section>
@@ -374,15 +374,15 @@
     <h2 class="slide__title">내 결과물 제출</h2>
   </div>
   <div class="slide__body" style="display:grid;grid-template-columns:520px 1fr;gap:40px">
-    <div class="note" style="align-self:start">
+    <div class="note" style="display:flex;flex-direction:column">
       <div class="t-lg" style="font-size:28px">준비할 네 가지</div>
-      <ul class="checklist mt-m" style="gap:14px">
+      <ul class="checklist fill-rows mt-m" style="gap:14px;flex:1;height:auto">
         <li><span class="box"></span><span class="bar">작품 제목</span></li>
         <li><span class="box"></span><span class="bar">간단한 설명 2~3문장</span></li>
         <li><span class="box"></span><span class="bar">MakeCode 공유 주소</span></li>
         <li><span class="box"></span><span class="bar">작동 영상 주소</span></li>
       </ul>
-      <p class="t-sm t-muted" style="margin:18px 0 0;font-size:20px">다시 제출하면 고쳐집니다.</p>
+      <p class="t-sm t-muted" style="margin:auto 0 0;padding-top:18px;font-size:20px">다시 제출하면 고쳐집니다.</p>
     </div>
     <div data-widget="my-submission"></div>
   </div>
@@ -419,7 +419,7 @@
     <h2 class="slide__title">우리 반 수업과 잇기</h2>
   </div>
   <div class="slide__body" style="top:252px">
-    <table class="table">
+    <table class="table table--roomy">
       <thead><tr><th style="width:330px">도전과제</th><th style="width:220px">교과</th><th>수업 아이디어</th></tr></thead>
       <tbody>
         <tr><td>손짓 오케스트라</td><td>음악</td><td>손짓 신호로 모둠 리듬 합주하기</td></tr>

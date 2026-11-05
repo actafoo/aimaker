@@ -221,7 +221,7 @@ window.MK = window.MK || {};
       '<div class="apply__h">신청 현황</div>' +
       '<div class="apply__count">' + n + '<small> / ' + cap + '명</small></div>' + seatDots(n, cap).replace('class="seats"', 'class="seats seats--lg"') +
       '<div class="apply__names">' + (n ? nameChips(list) : '<span class="apply__empty">아직 신청한 사람이 없어요.<br>첫 번째 도전자가 되어 보세요.</span>') + '</div>' +
-      (isMine ? '<div class="apply__state">내가 신청한 도전과제입니다.</div>' : mine ? '<div class="apply__state">지금 신청: ' + esc(MK.challengeById(mine.challengeId).title) + '</div>' : '') +
+      (isMine ? '' : mine ? '<div class="apply__state">지금 신청: ' + esc(MK.challengeById(mine.challengeId).title) + '</div>' : '') +
       btn + '<button class="apply__back" data-goto="s-overview">' + ic('left') + ' 다른 도전과제 보기</button></div>';
   };
 
