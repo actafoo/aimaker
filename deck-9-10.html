@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9~10차시 · AI 메이커 작품 제작</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/deck.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+</head>
+<body class="deck-page">
+
+<div class="deck-viewport" id="viewport">
+<main class="deck-stage" id="stage">
+
+<!-- =====================================================
+     슬라이드 추가 방법
+     <section class="slide slide--body" id="고유이름" data-section="목차 묶음" data-title="목차에 보일 제목"> ... </section>
+     배경: slide--cover(표지) / slide--body(본문) / slide--pixel(섹션 구분) / slide--pastel(발표회)
+     ===================================================== -->
+
+<!-- ============ 시작 ============ -->
+
+<section class="slide slide--cover" id="s-cover" data-section="시작" data-title="표지" data-no-footer="">
+  <div class="cover">
+    <div class="cover__session">
+      <span class="tag tag--solid c-blue" style="height:52px;font-size:26px;padding:0 26px">9~10차시</span>
+      <span class="cover__course" data-widget="cfg" data-key="course"></span>
+    </div>
+    <h1 class="cover__title">링비트와 AI모델을 활용한<br><em>문제해결 작품 제작</em> 및 수업 적용</h1>
+    <p class="cover__tagline" data-widget="cfg" data-key="tagline"></p>
+    <p class="cover__meta"><span data-widget="cfg" data-key="date"></span> · <span data-widget="cfg" data-key="place"></span> · <b data-widget="cfg" data-key="instructor"></b></p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-recap" data-section="시작" data-title="7~8차시에서 이어서">
+  <div class="slide__head">
+    <div class="slide__kicker">지난 시간 정리</div>
+    <h2 class="slide__title">7~8차시에서 이어서</h2>
+  </div>
+  <div class="slide__body">
+    <div class="chain">
+      <div class="card chain__node c-blue">
+        <img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">
+        <div class="chain__step">① 보는 눈</div>
+        <div class="chain__name">AI 웹앱</div>
+        <div class="chain__desc">카메라로 보고, 결과를 글자로 보낸다<br><span class="t-muted">핸드포즈 · 이미지분류 · 모션인식</span></div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path></svg>블루투스</div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/microbit.png" alt="">
+        <div class="chain__step">② 판단</div>
+        <div class="chain__name">마이크로비트</div>
+        <div class="chain__desc">‘데이터가 ID1이면 move 1’을<br>정한다 · 오늘도 코딩은 여기</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path></svg>각도 명령</div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/robot-arm.png" alt="">
+        <div class="chain__step">③ 움직임</div>
+        <div class="chain__name">180° 서보 2개</div>
+        <div class="chain__desc">move 1은 P0, move 2는 P1<br>서보를 움직인다</div>
+      </div>
+    </div>
+    <div class="grid-3 mt-l" style="align-items:start">
+      <div class="clip c-green"><div class="t-lg">가져온 장비</div><p class="t-sm" style="margin:8px 0 0">장치 이름표가 붙은 마이크로비트·링비트·서보 2개, 골판지와 마스킹테이프</p></div>
+      <div class="clip c-yellow"><div class="t-lg">아이디어 카드</div><p class="t-sm" style="margin:8px 0 0">문장 틀로 쓴 아이디어 한 장. 오늘 <b>자유발명</b> 과제로 이어서 만들 수 있어요.</p></div>
+      <div class="bubble sparkle" style="margin-top:34px">보낼 땐 끄고,<br>움직일 땐 켠다</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-flow" data-section="시작" data-title="오늘의 흐름">
+  <div class="slide__head">
+    <div class="slide__kicker">16:00 ~ 17:50 · 110분</div>
+    <h2 class="slide__title">오늘의 흐름</h2>
+  </div>
+  <div class="slide__body">
+    <div class="steps">
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">고르기</div><div class="step__text">도전과제 7개를 둘러보고 하나를 신청</div><div class="step__meta">10분</div></div>
+      <div class="step c-green"><span class="step__num">2</span><div class="step__title">만들기</div><div class="step__text">골판지로 거칠게, 움직이며 고치기</div><div class="step__meta">40분</div></div>
+      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">찍고 제출</div><div class="step__text">30초 영상, MakeCode 주소, 설명</div><div class="step__meta">10분</div></div>
+      <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">함께 보기</div><div class="step__text">작품 발표회</div><div class="step__meta">20분</div></div>
+    </div>
+    <div class="mt-l">
+      <div class="timeline">
+        <div style="flex:10;background:var(--sky)">도입</div>
+        <div style="flex:10;background:var(--blue-mid)">고르기</div>
+        <div style="flex:30;background:var(--green-mid)">만들기 ①</div>
+        <div style="flex:10" class="tl-break">쉬는 시간</div>
+        <div style="flex:10;background:var(--green-mid)">만들기 ②</div>
+        <div style="flex:10;background:var(--purple-mid)">찍고 제출</div>
+        <div style="flex:20;background:var(--yellow-mid)">작품 발표회</div>
+        <div style="flex:10;background:var(--sky)">수업으로</div>
+      </div>
+      <div class="timeline-labels">
+        <span style="flex:10">16:00</span><span style="flex:10">16:10</span><span style="flex:30">16:20</span><span style="flex:10">16:50</span><span style="flex:10">17:00</span><span style="flex:10">17:10</span><span style="flex:20">17:20</span><span style="flex:10">17:40 ~ 17:50</span>
+      </div>
+    </div>
+    <div class="row mt-l" style="align-items:center;gap:24px">
+      <img class="icon-badge icon-badge--sm" src="assets/img/icons/sprout.png" alt="">
+      <div class="t-md"><b class="t-strong">마지막 10분</b>은 우리 반 수업으로 가져가는 방법을 함께 이야기합니다.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-rules" data-section="시작" data-title="공통 도전 조건">
+  <div class="slide__head">
+    <div class="slide__kicker">모든 도전과제에 똑같이</div>
+    <h2 class="slide__title">공통 도전 조건</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:1.45fr 1fr;gap:44px;align-items:start">
+    <div class="clip c-blue" style="margin-top:30px"><div data-widget="common-notice"></div></div>
+    <div class="col" style="gap:30px;margin-top:30px">
+      <div class="bubble sparkle t-md" style="font-size:27px"><span data-widget="design-freedom"></span></div>
+      <div class="card" style="margin-top:20px">
+        <div class="t-sm t-muted" style="font-weight:800">예: 인식 2가지 → 행동 2가지</div>
+        <div class="col mt-s" style="gap:14px">
+          <div class="row" style="gap:14px;align-items:center"><span class="tag c-blue">주먹 · ID1</span>→<span class="tag tag--solid c-blue">P0 서보가 북 치기</span></div>
+          <div class="row" style="gap:14px;align-items:center"><span class="tag c-green">보 · ID2</span>→<span class="tag tag--solid c-green">P1 서보가 딸랑이</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-howto" data-section="시작" data-title="이 교안 쓰는 법">
+  <div class="slide__head">
+    <div class="slide__kicker">내 노트북에서</div>
+    <h2 class="slide__title">이 교안에서 바로 신청하고 제출합니다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="window">
+      <div class="window__bar">이 교안 주소</div>
+      <div class="window__body" style="display:flex;align-items:center;gap:26px;padding:22px 30px">
+        <img class="icon-badge icon-badge--sm" src="assets/img/icons/laptop.png" alt="">
+        <div class="t-xl" style="font-size:44px;word-break:break-all" data-widget="share-url"></div>
+      </div>
+    </div>
+    <div class="steps mt-l">
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">주소 열기</div><div class="step__text">내 노트북 크롬에서</div></div>
+      <div class="step c-green"><span class="step__num">2</span><div class="step__title">이름 등록</div><div class="step__text">오른쪽 위 버튼 · 비밀번호 4자리</div></div>
+      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">신청하기</div><div class="step__text">도전과제 쪽에서 하나만</div></div>
+      <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">제출하기</div><div class="step__text">만든 뒤 ‘내 결과물 제출’ 쪽에서</div></div>
+    </div>
+    <div class="row mt-l" style="align-items:center;gap:30px">
+      <button class="btn" data-act="identify"><svg class="i"><use href="#i-user"></use></svg> 지금 이름 등록하기</button>
+      <div class="t-sm t-muted"><span class="kbd">←</span> <span class="kbd">→</span> 키나 오른쪽 아래 버튼으로 넘기고, <b class="t-strong">목차</b>로 원하는 쪽에 바로 갑니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1. 도전과제 고르기 ============ -->
+
+<section class="slide slide--pixel" id="s-part1" data-section="1. 도전과제 고르기" data-title="PART 1 · 도전과제 고르기">
+  <div class="divider">
+    <span class="divider__part">PART 1</span>
+    <h2 class="divider__title">도전과제 고르기</h2>
+    <p class="divider__text">7개 중 하나를 골라 신청합니다.<br>과제마다 정원이 있으니 먼저 둘러보세요.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 16:10 ~ 16:20</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-overview" data-section="1. 도전과제 고르기" data-title="도전과제 한눈에 보기">
+  <div class="slide__head" style="right:300px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+    <div>
+      <div class="slide__kicker">하나를 골라 신청</div>
+      <h2 class="slide__title">도전과제 한눈에 보기</h2>
+    </div>
+    <div class="ch-legend">
+      <span class="tag c-blue"><span class="dot"></span>핸드포즈</span>
+      <span class="tag c-green"><span class="dot"></span>이미지분류</span>
+      <span class="tag c-purple"><span class="dot"></span>얼굴인식</span>
+      <span class="tag c-yellow"><span class="dot"></span>자유발명</span>
+    </div>
+  </div>
+  <div class="slide__body" style="top:250px;bottom:150px">
+    <div data-widget="challenge-overview"></div>
+  </div>
+</section>
+
+<div data-generate="challenges" style="display:contents"></div>
+
+<section class="slide slide--body" id="s-board" data-section="1. 도전과제 고르기" data-title="신청 현황판">
+  <div class="slide__head">
+    <div class="slide__kicker">실시간</div>
+    <h2 class="slide__title">신청 현황판</h2>
+  </div>
+  <div class="slide__body" style="top:250px">
+    <div data-widget="seat-board"></div>
+  </div>
+</section>
+
+<!-- ============ 2. 만들기 ============ -->
+
+<section class="slide slide--pixel" id="s-part2" data-section="2. 만들기" data-title="PART 2 · 만들기">
+  <div class="divider">
+    <span class="divider__part">PART 2</span>
+    <h2 class="divider__title">만들기</h2>
+    <p class="divider__text">완벽하게 말고, 빠르게.<br>완성품보다 움직이는 첫 모형이 먼저입니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 16:20 ~ 17:10 · 쉬는 시간 포함</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-code" data-section="2. 만들기" data-title="시작 전에: 모델별 코드">
+  <div class="slide__head">
+    <div class="slide__kicker">시작 전에</div>
+    <h2 class="slide__title">내 모델에 맞는 코드부터</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;gap:30px 36px;align-items:start">
+    <div class="window">
+      <div class="window__bar">핸드포즈 · 이미지분류 — 7차시 기본 코드</div>
+      <div class="window__body" style="display:flex;flex-direction:column;gap:20px">
+        <div class="blocks">
+          <span class="blk blk--loop">무한 반복</span>
+          <div class="blk-indent">
+            <span class="blk blk--if">만약 <span class="slot">데이터 = "ID1"</span> 이면 → <span class="slot">move 1</span></span>
+            <span class="blk blk--if">아니면 만약 <span class="slot">데이터 = "ID2"</span> 이면 → <span class="slot">move 2</span></span>
+          </div>
+          <span class="blk blk--call">함수 move 1 · P0 서보 각도 <span class="slot">0°</span> → 0.5초 → <span class="slot">90°</span></span>
+        </div>
+        <div class="t-sm"><b class="t-strong">고칠 곳은 두 군데</b> · 함수 속 각도, ID 글자(웹앱과 대소문자까지 같게)</div>
+        <div class="t-sm t-muted">이미지분류는 8차시에 저장한 모델을 <b>모델 가져오기</b>로 불러옵니다.</div>
+      </div>
+    </div>
+    <div class="window">
+      <div class="window__bar">얼굴인식 — 19자리 숫자가 옵니다</div>
+      <div class="window__body" style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div class="packet" style="gap:4px">
+            <span class="w2" style="width:56px">50</span><span class="w2" style="width:56px">50</span><span class="w2 hl2" style="width:56px">60</span><span class="w2" style="width:56px">50</span><span class="w2" style="width:56px">50</span><span class="w2 hl" style="width:56px">00</span><span class="w2" style="width:56px">99</span><span class="w2" style="width:56px">99</span><span class="w1" style="width:36px">5</span><span class="w1 hl" style="width:36px">0</span><span class="w1" style="width:36px">1</span>
+          </div>
+          <div class="packet-labels">
+            <span style="width:56px">좌우</span><span style="width:56px">위아래</span><span style="width:56px;color:#8A6500">거리</span><span style="width:56px">고개</span><span style="width:56px">끄덕</span><span style="width:56px;color:var(--purple-deep)">입</span><span style="width:56px">왼눈</span><span style="width:56px">오른눈</span><span style="width:36px">기울</span><span style="width:36px;color:var(--purple-deep)">웃음</span><span style="width:36px">얼굴</span>
+          </div>
+        </div>
+        <div class="t-sm">필요한 자리만 꺼내 숫자로 바꾼 뒤 비교합니다.</div>
+        <div class="dashed mono" style="padding:14px 20px;font-size:20px;line-height:1.7;color:var(--navy)">거리 = parseFloat(data.substr(4, 2)) <span class="t-muted">// 5~6번째</span><br>웃음 = parseFloat(data.substr(17, 1)) <span class="t-muted">// 18번째</span></div>
+        <div class="t-sm t-muted" style="font-size:20px">0.1초마다 계속 옵니다. 자유발명에서 모션인식을 쓰면 8차시 180° 서보 예제 코드를 보냅니다.</div>
+      </div>
+    </div>
+    <div class="row" style="grid-column:1 / -1;align-items:center;gap:28px">
+      <img class="icon-badge icon-badge--sm" src="assets/img/icons/microbit.png" alt="">
+      <div class="bubble bubble--white sparkle" style="padding:20px 36px">코드를 보낼 땐 링비트 스위치를 <b class="t-blue">끄고</b>, 움직일 땐 <b class="t-blue">켭니다</b>.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-proto" data-section="2. 만들기" data-title="퀵 프로토타입 · 타이머">
+  <div class="slide__head">
+    <div class="slide__kicker">만들기 40분</div>
+    <h2 class="slide__title">짧게, 여러 번 돌려 봅니다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="steps">
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">떠올리기</div><div class="step__text">인식 2가지, 행동 2가지를 정한다</div></div>
+      <div class="step c-green"><span class="step__num">2</span><div class="step__title">만들기</div><div class="step__text">골판지와 테이프로 거칠게</div></div>
+      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">움직이기</div><div class="step__text">AI와 서보를 연결해 돌려 본다</div></div>
+      <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">고치기</div><div class="step__text">안 되는 곳을 찾아 바로 고친다</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px">
+      <div class="dashed">
+        <div class="t-lg" style="font-size:28px">만들 때 기억할 것</div>
+        <ul class="t-sm" style="margin:12px 0 0;padding-left:28px;line-height:1.75">
+          <li>0°를 먼저 보내고, 그 위치에 혼(날개)을 끼운다</li>
+          <li>서보 축은 손으로 돌리지 않는다</li>
+          <li>각도 사이 pause는 500ms 이상</li>
+          <li>골판지 팔은 혼에 마스킹테이프로 단단히</li>
+        </ul>
+      </div>
+      <div class="card" style="padding:24px 30px"><div data-widget="timer" data-minutes="40" data-id="make"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-check5" data-section="2. 만들기" data-title="안 될 때 다섯 가지 확인">
+  <div class="slide__head">
+    <div class="slide__kicker">막혔을 때</div>
+    <h2 class="slide__title">안 될 때 다섯 가지 확인</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:1.5fr 1fr;gap:44px;align-items:start">
+    <ul class="checklist">
+      <li><span class="box"></span><span class="bar"><span><b>1 · AI 연결용 코드가 들어갔나?</b> <span class="t-muted" style="font-size:22px">장치 이름 확인 코드와 헷갈리기 쉬워요</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>2 · 내 장치 이름에 연결했나?</b> <span class="t-muted" style="font-size:22px">이름표의 다섯 글자와 같은지</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>3 · ID 글자가 같은가?</b> <span class="t-muted" style="font-size:22px">코드와 웹앱, 대소문자까지</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>4 · ‘시작’을 눌렀나?</b> <span class="t-muted" style="font-size:22px">인식을 시작해야 글자가 갑니다</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>5 · 링비트 전원을 켰나?</b> <span class="t-muted" style="font-size:22px">보낼 땐 끄고, 움직일 땐 켠다</span></span></span></li>
+    </ul>
+    <div class="col" style="gap:40px">
+      <div class="bubble sparkle">그래도 안 되면<br>손을 들어 주세요.<br><span class="t-blue">분임강사가 갑니다.</span></div>
+      <div class="card c-purple card--soft" style="margin-top:10px"><div class="t-sm"><b class="t-strong">얼굴인식은?</b> ID 대신 숫자가 옵니다. 3번은 <b>몇 번째 자리</b>를 꺼냈는지로 확인합니다.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. 찍고 제출하기 ============ -->
+
+<section class="slide slide--pixel" id="s-part3" data-section="3. 찍고 제출하기" data-title="PART 3 · 찍고 제출하기">
+  <div class="divider">
+    <span class="divider__part">PART 3</span>
+    <h2 class="divider__title">찍고 제출하기</h2>
+    <p class="divider__text">30초 영상, MakeCode 주소, 두세 문장 설명.<br>세 가지면 발표 준비 끝입니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 17:10 ~ 17:20</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-video" data-section="3. 찍고 제출하기" data-title="30초 시연 영상 찍기">
+  <div class="slide__head">
+    <div class="slide__kicker">작동 영상</div>
+    <h2 class="slide__title">30초 시연 영상 찍기</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+    <ul class="checklist">
+      <li><span class="box"></span><span class="bar"><b>가로로</b>&nbsp;찍는다</span></li>
+      <li><span class="box"></span><span class="bar">웹앱 화면과 작품이&nbsp;<b>함께</b>&nbsp;나오게</span></li>
+      <li><span class="box"></span><span class="bar">인식 1 → 행동 1, 인식 2 → 행동 2</span></li>
+      <li><span class="box"></span><span class="bar"><b>30초</b>&nbsp;안에 끝낸다</span></li>
+    </ul>
+    <div class="col" style="gap:22px">
+      <div class="card c-green card--soft" style="padding:22px 28px">
+        <div class="t-lg" style="font-size:27px">구글 드라이브</div>
+        <div class="t-sm" style="margin-top:6px">업로드 → 공유 → 일반 액세스를 <b class="mark">링크가 있는 모든 사용자</b>로 → 링크 복사</div>
+      </div>
+      <div class="card c-purple card--soft" style="padding:22px 28px">
+        <div class="t-lg" style="font-size:27px">유튜브</div>
+        <div class="t-sm" style="margin-top:6px"><b>일부 공개</b>로 업로드 → 공유 → 링크 복사</div>
+      </div>
+      <div class="t-sm t-muted" style="font-size:21px">드라이브 링크가 ‘제한됨’이면 발표 때 재생되지 않습니다.</div>
+    </div>
+    <div style="grid-column:1 / -1;margin-top:10px">
+      <div class="t-lg" style="font-size:27px;margin-bottom:14px">30초는 이렇게 나눠 보세요</div>
+      <div class="timeline" style="height:76px">
+        <div style="flex:5;background:var(--sky)">작품 보여 주기</div>
+        <div style="flex:10;background:var(--blue-mid)">인식 1 → 행동 1</div>
+        <div style="flex:10;background:var(--green-mid)">인식 2 → 행동 2</div>
+        <div style="flex:5;background:var(--yellow-mid)">한 번 더</div>
+      </div>
+      <div class="timeline-labels"><span style="flex:5">0초</span><span style="flex:10">5초</span><span style="flex:10">15초</span><span style="flex:5">25 ~ 30초</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-makecode" data-section="3. 찍고 제출하기" data-title="MakeCode 공유 주소 만들기">
+  <div class="slide__head">
+    <div class="slide__kicker">코드 공유</div>
+    <h2 class="slide__title">MakeCode 공유 주소 만들기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="steps">
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">이름 정하기</div><div class="step__text">아래 이름 칸에 예: 김하늘-오케스트라</div></div>
+      <div class="step c-green"><span class="step__num">2</span><div class="step__title">공유 누르기</div><div class="step__text">MakeCode 오른쪽 위 공유 버튼</div></div>
+      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">링크 만들기</div><div class="step__text">공유 창에서 링크를 만든다</div></div>
+      <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">주소 복사</div><div class="step__text">제출 창에 붙여 넣는다</div></div>
+    </div>
+    <div class="window mt-l">
+      <div class="window__bar">이런 주소가 나오면 성공</div>
+      <div class="window__body" style="display:flex;flex-direction:column;gap:12px">
+        <div class="mono" style="font-size:36px;font-weight:800;color:var(--navy)">https://makecode.microbit.org/<span style="background:var(--yellow-mid);padding:0 8px">_aBcD1234eFgH</span></div>
+        <div class="t-sm t-muted">S12345-12345-12345-12345 처럼 숫자로 된 주소도 됩니다. 공유한 코드는 누구나 볼 수 있으니 개인정보를 넣지 마세요.</div>
+      </div>
+    </div>
+    <div class="row mt-l" style="align-items:center;gap:28px">
+      <img class="icon-badge icon-badge--sm" src="assets/img/icons/laptop.png" alt="">
+      <div class="bubble bubble--white sparkle" style="padding:20px 36px">장치 이름 확인 코드 말고, <b class="t-blue">오늘 만든 작품 코드</b>의 주소인지 한 번 더 확인!</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-submit" data-section="3. 찍고 제출하기" data-title="내 결과물 제출">
+  <div class="slide__head">
+    <div class="slide__kicker">제출</div>
+    <h2 class="slide__title">내 결과물 제출</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:520px 1fr;gap:40px">
+    <div class="clip c-yellow" style="margin-top:30px;align-self:start">
+      <div class="t-lg" style="font-size:28px">준비할 네 가지</div>
+      <ul class="checklist mt-m" style="gap:14px">
+        <li><span class="box"></span><span class="bar">작품 제목</span></li>
+        <li><span class="box"></span><span class="bar">간단한 설명 2~3문장</span></li>
+        <li><span class="box"></span><span class="bar">MakeCode 공유 주소</span></li>
+        <li><span class="box"></span><span class="bar">작동 영상 주소</span></li>
+      </ul>
+      <p class="t-sm t-muted" style="margin:18px 0 0;font-size:20px">다시 제출하면 고쳐집니다.</p>
+    </div>
+    <div data-widget="my-submission"></div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-subboard" data-section="3. 찍고 제출하기" data-title="제출 현황">
+  <div class="slide__head">
+    <div class="slide__kicker">실시간</div>
+    <h2 class="slide__title">제출 현황</h2>
+  </div>
+  <div class="slide__body" style="top:250px">
+    <div data-widget="submit-board"></div>
+  </div>
+</section>
+
+<!-- ============ 4. 작품 발표회 (제출물로 자동 생성) ============ -->
+
+<div data-generate="showcase" style="display:contents"></div>
+
+<!-- ============ 5. 수업으로 ============ -->
+
+<section class="slide slide--pixel" id="s-part5" data-section="5. 수업으로" data-title="PART 5 · 수업으로 가져가기">
+  <div class="divider">
+    <span class="divider__part">PART 5</span>
+    <h2 class="divider__title">수업으로 가져가기</h2>
+    <p class="divider__text">오늘 만든 것을 우리 반에서는 어떻게 할까요?</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 17:40 ~ 17:50</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-class" data-section="5. 수업으로" data-title="우리 반 수업과 잇기">
+  <div class="slide__head">
+    <div class="slide__kicker">교과 연계 예시</div>
+    <h2 class="slide__title">우리 반 수업과 잇기</h2>
+  </div>
+  <div class="slide__body" style="top:252px">
+    <table class="table">
+      <thead><tr><th style="width:330px">도전과제</th><th style="width:220px">교과</th><th>수업 아이디어</th></tr></thead>
+      <tbody>
+        <tr><td>손짓 오케스트라</td><td>음악</td><td>손짓 신호로 모둠 리듬 합주하기</td></tr>
+        <tr><td>분류 챌린지</td><td>과학 · 환경</td><td>기준을 정해 물체 나누기, 분리배출 도우미</td></tr>
+        <tr><td>움직이는 다리</td><td>사회 · 과학</td><td>교통과 생활, 움직이는 구조물 탐구</td></tr>
+        <tr><td>AI 생명체</td><td>미술 · 국어</td><td>표정에 반응하는 캐릭터와 이야기 만들기</td></tr>
+        <tr><td>토이스토리</td><td>국어 · 미술</td><td>이야기 속 장면을 움직이는 장난감으로</td></tr>
+        <tr><td>물건 업그레이드</td><td>실과</td><td>생활 속 불편 찾기, 발명 기법 ‘더하기’</td></tr>
+        <tr><td>종이컵 변신</td><td>미술 · 창체</td><td>재활용 재료로 움직이는 작품 만들기</td></tr>
+      </tbody>
+    </table>
+    <p class="t-sm t-muted" style="margin:14px 0 0;font-size:20px">예시입니다. 학년과 교과에 맞게 고쳐 쓰세요.</p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-tips" data-section="5. 수업으로" data-title="수업 운영 팁">
+  <div class="slide__head">
+    <div class="slide__kicker">교실에서</div>
+    <h2 class="slide__title">수업 운영 팁</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;gap:28px 36px">
+    <div class="card c-blue card--soft"><div class="pill pill--soft pill--sm c-blue"><span class="pill__tab"><svg class="i"><use href="#i-users"></use></svg></span><span class="pill__text">모둠과 역할</span></div><p class="t-md" style="margin:18px 0 0;font-size:28px;line-height:1.55">2인 1조. 한 사람은 조종(인식), 한 사람은 관찰하고 고치기. 역할을 바꿔 가며.</p></div>
+    <div class="card c-green card--soft"><div class="pill pill--soft pill--sm c-green"><span class="pill__tab"><svg class="i"><use href="#i-box"></use></svg></span><span class="pill__text">준비물</span></div><p class="t-md" style="margin:18px 0 0;font-size:28px;line-height:1.55">마이크로비트·링비트·서보 2개·AAA 건전지 3개, 골판지·마스킹테이프, 카메라 되는 기기, 장치 이름표</p></div>
+    <div class="card c-purple card--soft"><div class="pill pill--soft pill--sm c-purple"><span class="pill__tab"><svg class="i"><use href="#i-clock"></use></svg></span><span class="pill__text">시간 배분</span></div><p class="t-md" style="margin:18px 0 0;font-size:28px;line-height:1.55">1차시 도구 익히기 → 2차시 아이디어 카드 → 3~4차시 만들기·영상·공유</p></div>
+    <div class="card c-yellow card--soft"><div class="pill pill--soft pill--sm c-yellow"><span class="pill__tab"><svg class="i"><use href="#i-shield"></use></svg></span><span class="pill__text">안전</span></div><p class="t-md" style="margin:18px 0 0;font-size:28px;line-height:1.55">서보 축은 손으로 돌리지 않기 · 칼은 자 위에서 · 보낼 땐 끄고, 움직일 땐 켠다</p></div>
+  </div>
+</section>
+
+<section class="slide slide--pastel" id="s-end" data-section="5. 수업으로" data-title="마무리">
+  <div class="show-cover" style="top:250px">
+    <span class="divider__part">THANK YOU</span>
+    <h2 class="show-cover__title">수고하셨습니다</h2>
+    <p class="show-cover__text">고르고, 만들고, 보여 주었습니다.<br>이제 우리 반 차례입니다.</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/challenges.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/deck.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/showcase.js"></script>
+<script src="assets/js/admin.js"></script>
+<script src="assets/js/editor.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
