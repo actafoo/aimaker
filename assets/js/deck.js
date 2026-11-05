@@ -53,6 +53,7 @@ MK.generators = MK.generators || {};
       if (f) f.innerHTML = esc(MK.config.session + ' · ' + MK.config.title) + '<b>' + (i + 1) + '</b>';
     });
     buildToc();
+    buildBar();
     $('#dock-count').textContent = (cur + 1) + ' / ' + total;
   }
 
@@ -79,6 +80,7 @@ MK.generators = MK.generators || {};
     if (!(opts && opts.noHash) && location.hash !== hash) history.replaceState(null, '', hash);
     try { localStorage.setItem(POS_KEY, String(i + 1)); } catch (e) {}
     $$('.toc__item').forEach(function (b) { b.classList.toggle('is-current', +b.dataset.i === i); });
+    updateBar(i);
     document.dispatchEvent(new CustomEvent('deck:enter', { detail: { slide: sl, index: i } }));
   }
   function indexOfId(id) { for (var i = 0; i < slides.length; i++) if (slides[i].id === id) return i; return -1; }
@@ -106,6 +108,48 @@ MK.generators = MK.generators || {};
     });
     list.innerHTML = html;
   }
+  /* ---------- 아래 슬라이드 바: 파트별 구간 + 슬라이드마다 한 칸 ---------- */
+  var PART_COLOR = { '1': 'c-blue', '2': 'c-green', '3': 'c-purple', '4': 'c-yellow', '5': 'c-sky' };
+  function shortSection(s) { return String(s || '').replace(/^(\d+)\.\s*/, '$1 '); }
+  function buildBar() {
+    var track = $('#sbar-track'); if (!track) return;
+    showTip(null);
+    var groups = [], last = null;
+    slides.forEach(function (sl, i) {
+      var name = sl.dataset.section || '';
+      if (!last || last.name !== name) { last = { name: name, items: [] }; groups.push(last); }
+      last.items.push(i);
+    });
+    track.innerHTML = groups.map(function (g) {
+      var m = g.name.match(/^(\d+)\./), color = m ? (PART_COLOR[m[1]] || 'c-sky') : 'c-gray';
+      return '<div class="sbar__sec ' + color + '" style="flex:' + g.items.length + '" data-first="' + g.items[0] + '">' +
+        '<button class="sbar__label" data-i="' + g.items[0] + '" title="' + esc(g.name) + ' 처음으로">' + esc(shortSection(g.name) || '슬라이드') + '</button>' +
+        '<div class="sbar__ticks">' + g.items.map(function (i) {
+          return '<button class="sbar__tick" data-i="' + i + '" aria-label="' + (i + 1) + ' · ' + esc(titleOf(slides[i])) + '"></button>';
+        }).join('') + '</div></div>';
+    }).join('');
+    updateBar(cur);
+  }
+  function updateBar(i) {
+    $$('.sbar__tick').forEach(function (t) {
+      var k = +t.dataset.i;
+      t.classList.toggle('is-current', k === i);
+      t.classList.toggle('is-past', k < i);
+    });
+    $$('.sbar__sec').forEach(function (sec) {
+      sec.classList.toggle('is-current', !!sec.querySelector('.sbar__tick.is-current'));
+    });
+  }
+  function showTip(t) {
+    var tip = $('#sbar-tip'); if (!tip) return;
+    if (!t) { tip.classList.remove('is-on'); return; }
+    var b = t.getBoundingClientRect();
+    tip.textContent = t.getAttribute('aria-label') || t.title;
+    tip.style.left = Math.round(b.left + b.width / 2) + 'px';
+    tip.style.top = Math.round(b.top - 10) + 'px';
+    tip.classList.add('is-on');
+  }
+
   function toggleToc(force) {
     var t = $('#toc'); var on = force == null ? !t.classList.contains('is-open') : force;
     t.classList.toggle('is-open', on);
@@ -148,13 +192,15 @@ MK.generators = MK.generators || {};
   function buildChrome() {
     var ic = MK.icon;
     document.body.insertAdjacentHTML('beforeend',
-      '<nav class="dock ui" id="dock" aria-label="슬라이드 이동">' +
+      '<nav class="dock sbar ui" id="dock" aria-label="슬라이드 이동">' +
         '<button id="dock-toc" title="목차 (M)">' + ic('list') + '<span>목차</span></button>' +
         '<button id="dock-prev" title="이전 (←)" aria-label="이전">' + ic('left') + '</button>' +
+        '<div class="sbar__track" id="sbar-track"></div>' +
         '<span class="dock__count" id="dock-count">1 / 1</span>' +
         '<button id="dock-next" class="dock__primary" title="다음 (→)" aria-label="다음">' + ic('right') + '</button>' +
         '<button id="dock-full" title="전체화면 (F)" aria-label="전체화면">' + ic('expand') + '</button>' +
       '</nav>' +
+      '<div class="sbar__tip ui" id="sbar-tip" role="tooltip"></div>' +
       '<aside class="toc ui" id="toc" aria-label="목차">' +
         '<div class="toc__head"><b>목차</b><button class="icon-btn" id="toc-close" aria-label="닫기">' + ic('x') + '</button></div>' +
         '<div class="toc__list" id="toc-list"></div>' +
@@ -165,6 +211,15 @@ MK.generators = MK.generators || {};
     $('#dock-full').onclick = toggleFull;
     $('#dock-toc').onclick = function () { toggleToc(); };
     $('#toc-close').onclick = function () { toggleToc(false); };
+    var track = $('#sbar-track');
+    track.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-i]'); if (!b) return;
+      showTip(null); show(+b.dataset.i);
+    });
+    track.addEventListener('mouseover', function (e) { var t = e.target.closest('.sbar__tick'); showTip(t || null); });
+    track.addEventListener('mouseleave', function () { showTip(null); });
+    track.addEventListener('focusin', function (e) { var t = e.target.closest('.sbar__tick'); if (t) showTip(t); });
+    track.addEventListener('focusout', function () { showTip(null); });
     $('#toc-list').addEventListener('click', function (e) {
       var b = e.target.closest('.toc__item'); if (!b) return;
       show(+b.dataset.i); toggleToc(false);

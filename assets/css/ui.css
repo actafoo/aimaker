@@ -24,6 +24,33 @@
 .dock .dock__primary { background: var(--blue-tab); color: var(--navy); }
 .dock .dock__primary:hover { background: var(--blue-mid); }
 
+/* ---------- 아래 슬라이드 바 (이동 막대 + 파트 구간 + 슬라이드 칸) ---------- */
+.dock.sbar { left: 14px; right: 14px; bottom: 12px; gap: 2px; padding: 5px 6px; border-radius: 16px; }
+.dock.sbar.is-idle { opacity: 0; transform: translateY(10px); transition: opacity .3s, transform .3s; }
+.dock.sbar:hover, .dock.sbar:focus-within { opacity: 1; transform: none; }
+.sbar__track { flex: 1; min-width: 0; display: flex; align-items: stretch; gap: 6px; padding: 0 8px; }
+.sbar__sec { min-width: 26px; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+.sbar__label { height: 17px; min-width: 0; border: 0; background: none; padding: 0 2px; text-align: left; cursor: pointer;
+  font: 800 12px/17px var(--font); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-radius: 6px; }
+.dock .sbar__label { height: 17px; min-width: 0; padding: 0 2px; justify-content: flex-start; font-size: 12px; display: block; }
+.dock .sbar__label:hover { background: var(--c-soft, var(--sky)); color: var(--navy); }
+.sbar__sec.is-current .sbar__label { color: var(--navy); }
+.sbar__ticks { display: flex; gap: 2px; height: 18px; }
+.dock .sbar__tick { flex: 1; min-width: 4px; height: 18px; padding: 0; border: 0; border-radius: 0; background: none; cursor: pointer; position: relative; }
+.dock .sbar__tick:hover { background: none; }
+.sbar__tick::before { content: ''; position: absolute; left: 0; right: 0; top: 4px; height: 10px; border-radius: 3px;
+  background: var(--c-soft, #E7ECF5); border: 1.5px solid var(--c-tab, #B8C3D9); box-sizing: border-box; transition: transform .1s; }
+.sbar__tick.is-past::before { background: var(--c-tab, #B8C3D9); }
+.sbar__tick.is-current::before { background: var(--navy); border-color: var(--navy); top: 1px; height: 16px; }
+.sbar__tick:hover::before { transform: scaleY(1.35); }
+.sbar__tick:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.c-gray { --c-tab: #B8C3D9; --c-mid: #D3DBEA; --c-soft: #EDF1F7; }
+.c-sky { --c-tab: #8FC8E8; --c-mid: #BFE3F5; --c-soft: #E6F4FB; }
+.sbar__tip { position: fixed; z-index: 32; transform: translate(-50%, -100%); padding: 6px 10px; border-radius: 8px; background: var(--navy); color: #fff;
+  font: 700 13px/1.3 var(--font); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .12s; }
+.sbar__tip.is-on { opacity: 1; }
+@media (max-width: 900px) { .dock.sbar #dock-toc span { display: none; } .sbar__label { font-size: 11px; } }
+
 /* ---------- 오른쪽 위: 내 정보 칩 ---------- */
 .me {
   position: fixed; right: 14px; top: 14px; z-index: 30; display: flex; align-items: center; gap: 8px;
@@ -37,8 +64,8 @@
 .me.is-hidden { display: none; }
 
 /* ---------- 데모 안내 띠 ---------- */
-.demo-flag { position: fixed; left: 14px; bottom: 14px; z-index: 29; padding: 6px 12px; border-radius: 999px; background: var(--yellow-soft); border: 2px solid #E6B000; font-size: 12px; font-weight: 700; color: #6A5000; }
-.demo-flag.is-hidden { display: none; }
+.demo-flag { position: fixed; left: 14px; top: 14px; z-index: 29; padding: 6px 12px; border-radius: 999px; background: var(--yellow-soft); border: 2px solid #E6B000; font-size: 12px; font-weight: 700; color: #6A5000; }
+.demo-flag.is-hidden, .is-editing .demo-flag { display: none; }
 .demo-flag.is-off { background: #FFECEA; border-color: var(--red); color: #B42318; }
 
 /* ---------- 목차 서랍 (왼쪽) ---------- */
@@ -154,5 +181,5 @@
   .deck-viewport { position: static; }
   .deck-stage { position: relative; height: auto; transform: none !important; box-shadow: none; }
   .slide { display: block !important; position: relative; width: 1920px; height: 1080px; page-break-after: always; animation: none !important; }
-  .dock, .me, .toc, .admin, .toast, .demo-flag, .editbar { display: none !important; }
+  .dock, .me, .toc, .admin, .toast, .demo-flag, .editbar, .sbar__tip { display: none !important; }
 }
