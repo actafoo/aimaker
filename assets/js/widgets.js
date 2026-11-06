@@ -48,7 +48,7 @@ window.MK = window.MK || {};
       } else f += fieldHtml(x);
     }
     f += '<div class="modal__msg" role="alert"></div>';
-    f += '<div class="modal__wait" role="status">사람이 몰려 차례대로 처리하는 중이에요. 창을 닫지 말고 잠시만 기다려 주세요.</div>';
+    f += '<div class="modal__wait" role="status">사람이 몰려 차례대로 처리하고 있어요. 창을 닫지 말고 잠시만 기다려 주세요.</div>';
     if (o.note) f += '<div class="modal__note">' + o.note + '</div>';
     f += '<div class="modal__actions">' + (o.extra || '') + '<button type="button" class="ubtn ubtn--ghost" data-cancel>취소</button><button type="submit" class="ubtn' + (o.danger ? ' ubtn--danger' : '') + '">' + esc(o.submitText || '확인') + '</button></div></form>';
     var d = dialog(f, o.wide);
@@ -129,7 +129,7 @@ window.MK = window.MK || {};
   MK.actions = {
     identify: function () {
       var m = me();
-      MK.ui.form({ kicker: '이름 등록', title: '이 노트북을 쓰는 사람', desc: '신청과 제출에 쓸 이름을 적어 주세요. 같은 이름이 있으면 이름 뒤에 학교 이름을 붙여 주세요.', fields: personFields(m), note: PIN_NOTE, submitText: '등록',
+      MK.ui.form({ kicker: '이름 등록', title: '이 노트북을 쓰는 사람', desc: '신청과 제출에 쓸 이름을 적어 주세요. 이름이 겹치면 뒤에 학교 이름을 붙여 주세요.', fields: personFields(m), note: PIN_NOTE, submitText: '등록',
         onSubmit: function (v) { return MK.store.identify(v).then(function () { MK.ui.toast(v.name.trim() + ' 선생님, 반갑습니다!'); }); } });
     },
     apply: function (challengeId) {
@@ -139,7 +139,7 @@ window.MK = window.MK || {};
       MK.ui.form({ kicker: ch.category + ' · 개인 도전', title: ch.title + ' 신청', desc: '도전과제는 한 사람이 하나만 신청합니다. 정원 ' + capOf(st, challengeId) + '명.', fields: personFields(me()), note: note, submitText: '이 도전 신청하기',
         onSubmit: function (v) {
           return MK.store.apply({ name: v.name, pin: v.pin, challengeId: challengeId }).then(function (r) {
-            MK.ui.toast(r.already ? '이미 신청한 도전과제입니다.' : '「' + ch.title + '」에 신청했어요. 이제 만들어 봅시다!');
+            MK.ui.toast(r.already ? '이미 신청한 도전과제입니다.' : '「' + ch.title + '」에 신청했어요. 이제 만들어 보세요!');
           });
         } });
     },
@@ -153,12 +153,12 @@ window.MK = window.MK || {};
       var st = MK.store.getStateSync(), m = me(), mine = myEnrollment(st), sub = mySubmission(st);
       if (!mine) { MK.ui.toast('먼저 도전과제를 신청해 주세요.', true); return; }
       var ch = MK.challengeById(mine.challengeId);
-      MK.ui.form({ wide: true, kicker: ch.title, title: sub ? '내 결과물 고치기' : '내 결과물 제출', desc: '30초 이내 영상으로 서로 다른 행동 두 가지 이상을 보여 주세요. 다시 제출하면 고쳐집니다.',
+      MK.ui.form({ wide: true, kicker: ch.title, title: sub ? '내 결과물 고치기' : '내 결과물 제출', desc: '30초 이내 영상으로 서로 다른 행동 두 가지 이상을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
         fields: personFields(m).concat([
           { name: 'title', label: '작품 제목', value: sub ? sub.title : '', placeholder: '예: 손끝으로 지휘하는 작은 무대', maxlength: 40 },
           { name: 'desc', label: '간단한 설명', small: '무엇을 인식하면 어떻게 움직이는지 2~3문장', type: 'textarea', value: sub ? sub.desc : '', maxlength: MK.config.descMax, placeholder: '예: 주먹을 쥐면 서보가 북을 치고, 손바닥을 펴면 탬버린을 흔듭니다.' },
           { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: sub ? sub.makecodeUrl : '', placeholder: 'https://makecode.microbit.org/_…', help: 'MakeCode 오른쪽 위 <b>공유</b> → 공유 링크 만들기 → 주소 복사' },
-          { name: 'videoUrl', label: '작동 영상 주소', value: sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '구글 드라이브는 공유 설정을 <b>링크가 있는 모든 사용자</b>로 바꿔야 발표 때 재생됩니다.' }
+          { name: 'videoUrl', label: '작동 영상 주소', value: sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '구글 드라이브 영상은 <b>링크가 있는 모든 사용자</b>로 공유해야 발표 때 재생됩니다.' }
         ]), submitText: sub ? '고친 내용 제출' : '결과물 제출하기',
         onSubmit: function (v) { return MK.store.submit(v).then(function (r) { MK.ui.toast(r.updated ? '결과물을 고쳤어요.' : '결과물을 제출했어요. 수고하셨습니다!'); }); } });
     },
@@ -202,8 +202,8 @@ window.MK = window.MK || {};
         '<div class="ch-card__seats">' + seatDots(n, cap) + (closed ? '<span class="full">마감</span>' : left > 0 ? '<span class="left">' + left + '자리 남음</span>' : '<span class="full">정원 마감</span>') + '</div></div></button>';
     });
     h += '<div class="dashed" style="display:flex;flex-direction:column;justify-content:center;gap:12px;padding:22px 26px">' +
-      '<div class="t-lg" style="font-size:26px">카드를 누르면<br>자세한 설명으로</div>' +
-      '<div class="t-sm t-muted" style="font-size:20px;line-height:1.45">한 사람이 하나만 신청합니다.<br>바꾸면 이전 신청은 자동 취소.</div></div>';
+      '<div class="t-lg" style="font-size:26px">카드를 누르면<br>설명이 나옵니다</div>' +
+      '<div class="t-sm t-muted" style="font-size:20px;line-height:1.45">한 사람이 하나만 신청합니다.<br>바꾸면 이전 신청이 취소됩니다.</div></div>';
     el.innerHTML = h + '</div>';
   };
 
@@ -275,7 +275,7 @@ window.MK = window.MK || {};
         '<div class="board__title">' + esc(c.title) + '</div><div class="board__names">' +
         nameChips(list, { done: function (e) { return subBy[e.name]; }, pending: function (e) { return !subBy[e.name]; } }) + '</div></div>';
     });
-    h += '<div class="board__summary"><div class="t-sm t-muted" style="font-size:21px;font-weight:800">제출</div><div class="big">' + done + '<small style="font-size:28px;color:var(--muted)"> / ' + total + '명</small></div><div class="t-sm" style="font-size:20px">' + ic('check') + ' 표시가 제출한 사람</div></div>';
+    h += '<div class="board__summary"><div class="t-sm t-muted" style="font-size:21px;font-weight:800">제출</div><div class="big">' + done + '<small style="font-size:28px;color:var(--muted)"> / ' + total + '명</small></div><div class="t-sm" style="font-size:20px">' + ic('check') + ' 표시는 제출 완료</div></div>';
     el.innerHTML = h + '</div>';
   };
 
