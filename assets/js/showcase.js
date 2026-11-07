@@ -200,7 +200,9 @@ window.MK = window.MK || {};
   }
   function inlineCss(path) {
     var base = path.replace(/[^/]+$/, '');
-    return fetch(path).then(function (r) { if (!r.ok) throw new Error(path); return r.text(); }).then(function (css) {
+    // 화면에 실제로 붙어 있는 주소(버전 번호 포함)로 받아야 예전 파일이 섞이지 않음
+    var link = document.querySelector('link[rel=stylesheet][href^="' + path + '"]');
+    return fetch(link ? link.getAttribute('href') : path).then(function (r) { if (!r.ok) throw new Error(path); return r.text(); }).then(function (css) {
       css = css.replace(/,\s*url\('https:[^']+'\) format\('woff2'\)/g, ''); // CDN 예비 주소 빼기
       var urls = []; css.replace(/url\('(\.\.\/[^']+)'\)/g, function (m, u) { if (urls.indexOf(u) < 0) urls.push(u); });
       return Promise.all(urls.map(function (u) { return toDataUrl(base + u).then(function (d) { return [u, d]; }); })).then(function (pairs) {
