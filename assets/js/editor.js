@@ -78,19 +78,41 @@ window.MK = window.MK || {};
       el.remove();
     });
     $$('[contenteditable]', box).forEach(function (el) { el.removeAttribute('contenteditable'); });
+    // 맨 끝에 혼자 남은 <br>은 화면에 안 보이니 지움 (Enter를 누르고 아무것도 안 쓴 경우)
+    var last = box.lastChild;
+    while (last && last.nodeType === 3 && !/\S/.test(last.nodeValue)) last = last.previousSibling;
+    if (last && last.nodeName === 'BR') {
+      var prev = last.previousSibling;
+      while (prev && prev.nodeType === 3 && !/\S/.test(prev.nodeValue)) prev = prev.previousSibling;
+      if (!prev || prev.nodeName !== 'BR') last.remove();
+    }
     return box.innerHTML;
   }
   function cleanInline(html) { // 도전과제 힌트: b, br 만 남김
-    var box = document.createElement('div'); box.innerHTML = html;
+    var box = document.createElement('div'); box.innerHTML = html.replace(/\r?\n/g, '<br>');
     $$('*', box).forEach(function (el) {
       if (el.tagName === 'B' || el.tagName === 'BR') { Array.prototype.slice.call(el.attributes).forEach(function (a) { el.removeAttribute(a.name); }); return; }
       if (el.tagName === 'STRONG') { var b = document.createElement('b'); b.innerHTML = el.innerHTML; el.replaceWith(b); return; }
       while (el.firstChild) el.parentNode.insertBefore(el.firstChild, el);
       el.remove();
     });
-    return box.innerHTML.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+    return box.innerHTML.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().replace(/(\s*<br>)+$/, '');
   }
   function plain(el) { return el.innerText.replace(/\s+/g, ' ').trim(); }
+  // 줄바꿈을 살리는 칸: 줄마다 공백을 정리하고 \n 으로 잇기
+  function plainLines(el) {
+    return el.innerText.replace(/\r/g, '').split('\n').map(function (s) { return s.replace(/\s+/g, ' ').trim(); })
+      .join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+  // Enter로 줄을 바꿀 수 있는 칸인지 (제목·질문·공통 조건 한 줄·연수 정보는 한 줄짜리)
+  var MULTI = /^(ch:[^:]+:(materials|problem|success|start)|freedom)$/;
+  function multiLine(host) {
+    return host.getAttribute('data-edit-host') === 'ek' || MULTI.test(host.getAttribute('data-field') || '');
+  }
+  function lineBreakOrEnd(host) {
+    if (multiLine(host)) document.execCommand('insertLineBreak');
+    else host.blur(); // 한 줄짜리 칸은 Enter로 끝내기
+  }
 
   function apply(host) {
     var kind = host.getAttribute('data-edit-host');
@@ -101,9 +123,9 @@ window.MK = window.MK || {};
       var f = (host.getAttribute('data-field') || '').split(':');
       if (f[0] === 'ch') {
         var ch = MK.challengeById(f[1]);
-        if (ch) { ch[f[2]] = f[2] === 'start' ? cleanInline(host.innerHTML) : plain(host); dirty.challenges++; }
+        if (ch) { ch[f[2]] = f[2] === 'start' ? cleanInline(host.innerHTML) : (multiLine(host) ? plainLines(host) : plain(host)); dirty.challenges++; }
       } else if (f[0] === 'notice') { MK.commonNotice[+f[1]] = plain(host); dirty.challenges++; }
-      else if (f[0] === 'freedom') { MK.designFreedom = plain(host); dirty.challenges++; }
+      else if (f[0] === 'freedom') { MK.designFreedom = plainLines(host); dirty.challenges++; }
       else if (f[0] === 'cfg') { MK.config[f[1]] = plain(host); dirty.config++; }
     }
     paintBar();
@@ -114,6 +136,14 @@ window.MK = window.MK || {};
     if (!editing) return;
     var host = e.target.closest && e.target.closest('[data-edit-host]');
     if (host) apply(host);
+  });
+  // 위 keydown이 못 막은 Enter(입력기에 따라 조합 확정과 함께 오는 경우)도 같은 방식으로 처리
+  document.addEventListener('beforeinput', function (e) {
+    if (!editing || e.inputType !== 'insertParagraph') return;
+    var host = e.target.closest && e.target.closest('[data-edit-host]');
+    if (!host) return;
+    e.preventDefault();
+    lineBreakOrEnd(host);
   });
   document.addEventListener('paste', function (e) {
     if (!editing || !e.target.closest || !e.target.closest('[data-edit-host]')) return;
@@ -126,10 +156,11 @@ window.MK = window.MK || {};
     if (host) {
       if (e.key === 'Escape') { e.preventDefault(); host.blur(); }
       else if (e.key === 'Enter') {
+        // 한글을 조합하던 중의 Enter는 글자를 확정하는 데 쓰이고, 곧 Enter가 한 번 더 옵니다.
+        // 여기서 처리하면 줄이 두 번 바뀌거나 꼬이므로 그냥 둡니다.
+        if (e.isComposing || e.keyCode === 229) return;
         e.preventDefault();
-        var f = host.getAttribute('data-field') || '';
-        if (host.getAttribute('data-edit-host') === 'ek' || /:start$/.test(f)) document.execCommand('insertLineBreak');
-        else host.blur(); // 한 줄짜리 값은 Enter로 끝내기
+        lineBreakOrEnd(host);
       }
       return;
     }
@@ -160,7 +191,7 @@ window.MK = window.MK || {};
     if (on && !bar) {
       bar = document.createElement('div');
       bar.className = 'editbar ui';
-      bar.innerHTML = '<span class="editbar__title">' + ic('edit') + ' 편집 모드</span><span class="editbar__hint">글자를 눌러 고치세요 · Enter 줄바꿈 · Esc 끝</span>' +
+      bar.innerHTML = '<span class="editbar__title">' + ic('edit') + ' 편집 모드</span><span class="editbar__hint">글자를 눌러 고치세요 · Enter 줄바꿈(제목·질문은 한 줄) · Esc 끝</span>' +
         '<span class="editbar__count"></span><button class="ubtn ubtn--sm" data-ed="save">' + ic('download') + ' 저장</button><button class="ubtn ubtn--sm ubtn--ghost" data-ed="off">끝내기</button>';
       bar.addEventListener('click', function (e) {
         var b = e.target.closest('[data-ed]'); if (!b) return;

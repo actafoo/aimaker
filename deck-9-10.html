@@ -45,29 +45,28 @@
     <div class="chain">
       <div class="card chain__node c-blue">
         <img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">
-        <div class="chain__step">① 보는 눈</div>
-        <div class="chain__name">AI 웹앱</div>
-        <div class="chain__desc">카메라로 보고 결과를 글자로 보낸다<br><span class="t-muted">핸드포즈 · 이미지분류 · 모션인식</span></div>
+        <div class="chain__step">① 인식</div>
+        <div class="chain__name">AI 모델</div>
+        <div class="chain__desc">카메라로 촬영한 손동작, 이미지, 표정을 인식하고 그 결과를 마이크로비트에 보냅니다.<br><span class="t-muted">핸드포즈 · 이미지분류 · 얼굴인식</span></div>
       </div>
       <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>블루투스</div>
       <div class="card chain__node">
         <img class="icon-badge" src="assets/img/icons/microbit.png" alt="">
         <div class="chain__step">② 판단</div>
         <div class="chain__name">마이크로비트</div>
-        <div class="chain__desc">‘데이터가 ID1이면 move 1’로<br>정한다 · 오늘도 코딩은 여기</div>
+        <div class="chain__desc">AI 모델이 보낸 인식 결과에 따라 미리 블록코딩한 명령을 실행합니다.</div>
       </div>
       <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>각도 명령</div>
       <div class="card chain__node">
         <img class="icon-badge" src="assets/img/icons/robot-arm.png" alt="">
         <div class="chain__step">③ 움직임</div>
-        <div class="chain__name">180° 서보 2개</div>
-        <div class="chain__desc">move 1은 P0, move 2는 P1<br>서보를 움직인다</div>
+        <div class="chain__name">서보모터</div>
+        <div class="chain__desc">마이크로비트의 명령에 따라 정해진 방향이나 각도로 움직입니다.</div>
       </div>
     </div>
-    <div class="grid-3 mt-l">
-      <div class="card card--soft c-green"><div class="t-lg">가져온 장비</div><p class="t-sm" style="margin:8px 0 0">장치 이름표가 붙은 마이크로비트·링비트·서보 2개, 골판지와 마스킹테이프</p></div>
-      <div class="note"><div class="t-lg">아이디어 카드</div><p class="t-sm" style="margin:8px 0 0">문장 틀로 쓴 아이디어 한 장. 오늘 <b>자유발명</b> 과제로 이어서 만들 수 있어요.</p></div>
-      <div class="callout callout--sky v-center">보낼 땐 끄고,<br>움직일 땐 켠다</div>
+    <div class="grid-2 mt-m">
+      <div class="card card--soft c-green"><div class="t-lg">준비물 확인</div><p class="t-sm" style="margin:8px 0 0">마이크로비트·링비트·서보 2개,<br>골판지와 마스킹테이프</p></div>
+      <div class="note"><div class="t-lg">아이디어 카드</div><p class="t-sm" style="margin:8px 0 0">문장 틀로 쓴 아이디어 한 장.<br>오늘 <b>자유발명</b> 과제로 이어서 만들 수 있어요.</p></div>
     </div>
   </div>
 </section>
@@ -79,8 +78,8 @@
   </div>
   <div class="slide__body">
     <div class="steps">
-      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">고르기</div><div class="step__text">도전과제 7개를 둘러보고 하나를 신청</div><div class="step__meta">10분</div></div>
-      <div class="step c-green"><span class="step__num">2</span><div class="step__title">만들기</div><div class="step__text">골판지로 거칠게, 움직이며 고치기</div><div class="step__meta">40분</div></div>
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">과제 고르기</div><div class="step__text">도전과제 7개를 둘러보고 하나를 신청</div><div class="step__meta">10분</div></div>
+      <div class="step c-green"><span class="step__num">2</span><div class="step__title">만들기</div><div class="step__text">주어진 재료로 MAKING</div><div class="step__meta">40분</div></div>
       <div class="step c-purple"><span class="step__num">3</span><div class="step__title">찍고 제출</div><div class="step__text">30초 영상, MakeCode 주소, 설명</div><div class="step__meta">10분</div></div>
       <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">함께 보기</div><div class="step__text">작품 발표회</div><div class="step__meta">20분</div></div>
     </div>
@@ -101,7 +100,7 @@
     </div>
     <div class="callout callout--sky mt-l" style="display:flex;align-items:center;gap:24px;padding:14px 28px;font-weight:500">
       <img class="icon-badge icon-badge--sm" src="assets/img/icons/sprout.png" alt="">
-      <div class="t-md"><b class="t-strong">마지막 10분</b>에는 우리 반 수업에 쓰는 방법을 함께 이야기합니다.</div>
+      <div class="t-md">이번 메이킹 활동은 <b>AI 모델과 마이크로비트, 서보모터를 연결하고 작동시키는 방법</b>을 익히는 데 목적이 있습니다.</div>
     </div>
   </div>
 </section>
@@ -118,8 +117,8 @@
       <div class="card">
         <div class="t-sm t-muted" style="font-weight:800">예: 인식 2가지 → 행동 2가지</div>
         <div class="col mt-s" style="gap:14px">
-          <div class="row" style="gap:14px;align-items:center"><span class="tag c-blue">주먹 · ID1</span>→<span class="tag tag--solid c-blue">P0 서보가 북 치기</span></div>
-          <div class="row" style="gap:14px;align-items:center"><span class="tag c-green">보 · ID2</span>→<span class="tag tag--solid c-green">P1 서보가 딸랑이</span></div>
+          <div class="row" style="gap:14px;align-items:center"><span class="tag c-blue">주먹</span>→<span class="tag tag--solid c-blue">P0 서보가 북 치기</span></div>
+          <div class="row" style="gap:14px;align-items:center"><span class="tag c-green">보</span>→<span class="tag tag--solid c-green">P1 서보가 딸랑이</span></div>
         </div>
       </div>
     </div>
@@ -166,7 +165,7 @@
 <section class="slide slide--body" id="s-overview" data-section="1. 도전과제 고르기" data-title="도전과제 한눈에 보기">
   <div class="slide__head" style="right:var(--safe-r);display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
     <div>
-      <div class="slide__kicker">하나를 골라 신청</div>
+      <div class="slide__kicker">도전과제 고르기</div>
       <h2 class="slide__title">도전과제 한눈에 보기</h2>
     </div>
     <div class="ch-legend">
@@ -199,7 +198,7 @@
   <div class="divider">
     <span class="divider__part">PART 2</span>
     <h2 class="divider__title">만들기</h2>
-    <p class="divider__text">빠르게 만들어 보세요.<br>처음에는 움직이는 모형이면 충분합니다.</p>
+    <p class="divider__text">골판지와 마스킹테이프를 활용해 작품을 만들어 보세요.<br>완성도보다는 AI 모델과 서보모터를 연결하고 작동시키는 경험에 집중해 보세요.</p>
     <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 16:20 ~ 17:10 · 쉬는 시간 포함</div>
   </div>
 </section>
@@ -209,41 +208,60 @@
     <div class="slide__kicker">시작 전에</div>
     <h2 class="slide__title">내 모델에 맞는 코드부터</h2>
   </div>
-  <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;gap:30px 36px;align-items:start">
-    <div class="window">
+  <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;gap:24px 36px;align-items:start">
+    <div class="window" style="align-self:stretch">
       <div class="window__bar">핸드포즈 · 이미지분류 — 7차시 기본 코드</div>
-      <div class="window__body" style="display:flex;flex-direction:column;gap:20px">
-        <div class="blocks">
-          <span class="blk blk--loop">무한 반복</span>
-          <div class="blk-indent">
-            <span class="blk blk--if">만약 <span class="slot">데이터 = "ID1"</span> 이면 → <span class="slot">move 1</span></span>
-            <span class="blk blk--if">아니면 만약 <span class="slot">데이터 = "ID2"</span> 이면 → <span class="slot">move 2</span></span>
+      <div class="window__body" style="display:flex;flex-direction:column;gap:16px">
+        <div class="mcb" aria-label="MakeCode 기본 코드 블록">
+          <div class="mcb-c mcb--loop">
+            <div class="mcb-head"><svg class="i"><use href="#i-list"></use></svg>무한반복</div><div class="mcb-arm"></div>
+            <div class="mcb-in">
+              <div class="mcb-c mcb--logic">
+                <div class="mcb-head">만약<span class="mcb-hex"><span class="mcb-var">데이터 <i class="mcb-caret"></i></span><span class="mcb-op">= <i class="mcb-caret"></i></span><span class="mcb-str mcb-mark" data-n="1"><i class="mcb-q">“</i>클래스 이름<i class="mcb-q">”</i></span></span>이면</div><div class="mcb-arm"></div>
+                <div class="mcb-in"><div class="mcb-stmt mcb-mark" data-n="2"><span class="mcb-dd">P0 <i class="mcb-caret"></i></span>에 서보 값<span class="mcb-num">180</span>출력</div></div>
+                <div class="mcb-head mcb-head--mid">아니고 만약<span class="mcb-hex"><span class="mcb-var">데이터 <i class="mcb-caret"></i></span><span class="mcb-op">= <i class="mcb-caret"></i></span><span class="mcb-str mcb-mark" data-n="1"><i class="mcb-q">“</i>클래스 이름<i class="mcb-q">”</i></span></span>이면<span class="mcb-pm">−</span></div><div class="mcb-arm"></div>
+                <div class="mcb-in"><div class="mcb-stmt mcb-mark" data-n="2"><span class="mcb-dd">P1 <i class="mcb-caret"></i></span>에 서보 값<span class="mcb-num">180</span>출력</div></div>
+                <div class="mcb-foot"><span class="mcb-pm">+</span></div>
+              </div>
+            </div>
+            <div class="mcb-foot"></div>
           </div>
-          <span class="blk blk--call">함수 move 1 · P0 서보 각도 <span class="slot">0°</span> → 0.5초 → <span class="slot">90°</span></span>
         </div>
-        <div class="t-sm"><b class="t-strong">고칠 곳은 두 군데</b> · 함수 속 각도, ID 글자(웹앱과 대소문자까지 같게)</div>
-        <div class="t-sm t-muted">이미지분류는 8차시에 저장한 모델을 <b>모델 가져오기</b>로 불러옵니다.</div>
+        <div class="mcb-legend">
+          <div><span class="mcb-badge">1</span><b class="t-strong">클래스 이름</b> 두 곳 → 웹앱에서 정한 이름과 똑같이(대소문자까지)</div>
+          <div><span class="mcb-badge">2</span><b class="t-strong">서보 블록</b> → 원하는 동작으로(핀·각도)</div>
+        </div>
       </div>
     </div>
-    <div class="window">
-      <div class="window__bar">얼굴인식 — 19자리 숫자가 옵니다</div>
-      <div class="window__body" style="display:flex;flex-direction:column;gap:16px">
-        <div>
-          <div class="packet" style="gap:4px">
-            <span class="w2" style="width:56px">50</span><span class="w2" style="width:56px">50</span><span class="w2 hl2" style="width:56px">60</span><span class="w2" style="width:56px">50</span><span class="w2" style="width:56px">50</span><span class="w2 hl" style="width:56px">00</span><span class="w2" style="width:56px">99</span><span class="w2" style="width:56px">99</span><span class="w1" style="width:36px">5</span><span class="w1 hl" style="width:36px">0</span><span class="w1" style="width:36px">1</span>
-          </div>
-          <div class="packet-labels">
-            <span style="width:56px">좌우</span><span style="width:56px">위아래</span><span style="width:56px;color:#8A6500">거리</span><span style="width:56px">고개</span><span style="width:56px">끄덕</span><span style="width:56px;color:var(--purple-deep)">입</span><span style="width:56px">왼눈</span><span style="width:56px">오른눈</span><span style="width:36px">기울</span><span style="width:36px;color:var(--purple-deep)">웃음</span><span style="width:36px">얼굴</span>
-          </div>
+    <div class="window" style="align-self:stretch">
+      <div class="window__bar">예제 코드 — 누르면 새 탭에서 열립니다</div>
+      <div class="window__body code-links">
+        <a class="code-link c-yellow" href="https://makecode.microbit.org/S49771-77509-50114-72682" target="_blank" rel="noopener">
+          <span class="circle circle--sm"><svg class="i"><use href="#i-cpu"></use></svg></span>
+          <span class="code-link__text"><span class="code-link__name">장치 이름 확인 <span class="code-link__badge">가장 먼저</span></span><span class="code-link__url">makecode.microbit.org/S49771-77509-50114-72682</span></span>
+          <span class="code-link__go">코드 열기 <svg class="i"><use href="#i-external"></use></svg></span>
+        </a>
+        <a class="code-link c-blue" href="https://makecode.microbit.org/57559-53483-63617-50743" target="_blank" rel="noopener">
+          <span class="circle circle--sm"><svg class="i"><use href="#i-hand"></use></svg></span>
+          <span class="code-link__text"><span class="code-link__name">핸드포즈</span><span class="code-link__url">makecode.microbit.org/57559-53483-63617-50743</span></span>
+          <span class="code-link__go">코드 열기 <svg class="i"><use href="#i-external"></use></svg></span>
+        </a>
+        <a class="code-link c-green" href="https://makecode.microbit.org/#editor" target="_blank" rel="noopener">
+          <span class="circle circle--sm"><svg class="i"><use href="#i-image"></use></svg></span>
+          <span class="code-link__text"><span class="code-link__name">이미지분류</span><span class="code-link__url">makecode.microbit.org/#editor</span></span>
+          <span class="code-link__go">코드 열기 <svg class="i"><use href="#i-external"></use></svg></span>
+        </a>
+        <div class="code-link code-link--soon c-purple">
+          <span class="circle circle--sm"><svg class="i"><use href="#i-face"></use></svg></span>
+          <span class="code-link__text"><span class="code-link__name">얼굴인식</span><span class="code-link__url">예제 코드를 준비하고 있습니다</span></span>
+          <span class="code-link__go">준비 중</span>
         </div>
-        <div class="t-sm">필요한 자리만 꺼내 숫자로 바꾼 뒤 비교합니다.</div>
-        <div class="dashed mono" style="padding:14px 20px;font-size:20px;line-height:1.7;color:var(--navy)">거리 = parseFloat(data.substr(4, 2)) <span class="t-muted">// 5~6번째</span><br>웃음 = parseFloat(data.substr(17, 1)) <span class="t-muted">// 18번째</span></div>
-        <div class="t-sm t-muted" style="font-size:20px">0.1초마다 옵니다. 자유발명에서 모션인식을 쓰면 8차시 180° 서보 예제 코드를 보냅니다.</div>
+        <div class="t-sm t-muted" style="margin-top:auto;font-size:20px">이미지분류는 8차시에 저장한 모델을 <b>모델 가져오기</b>로 불러옵니다.</div>
       </div>
     </div>
     <div class="row" style="grid-column:1 / -1;align-items:center;gap:28px">
       <img class="icon-badge icon-badge--sm" src="assets/img/icons/microbit.png" alt="">
-      <div class="callout" style="flex:1;padding:20px 36px">코드를 보낼 땐 링비트 스위치를 <b class="t-blue">끄고</b>, 움직일 땐 <b class="t-blue">켭니다</b>.</div>
+      <div class="callout" style="flex:1;padding:16px 36px">마이크로비트와 PC로 연결할 때는 링비트 스위치를 <b class="t-blue">끄고</b>, 연결을 해제하고 작동할 때&nbsp;<b class="t-blue">켭니다</b>.</div>
     </div>
   </div>
 </section>
@@ -284,13 +302,13 @@
     <ul class="checklist fill-rows">
       <li><span class="box"></span><span class="bar"><span><b>1 · AI 연결용 코드가 들어갔나?</b> <span class="t-muted" style="font-size:22px">장치 이름 확인 코드와 헷갈리기 쉬워요</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>2 · 내 장치 이름에 연결했나?</b> <span class="t-muted" style="font-size:22px">이름표의 다섯 글자와 같은지</span></span></span></li>
-      <li><span class="box"></span><span class="bar"><span><b>3 · ID 글자가 같은가?</b> <span class="t-muted" style="font-size:22px">코드와 웹앱, 대소문자까지</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>3 · 클래스 이름이 같은가?</b> <span class="t-muted" style="font-size:22px">코드와 웹앱, 대소문자까지</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>4 · ‘시작’을 눌렀나?</b> <span class="t-muted" style="font-size:22px">인식을 시작해야 글자가 갑니다</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>5 · 링비트 전원을 켰나?</b> <span class="t-muted" style="font-size:22px">보낼 땐 끄고, 움직일 땐 켠다</span></span></span></li>
     </ul>
     <div class="stretch-col">
       <div class="callout grow v-center" style="font-size:34px;gap:20px;line-height:1.4"><span class="circle c-blue"><svg class="i"><use href="#i-hand"></use></svg></span><span>그래도 안 되면<br>손을 들어 주세요.<br><span class="t-blue">분임강사가 갑니다.</span></span></div>
-      <div class="card c-purple card--soft"><div class="t-sm"><b class="t-strong">얼굴인식은?</b> ID 대신 숫자가 옵니다. 3번은 <b>몇 번째 자리</b>를 꺼냈는지 확인합니다.</div></div>
+      <div class="card c-purple card--soft"><div class="t-sm"><b class="t-strong">얼굴인식은?</b> 클래스 이름 대신 숫자가 옵니다. 3번은 <b>몇 번째 자리</b>를 꺼냈는지 확인합니다.</div></div>
     </div>
   </div>
 </section>

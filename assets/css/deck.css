@@ -82,18 +82,18 @@ body.deck-page { overflow: hidden; background: #E6ECF7; font-family: var(--font)
 .divider { position: absolute; left: 460px; right: 460px; top: 300px; text-align: center; }
 .divider__part { --shape: polygon(0 0, 100% 0, calc(100% - 22px) 50%, 100% 100%, 0 100%, 22px 50%); --fill: var(--blue-mid); display: inline-flex; align-items: center; min-height: 54px; padding: 6px 56px; font-size: 25px; font-weight: 800; color: var(--navy); letter-spacing: .12em; }
 .divider__title { margin: 30px 0 0; font-size: 84px; font-weight: 800; letter-spacing: -0.04em; color: var(--navy); line-height: 1.15; }
-.divider__text { margin: 24px auto 0; max-width: 900px; font-size: 30px; font-weight: 500; color: var(--muted); line-height: 1.5; }
+.divider__text { margin: 24px auto 0; max-width: 1040px; font-size: 30px; font-weight: 500; color: var(--muted); line-height: 1.5; }
 .divider__time { margin-top: 34px; display: inline-flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 800; color: var(--green-deep); }
 
 /* =========================================================
    7~8차시 연결: 보는 눈 → 판단 → 움직임
    ========================================================= */
 .chain { display: grid; grid-template-columns: 1fr 120px 1fr 120px 1fr; align-items: stretch; }
-.chain__node { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 30px 26px; }
-.chain__node .icon-badge { margin-top: -8px; }
+.chain__node { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 24px 26px; }
+.chain__node .icon-badge { width: 100px; height: 100px; margin-top: -4px; }
 .chain__step { font-size: 24px; font-weight: 800; color: var(--blue); }
 .chain__name { font-size: 34px; font-weight: 800; color: var(--navy); }
-.chain__desc { font-size: 23px; color: var(--ink); line-height: 1.45; }
+.chain__desc { font-size: 23px; color: var(--ink); line-height: 1.45; margin: auto 0; } /* 설명이 짧으면 남는 칸 가운데에 */
 .chain__arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font-size: 20px; font-weight: 800; color: var(--muted); }
 .chain__arrow svg { width: 80px; height: 40px; }
 
@@ -164,7 +164,11 @@ body.deck-page { overflow: hidden; background: #E6ECF7; font-family: var(--font)
 .ch-back { --bfill: var(--blue-soft); margin-left: 8px; height: 40px; font-size: 19px; padding: 0 18px; color: var(--blue-deep); }
 .apply__back { align-self: center; border: 0; background: none; padding: 2px 4px; font: 700 19px/1.2 var(--font); color: var(--blue-deep); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .apply__back:hover { text-decoration: underline; text-underline-offset: 4px; }
-.ch-hint b { font-weight: 800; color: var(--c-deep, var(--blue)); }
+/* '이렇게 시작해 보세요' 상자: 위 소제목 + 구분선 + 설명 */
+.ch-hint__h { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1.5px solid var(--line); font-size: 23px; font-weight: 800; color: var(--navy); }
+.ch-hint__h .ico { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--c-mid); border: var(--stroke) solid var(--navy); color: var(--navy); font-size: 19px; flex: none; }
+.ch-hint__body { font-size: 21px; line-height: 1.55; color: var(--ink); }
+.ch-hint__body b { font-weight: 800; color: var(--navy); }
 
 /* 신청 패널 */
 .apply { display: flex; flex-direction: column; gap: 9px; padding: 18px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); box-shadow: var(--pop); }
@@ -307,3 +311,59 @@ body.deck-page { overflow: hidden; background: #E6ECF7; font-family: var(--font)
 
 .table--roomy th, .table--roomy td { padding-top: 21px; padding-bottom: 21px; }
 .callout.v-center { align-items: flex-start; }
+
+/* 도전과제 설명·설계 자유처럼 데이터에서 온 글자: 편집 모드에서 넣은 줄바꿈(\n)을 그대로 보여 줌 */
+[data-field]:not([data-field$=":start"]) { white-space: pre-line; }
+
+/* 모델별 예제 코드 주소 (만들기 › 시작 전에) */
+.code-links { display: flex; flex-direction: column; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
+.code-link { display: flex; align-items: center; gap: 14px; padding: 10px 16px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--c-soft); color: var(--navy); text-decoration: none; }
+a.code-link:hover { background: var(--c-mid); }
+.code-link__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.code-link__name { font-size: 25px; font-weight: 800; line-height: 1.25; }
+.code-link__url { font-size: 15px; letter-spacing: -0.01em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.code-link__go { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 42px; padding: 0 14px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--paper); font-size: 18px; font-weight: 800; white-space: nowrap; }
+.code-link--soon { border-style: dashed; background: var(--paper); }
+.code-link__badge { display: inline-block; margin-left: 8px; padding: 2px 10px; border: 1.5px solid var(--navy); border-radius: 999px; background: var(--paper); font-size: 15px; font-weight: 800; vertical-align: 3px; }
+.code-link--soon .code-link__go { border-style: dashed; color: var(--muted); }
+
+/* MakeCode 블록 모양 (만들기 › 시작 전에의 기본 코드). 색은 MakeCode 화면에서 뽑은 값 */
+.mcb { --loop: #458EF7; --logic: #49A2A5; --logic-d: #33797B; --var: #CA3142; --var-d: #A32535; --pin: #A4312A; --pin-d: #82241F; --pin-dd: #8B2924; --txt: #575E75;
+  align-self: flex-start; font: 700 19px/1.1 var(--font); color: #fff; letter-spacing: 0; }
+.mcb .i { stroke: #fff; }
+.mcb-c { display: grid; grid-template-columns: 16px max-content; }
+.mcb-c > .mcb-head, .mcb-c > .mcb-foot { grid-column: 1 / -1; }
+.mcb-head { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 3px 14px; background: var(--bc); }
+.mcb-arm { background: var(--bc); }
+.mcb-in { padding: 3px 0; }
+.mcb-foot { min-height: 14px; padding: 3px 12px; background: var(--bc); display: flex; align-items: center; }
+.mcb--loop { --bc: var(--loop); }
+.mcb--loop > .mcb-head, .mcb--loop > .mcb-foot { justify-self: start; width: 210px; }
+.mcb--loop > .mcb-head { border-radius: 8px 8px 8px 0; }
+.mcb--loop > .mcb-foot { border-radius: 0 8px 8px 8px; }
+.mcb--logic { --bc: var(--logic); }
+.mcb--logic > .mcb-head:first-child { border-radius: 6px 6px 6px 0; }
+.mcb--logic > .mcb-head--mid { border-radius: 0 6px 6px 0; }
+.mcb--logic > .mcb-foot { border-radius: 0 6px 6px 6px; min-height: 30px; }
+/* 육각형 조건 칸: 진한 테두리 + 같은 색 채움 */
+.mcb-hex { --shape: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
+  position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 8px; padding: 4px 24px; }
+.mcb-hex::before, .mcb-hex::after { content: ''; position: absolute; clip-path: var(--shape); }
+.mcb-hex::before { inset: 0; background: var(--logic-d); z-index: -2; }
+.mcb-hex::after { inset: 2px; background: var(--logic); z-index: -1; }
+.mcb-var, .mcb-dd { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 14px; border-radius: 999px; }
+.mcb-var { background: var(--var); box-shadow: inset 0 0 0 1.5px var(--var-d); }
+.mcb-dd { background: var(--pin-dd); }
+.mcb-op { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 5px; background: var(--logic); box-shadow: inset 0 0 0 1.5px var(--logic-d); }
+.mcb-caret { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #fff; }
+.mcb-str, .mcb-num { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; background: #fff; color: var(--txt); }
+.mcb-q { font-style: normal; font-size: 15px; align-self: flex-start; margin: 3px 2px 0; }
+.mcb-stmt { display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 14px 0 18px; border-radius: 6px; background: var(--pin); box-shadow: inset 0 0 0 1.5px var(--pin-d); }
+.mcb-pm { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: var(--logic); font-size: 24px; font-weight: 800; line-height: 1; }
+/* 고칠 곳 표시: 노란 점선 + 번호 */
+.mcb-mark { position: relative; outline: 3px dashed var(--yellow); outline-offset: 2px; }
+.mcb-mark::after { content: attr(data-n); position: absolute; top: -15px; right: -15px; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--yellow-tab); border: 2px solid var(--navy); color: var(--navy); font: 800 16px/24px var(--font); text-align: center; z-index: 2; }
+.mcb-legend { display: flex; flex-direction: column; gap: 6px; font-size: 21px; line-height: 1.4; color: var(--ink); }
+.mcb-legend > div { display: flex; align-items: center; gap: 10px; }
+.mcb-badge { flex: none; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--yellow-tab); border: 2px solid var(--navy); color: var(--navy); font-size: 16px; font-weight: 800; }

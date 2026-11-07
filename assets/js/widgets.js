@@ -136,7 +136,7 @@ window.MK = window.MK || {};
       var ch = MK.challengeById(challengeId), st = MK.store.getStateSync(), mine = myEnrollment(st);
       var note = PIN_NOTE;
       if (mine && mine.challengeId !== challengeId) note = '<b>지금 신청한 「' + esc(MK.challengeById(mine.challengeId).title) + '」은 자동으로 취소됩니다.</b><br>' + PIN_NOTE;
-      MK.ui.form({ kicker: ch.category + ' · 개인 도전', title: ch.title + ' 신청', desc: '도전과제는 한 사람이 하나만 신청합니다. 정원 ' + capOf(st, challengeId) + '명.', fields: personFields(me()), note: note, submitText: '이 도전 신청하기',
+      MK.ui.form({ kicker: ch.category, title: ch.title + ' 신청', desc: '도전과제는 한 사람이 하나만 신청합니다. 정원 ' + capOf(st, challengeId) + '명.', fields: personFields(me()), note: note, submitText: '이 도전 신청하기',
         onSubmit: function (v) {
           return MK.store.apply({ name: v.name, pin: v.pin, challengeId: challengeId }).then(function (r) {
             MK.ui.toast(r.already ? '이미 신청한 도전과제입니다.' : '「' + ch.title + '」에 신청했어요. 이제 만들어 보세요!');
@@ -202,8 +202,8 @@ window.MK = window.MK || {};
         '<div class="ch-card__seats">' + seatDots(n, cap) + (closed ? '<span class="full">마감</span>' : left > 0 ? '<span class="left">' + left + '자리 남음</span>' : '<span class="full">정원 마감</span>') + '</div></div></button>';
     });
     h += '<div class="dashed" style="display:flex;flex-direction:column;justify-content:center;gap:12px;padding:22px 26px">' +
-      '<div class="t-lg" style="font-size:26px">카드를 누르면<br>설명이 나옵니다</div>' +
-      '<div class="t-sm t-muted" style="font-size:20px;line-height:1.45">한 사람이 하나만 신청합니다.<br>바꾸면 이전 신청이 취소됩니다.</div></div>';
+      '<div class="t-lg" style="font-size:24px">카드를 누르면<br>자세한 설명을 볼 수 있습니다.</div>' +
+      '<div class="t-sm t-muted" style="font-size:20px;line-height:1.45">신청은 1인당 하나만 가능합니다.<br>다른 항목을 신청하면<br>기존 신청은 자동으로 취소됩니다.</div></div>';
     el.innerHTML = h + '</div>';
   };
 
@@ -384,7 +384,7 @@ window.MK = window.MK || {};
     return MK.challenges.map(function (c, i) {
       var cat = MK.catOf(c), guide = MK.guideUrl(c.ref);
       return '<section class="slide slide--body c-' + cat.color + '" id="ch-' + c.id + '" data-section="1. 도전과제 고르기" data-title="도전과제 ' + (i + 1) + ' · ' + esc(c.title) + '">' +
-        '<div class="ch-head"><div class="ch-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span><span class="tag">도전과제 ' + (i + 1) + ' / ' + MK.challenges.length + '</span><span class="tag">개인 도전</span>' +
+        '<div class="ch-head"><div class="ch-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span><span class="tag">도전과제 ' + (i + 1) + ' / ' + MK.challenges.length + '</span>' +
         '<button class="btn btn--ghost btn--sm ch-back" data-goto="s-overview">' + ic('left') + ' 도전과제 목록</button></div>' +
         '<h2 class="ch-head__title" data-field="ch:' + c.id + ':title">' + esc(c.title) + '</h2><p class="ch-head__q" data-field="ch:' + c.id + ':question">' + esc(c.question) + '</p></div>' +
         '<div class="ch-grid">' +
@@ -395,7 +395,7 @@ window.MK = window.MK || {};
           '<div class="col" style="gap:22px">' +
             '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-blue">' + ic('doc') + '</span>문제 상황</div><p data-field="ch:' + c.id + ':problem">' + esc(c.problem) + '</p></div>' +
             '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-purple">' + ic('flag') + '</span>성공 기준</div><p data-field="ch:' + c.id + ':success">' + esc(c.success) + '</p></div>' +
-            (c.start ? '<div class="callout ch-hint"><b>이렇게 시작해 보세요</b><br><span data-field="ch:' + c.id + ':start">' + c.start + '</span></div>' : '') +
+            (c.start ? '<div class="callout ch-hint"><div class="ch-hint__h"><span class="ico c-yellow">' + ic('bulb') + '</span>이렇게 시작해 보세요</div><div class="ch-hint__body" data-field="ch:' + c.id + ':start">' + c.start + '</div></div>' : '') +
           '</div>' +
           '<div class="col">' +
             '<div data-widget="apply-panel" data-challenge="' + c.id + '"></div>' +
