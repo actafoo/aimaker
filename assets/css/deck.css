@@ -473,13 +473,17 @@ a.code-link:hover { background: var(--c-mid); }
 .servo__h { font-size: 25px; font-weight: 800; color: var(--navy); }
 .servo__h small { margin-left: 8px; font-size: 18px; font-weight: 600; color: var(--muted); }
 .servo__row { display: flex; align-items: center; gap: 24px; }
-.servo__deg { min-width: 150px; font-size: 64px; font-weight: 800; line-height: 1; color: var(--navy); font-variant-numeric: tabular-nums; }
+.servo__deg { flex: none; width: 190px; white-space: nowrap; font-size: 64px; font-weight: 800; line-height: 1; color: var(--navy); font-variant-numeric: tabular-nums; }
 .servo__presets { display: flex; gap: 10px; }
 .servo__presets .btn { height: 42px; padding: 0 16px; font-size: 19px; }
 .servo input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 14px; margin: 0; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--blue-soft); cursor: pointer; }
 .servo input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 34px; height: 34px; border: var(--stroke) solid var(--navy); border-radius: 50%; background: var(--blue-tab); }
 .servo input[type=range]::-moz-range-thumb { width: 30px; height: 30px; border: var(--stroke) solid var(--navy); border-radius: 50%; background: var(--blue-tab); }
 .servo__code .mcb-in { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+/* 숫자 자릿수가 바뀌어도 블록 폭이 그대로이게 (각도 0~180, pause 100~1000) */
+.servo__code .mcb-num { justify-content: center; font-variant-numeric: tabular-nums; }
+.servo__code .mcb-num[data-v] { min-width: 66px; }
+.servo__code .mcb-num[data-p] { min-width: 78px; }
 .mcb-stmt--basic { background: #1E90FF; box-shadow: inset 0 0 0 1.5px #1873CC; }
 .mcb-stmt.is-run { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .servo__swing-grid { display: grid; grid-template-columns: 1fr auto; gap: 26px; align-items: center; }
