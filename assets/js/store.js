@@ -28,7 +28,21 @@ window.MK = window.MK || {};
   function blank() {
     var cap = {};
     MK.challenges.forEach(function (c) { cap[c.id] = cfg.defaultCapacity; });
-    return { version: 1, settings: { open: true, capacity: cap, closed: {} }, enrollments: [], submissions: [] };
+    return { version: 1, settings: { open: true, capacity: cap, closed: {}, timer: {} }, enrollments: [], submissions: [], help: [], hearts: [], ideas: [] };
+  }
+  var FEATURES = ['help', 'timer', 'hearts', 'ideas', 'shuffle'];
+  var IDEA_MAX = 80;
+
+  /* 화면에 내보내는 모양: 대기 중인 도움 요청만, 하트는 작품별 이름 목록 */
+  function publicView(d) {
+    var v = copy(d), ids = {};
+    v.submissions.forEach(function (s) { ids[s.id] = 1; });
+    v.help = (d.help || []).filter(function (h) { return !h.done; });
+    var hearts = {};
+    (d.hearts || []).forEach(function (h) { if (ids[h.submissionId]) (hearts[h.submissionId] = hearts[h.submissionId] || []).push(h.name); });
+    v.hearts = hearts;
+    v.features = FEATURES;
+    return v;
   }
 
   /* 주소 검사 */
@@ -63,6 +77,11 @@ window.MK = window.MK || {};
       if (!d || d.version !== 1) d = blank();
       // 새로 생긴 도전과제에 기본 정원 채우기
       MK.challenges.forEach(function (c) { if (d.settings.capacity[c.id] == null) d.settings.capacity[c.id] = cfg.defaultCapacity; });
+      // 예전에 저장한 데이터에 새 칸 채우기
+      if (!d.settings.timer) d.settings.timer = {};
+      if (!Array.isArray(d.help)) d.help = [];
+      if (!Array.isArray(d.hearts)) d.hearts = [];
+      if (!Array.isArray(d.ideas)) d.ideas = [];
       return d;
     },
     _write: function (d) {
@@ -75,14 +94,14 @@ window.MK = window.MK || {};
 
     /* ---------- 읽기 ---------- */
     getState: function () {
-      var d = this._read();
+      var pub = publicView(this._read());
       // 비밀번호 해시는 화면에 내보내지 않음
-      var pub = copy(d);
-      pub.enrollments.forEach(function (e) { delete e.pin; });
-      pub.submissions.forEach(function (s) { delete s.pin; });
+      [pub.enrollments, pub.submissions, pub.help, pub.ideas].forEach(function (list) { list.forEach(function (r) { delete r.pin; }); });
       return Promise.resolve(pub);
     },
-    getStateSync: function () { return this._read(); },
+    getStateSync: function () { return publicView(this._read()); },
+    supports: function () { return true; },
+    now: function () { return Date.now(); },
 
     /* ---------- 나 (이 기기의 연수생) ---------- */
     getMe: function () { try { return JSON.parse(localStorage.getItem(ME_KEY)) || null; } catch (e) { return null; } },
@@ -95,7 +114,7 @@ window.MK = window.MK || {};
       if (name.length > 20) throw new Error('이름은 20자 이내로 적어 주세요.');
       if (!/^\d{4}$/.test(pin)) throw new Error('비밀번호는 숫자 4자리입니다.');
       var h = hashPin(pin);
-      var known = d.enrollments.concat(d.submissions).filter(function (r) { return r.name === name; });
+      var known = d.enrollments.concat(d.submissions, d.help, d.ideas).filter(function (r) { return r.name === name && r.pin; });
       if (known.length && known[0].pin !== h) throw new Error('같은 이름이 이미 있는데 비밀번호가 다릅니다. 내 이름이 맞다면 비밀번호를 확인하고, 다른 사람이라면 이름 뒤에 학교 이름을 붙여 주세요.');
       return { name: name, pin: h };
     },
@@ -166,6 +185,72 @@ window.MK = window.MK || {};
       return Promise.resolve({ updated: !!s });
     },
 
+    /* ---------- 도움 요청 ---------- */
+    requestHelp: function (o) {
+      var d = this._read(), p;
+      try { p = this._checkPerson(d, o.name, o.pin); } catch (e) { return fail(e.message); }
+      var en = d.enrollments.filter(function (e) { return e.name === p.name; })[0];
+      var step = String(Math.max(0, Math.min(9, parseInt(o.step, 10) || 0)));
+      var checked = String(o.checked || '').replace(/[^0-9,]/g, '').slice(0, 20), note = clean(o.note).slice(0, 60);
+      var open = d.help.filter(function (h) { return !h.done; });
+      var mine = open.filter(function (h) { return h.name === p.name; })[0];
+      if (mine) { mine.step = step; mine.checked = checked; mine.note = note; mine.challengeId = en ? en.challengeId : ''; }
+      else d.help.push({ id: uid('h'), name: p.name, pin: p.pin, challengeId: en ? en.challengeId : '', step: step, checked: checked, note: note, at: Date.now(), done: false, by: '', doneAt: 0 });
+      try { this._write(d); } catch (e) { return fail(e.message); }
+      this.setMe({ name: p.name, pin: clean(o.pin) });
+      return Promise.resolve({ updated: !!mine });
+    },
+    cancelHelp: function (o) {
+      var d = this._read(), p;
+      try { p = this._checkPerson(d, o.name, o.pin); } catch (e) { return fail(e.message); }
+      d.help.forEach(function (h) { if (!h.done && h.name === p.name) { h.done = true; h.by = '본인'; h.doneAt = Date.now(); } });
+      try { this._write(d); } catch (e) { return fail(e.message); }
+      return Promise.resolve({});
+    },
+
+    /* ---------- 작품 하트 ---------- */
+    setHeart: function (o) {
+      var d = this._read(), p;
+      try { p = this._checkPerson(d, o.name, o.pin); } catch (e) { return fail(e.message); }
+      var s = d.submissions.filter(function (x) { return x.id === o.submissionId; })[0];
+      if (!s || s.hidden) return fail('작품을 찾을 수 없습니다.');
+      if (s.name === p.name) return fail('내 작품에는 하트를 누를 수 없어요.');
+      var had = d.hearts.filter(function (h) { return h.submissionId === s.id && h.name === p.name; })[0];
+      if (o.on && !had) d.hearts.push({ id: uid('k'), submissionId: s.id, name: p.name, at: Date.now() });
+      if (!o.on && had) d.hearts = d.hearts.filter(function (h) { return h !== had; });
+      try { this._write(d); } catch (e) { return fail(e.message); }
+      return Promise.resolve({ on: !!o.on });
+    },
+
+    /* ---------- 수업 아이디어 ---------- */
+    postIdea: function (o) {
+      var d = this._read(), p;
+      try { p = this._checkPerson(d, o.name, o.pin); } catch (e) { return fail(e.message); }
+      var text = clean(o.text), grade = clean(o.grade);
+      if (!text) return fail('아이디어를 적어 주세요.');
+      if (text.length > IDEA_MAX) return fail('아이디어는 ' + IDEA_MAX + '자 이내로 적어 주세요.');
+      if (grade.length > 20) return fail('학년·교과는 20자 이내로 적어 주세요.');
+      if (d.ideas.some(function (x) { return x.name === p.name && x.text === text; })) return Promise.resolve({ already: true });
+      if (d.ideas.filter(function (x) { return x.name === p.name; }).length >= 5) return fail('아이디어는 한 사람이 5개까지 올릴 수 있어요.');
+      var en = d.enrollments.filter(function (e) { return e.name === p.name; })[0];
+      d.ideas.push({ id: uid('i'), name: p.name, pin: p.pin, challengeId: en ? en.challengeId : '', grade: grade, text: text, at: Date.now() });
+      try { this._write(d); } catch (e) { return fail(e.message); }
+      this.setMe({ name: p.name, pin: clean(o.pin) });
+      return Promise.resolve({});
+    },
+    deleteIdea: function (id, person) {
+      var d = this._read(), x = d.ideas.filter(function (i) { return i.id === id; })[0];
+      if (!x) return Promise.resolve({});
+      if (!this.isAdmin()) {
+        var p;
+        try { p = this._checkPerson(d, person && person.name, person && person.pin); } catch (e) { return fail(e.message); }
+        if (x.name !== p.name) return fail('내가 쓴 아이디어만 지울 수 있어요.');
+      }
+      d.ideas = d.ideas.filter(function (i) { return i !== x; });
+      try { this._write(d); } catch (e) { return fail(e.message); }
+      return Promise.resolve({});
+    },
+
     /* =========================================================
        관리자
        ========================================================= */
@@ -232,7 +317,25 @@ window.MK = window.MK || {};
       });
     },
     deleteSubmission: function (id) {
-      return this._admin(function (d) { d.submissions = d.submissions.filter(function (s) { return s.id !== id; }); });
+      return this._admin(function (d) {
+        d.submissions = d.submissions.filter(function (s) { return s.id !== id; });
+        d.hearts = d.hearts.filter(function (h) { return h.submissionId !== id; });
+      });
+    },
+    resolveHelp: function (id) {
+      return this._admin(function (d) { d.help.forEach(function (h) { if (h.id === id && !h.done) { h.done = true; h.by = '강사'; h.doneAt = Date.now(); } }); });
+    },
+    setTimer: function (cmd, o) { // 데모 모드는 이 브라우저 안의 타이머라 누구나 조작
+      var d = this._read();
+      try { d.settings.timer = MK.timerStep(d.settings.timer, cmd, o || {}, Date.now()); this._write(d); } catch (e) { return fail(e.message); }
+      return Promise.resolve({});
+    },
+    shuffleOrder: function () {
+      return this._admin(function (d) {
+        var list = d.submissions.slice();
+        for (var i = list.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = list[i]; list[i] = list[j]; list[j] = t; }
+        list.forEach(function (s, i) { s.order = i + 1; });
+      });
     },
     seedSamples: function () {
       return this._admin(function (d) {
@@ -248,6 +351,8 @@ window.MK = window.MK || {};
       return this._admin(function (d) {
         d.submissions = d.submissions.filter(function (s) { return !s.sample; });
         d.enrollments = d.enrollments.filter(function (e) { return !e.sample; });
+        var ids = {}; d.submissions.forEach(function (s) { ids[s.id] = 1; });
+        d.hearts = d.hearts.filter(function (h) { return ids[h.submissionId]; });
       });
     },
     exportAll: function () {
@@ -258,10 +363,13 @@ window.MK = window.MK || {};
       return this._admin(function (d) {
         if (!data || data.version !== 1 || !data.settings || !Array.isArray(data.enrollments) || !Array.isArray(data.submissions)) throw new Error('이 교안에서 내보낸 JSON 파일이 아닙니다.');
         d.settings = data.settings; d.enrollments = data.enrollments; d.submissions = data.submissions;
+        if (!d.settings.timer) d.settings.timer = {};
+        d.help = Array.isArray(data.help) ? data.help : []; d.ideas = Array.isArray(data.ideas) ? data.ideas : [];
+        d.hearts = Array.isArray(data.hearts) ? data.hearts : [];
       });
     },
     reset: function () {
-      return this._admin(function (d) { var b = blank(); d.settings = b.settings; d.enrollments = []; d.submissions = []; });
+      return this._admin(function (d) { var b = blank(); d.settings = b.settings; d.enrollments = []; d.submissions = []; d.help = []; d.hearts = []; d.ideas = []; });
     }
   };
 
@@ -280,6 +388,11 @@ window.MK = window.MK || {};
     var cap = (st.settings && st.settings.capacity) || {};
     Object.keys(cap).forEach(function (k) { if (cap[k] !== '' && cap[k] != null) d.settings.capacity[k] = Number(cap[k]); });
     d.settings.closed = (st.settings && st.settings.closed) || {};
+    d.settings.timer = (st.settings && st.settings.timer) || {};
+    d.features = st.features || []; // 예전 서버면 비어 있음 → 새 기능은 꺼진 채로
+    d.help = st.help || [];
+    d.hearts = st.hearts || {};
+    d.ideas = st.ideas || [];
     d.enrollments = st.enrollments || [];
     d.submissions = st.submissions || [];
     return d;
@@ -287,15 +400,17 @@ window.MK = window.MK || {};
 
   function isLiveView() {
     if (document.querySelector('#admin.is-open')) return true;
+    if (MK.store && MK.store.isAdmin()) return true; // 관리자는 도움 요청을 바로 봐야 함
     var sl = document.querySelector('.slide.is-active');
     if (!sl) return true;
     if (/^(s-show|show-)/.test(sl.id)) return true;
-    return !!sl.querySelector('[data-widget="apply-panel"], [data-widget="seat-board"], [data-widget="submit-board"], [data-widget="challenge-overview"], [data-widget="my-submission"]');
+    return !!sl.querySelector('[data-widget="apply-panel"], [data-widget="seat-board"], [data-widget="submit-board"], [data-widget="challenge-overview"], [data-widget="my-submission"], [data-widget="timer"], [data-widget="help-request"], [data-widget="idea-wall"]');
   }
 
   function RemoteStore(url) {
     var self = this;
     this.url = url; this.listeners = []; this.online = null; this.loaded = false; this.lastJson = '';
+    this.offset = 0; this.rtt = Infinity; // 서버 시계 - 이 노트북 시계 (같은 타이머용)
     var cached = null; try { cached = JSON.parse(localStorage.getItem(CACHE_KEY)); } catch (e) {}
     this.state = normalize(cached);
     if (cached) this.lastJson = JSON.stringify(this.state);
@@ -320,25 +435,33 @@ window.MK = window.MK || {};
     subscribe: LocalStore.prototype.subscribe,
     getMe: LocalStore.prototype.getMe,
     setMe: LocalStore.prototype.setMe,
+    supports: function (f) { return (this.state.features || []).indexOf(f) >= 0; },
+    now: function () { return Date.now() + this.offset; },
 
     _setOnline: function (on) {
       if (this.online === on) return;
       this.online = on; this._emit();
     },
     _setState: function (st) {
-      var d = normalize(st), j = JSON.stringify(d);
+      var d = normalize(st), j = JSON.stringify(d), first = !this.loaded;
       this.loaded = true;
-      if (j === this.lastJson) return;
+      if (j === this.lastJson) { if (first) this._emit(); return; } // 처음 받은 게 저장해 둔 것과 같아도 '연결하는 중' 표시는 지움
       this.lastJson = j; this.state = d;
       try { localStorage.setItem(CACHE_KEY, JSON.stringify(st)); } catch (e) {}
       this._emit();
     },
     _fetch: function (opts) {
-      var self = this, u = this.url;
+      var self = this, u = this.url, t0 = Date.now();
       var req = opts ? fetch(u, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(opts) })
                      : fetch(u + (u.indexOf('?') < 0 ? '?' : '&') + 'action=state&t=' + Date.now(), { redirect: 'follow' });
       return req.then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-        .then(function (j) { self._setOnline(true); return j; }, function (err) {
+        .then(function (j) {
+          self._setOnline(true);
+          // 왕복 시간이 가장 짧았던 응답으로 서버 시계를 맞춤
+          var t1 = Date.now();
+          if (j && j.now && t1 - t0 <= self.rtt) { self.rtt = t1 - t0; self.offset = j.now - Math.round((t0 + t1) / 2); }
+          return j;
+        }, function (err) {
           self._setOnline(false);
           throw new Error('서버에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.');
         });
@@ -359,7 +482,7 @@ window.MK = window.MK || {};
         body.pw = pw;
       }
       // 사람이 몰려 실패하면 자동으로 다시 보냄 (두 번 보내도 결과가 같은 요청만)
-      var canRetry = action !== 'moveSubmission';
+      var canRetry = action !== 'moveSubmission' && action !== 'shuffleOrder' && !(action === 'setTimer' && body.cmd === 'add');
       var waits = [1500, 3500], attempt = 0, sentOnce = false;
       function once() {
         return self._fetch(body).then(function (j) {
@@ -369,6 +492,7 @@ window.MK = window.MK || {};
             if (canRetry && /잠시 밀렸어요/.test(j.error || '') && attempt < waits.length) return again();
             // 앞서 보낸 취소가 실제로는 처리됐던 경우
             if (action === 'cancel' && sentOnce && /신청한 도전과제가 없습니다/.test(j.error || '')) { self._busy = null; self.refresh(); return {}; }
+            if (/^알 수 없는 요청입니다/.test(j.error || '')) throw new Error('서버 코드가 예전 버전이라 이 기능을 쓸 수 없어요. 강사에게 알려 주세요.');
             throw new Error(j.error || '처리하지 못했습니다.');
           }
           return j.result || {};
@@ -397,6 +521,22 @@ window.MK = window.MK || {};
       return this._call('apply', { name: o.name, pin: o.pin, challengeId: o.challengeId }).then(function (r) { self.setMe({ name: clean(o.name), pin: clean(o.pin) }); return r; });
     },
     cancel: function (o) { return this._call('cancel', { name: o.name, pin: o.pin }); },
+    requestHelp: function (o) {
+      var self = this;
+      return this._call('helpRequest', { name: o.name, pin: o.pin, step: o.step, checked: o.checked, note: o.note })
+        .then(function (r) { self.setMe({ name: clean(o.name), pin: clean(o.pin) }); return r; });
+    },
+    cancelHelp: function (o) { return this._call('helpCancel', { name: o.name, pin: o.pin }); },
+    setHeart: function (o) { return this._call('setHeart', { name: o.name, pin: o.pin, submissionId: o.submissionId, on: !!o.on }); },
+    postIdea: function (o) {
+      var self = this;
+      return this._call('ideaPost', { name: o.name, pin: o.pin, grade: o.grade, text: o.text })
+        .then(function (r) { self.setMe({ name: clean(o.name), pin: clean(o.pin) }); return r; });
+    },
+    deleteIdea: function (id, person) {
+      if (this.isAdmin()) return this._call('ideaDelete', { id: id }, true);
+      return this._call('ideaDelete', { id: id, name: person && person.name, pin: person && person.pin });
+    },
     submit: function (o) {
       var self = this;
       return this._call('submit', { name: o.name, pin: o.pin, title: o.title, desc: o.desc, makecodeUrl: o.makecodeUrl, videoUrl: o.videoUrl })
@@ -423,11 +563,34 @@ window.MK = window.MK || {};
     updateSubmission: function (id, patch) { return this._call('updateSubmission', { id: id, patch: patch }, true); },
     moveSubmission: function (id, dir) { return this._call('moveSubmission', { id: id, dir: dir }, true); },
     deleteSubmission: function (id) { return this._call('deleteSubmission', { id: id }, true); },
+    resolveHelp: function (id) { return this._call('helpDone', { id: id }, true); },
+    setTimer: function (cmd, o) { o = o || {}; return this._call('setTimer', { cmd: cmd, total: o.total, ms: o.ms, label: o.label }, true); },
+    shuffleOrder: function () { return this._call('shuffleOrder', {}, true); },
     seedSamples: function () { return this._call('seedSamples', { samples: MK.sampleResults }, true); },
     clearSamples: function () { return this._call('clearSamples', {}, true); },
     exportAll: function () { return this._call('exportAll', {}, true).then(function (r) { return r.data; }); },
     importAll: function (data) { return this._call('importAll', { data: data }, true); },
     reset: function () { return this._call('reset', {}, true); }
+  };
+
+  /* 같은 타이머 계산 (Code.gs의 setTimer와 같은 규칙) — 데모 모드에서 씀 */
+  MK.timerStep = function (t, cmd, o, now) {
+    t = t || {};
+    var total = Number(t.total) || 0, left = Number(t.left) || 0, running = !!t.running;
+    if (running) left = Math.max(0, (Number(t.endAt) || 0) - now);
+    var want = Math.max(0, Math.min(3 * 3600000, Math.round(Number(o.total) || 0)));
+    if (cmd === 'start') {
+      if (want && !running && (!total || left <= 0 || left === total)) { total = want; left = want; }
+      if (!total) { total = 40 * 60000; left = total; }
+      if (left <= 0) left = total;
+      running = true;
+    } else if (cmd === 'pause') running = false;
+    else if (cmd === 'reset') { running = false; if (want) total = want; left = total; }
+    else if (cmd === 'add') {
+      var ms = Math.max(-30 * 60000, Math.min(30 * 60000, Math.round(Number(o.ms) || 0)));
+      left = Math.max(0, left + ms); total = Math.max(total, left);
+    } else throw new Error('알 수 없는 타이머 명령입니다.');
+    return { total: total, left: left, endAt: running ? now + left : 0, running: running, label: clean(o.label || t.label || '').slice(0, 20), at: now };
   };
 
   MK.LocalStore = LocalStore;

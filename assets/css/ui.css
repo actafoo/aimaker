@@ -178,11 +178,28 @@
 .is-editing .toast { top: 66px; }
 @media (max-width: 1280px) { .editbar__hint { display: none; } }
 
+/* ---------- 같은 타이머: 모든 쪽 위 가운데 ---------- */
+.timer-chip { position: fixed; left: 50%; top: 14px; z-index: 31; transform: translate(-50%, -160%); transition: transform .25s ease;
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 2px solid var(--navy); border-radius: 999px;
+  background: rgba(255,255,255,.96); box-shadow: 0 4px 16px rgba(11,31,85,.16); font: 700 14px var(--font); color: var(--navy); cursor: pointer; white-space: nowrap; }
+.timer-chip.is-on { transform: translate(-50%, 0); }
+.timer-chip b { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.timer-chip small { font-size: 12px; font-weight: 800; color: var(--muted); }
+.timer-chip.is-warn { background: var(--yellow-soft); border-color: #D9A800; }
+.timer-chip.is-done { background: #FFECEA; border-color: var(--red); color: #B42318; animation: blink 1s steps(2) infinite; }
+.is-editing .timer-chip { display: none; }
+
+/* ---------- 관리자 알림 표시 ---------- */
+.me__badge { display: inline-block; margin-left: 4px; padding: 1px 7px; border-radius: 999px; background: var(--red); color: #fff; font-size: 11px; line-height: 16px; }
+.tab-badge { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: 999px; background: var(--red); color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
+.heart-n { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; color: var(--red); }
+.heart-n .i { fill: var(--red); }
+
 /* 인쇄: 슬라이드 한 장씩 */
 @media print {
   body.deck-page { overflow: visible; background: #fff; }
   .deck-viewport { position: static; }
   .deck-stage { position: relative; height: auto; transform: none !important; box-shadow: none; }
   .slide { display: block !important; position: relative; width: 1920px; height: 1080px; page-break-after: always; animation: none !important; }
-  .dock, .me, .toc, .admin, .toast, .demo-flag, .editbar, .sbar__tip { display: none !important; }
+  .dock, .me, .toc, .admin, .toast, .demo-flag, .editbar, .sbar__tip, .timer-chip { display: none !important; }
 }

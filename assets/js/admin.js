@@ -1,6 +1,6 @@
 /* =========================================================
    관리자 — Ctrl+Shift+A 또는 주소 끝 #admin
-   정원·마감 / 신청 명단 / 제출물 / 발표자료 / 데이터
+   정원·마감 / 신청 명단 / 도움 요청 / 제출물 / 발표자료 / 데이터
    ========================================================= */
 window.MK = window.MK || {};
 
@@ -19,7 +19,7 @@ window.MK = window.MK || {};
       '<aside class="admin ui" id="admin" aria-label="관리자">' +
         '<div class="admin__head">' + ic('lock') + '<b>관리자</b><button class="icon-btn" id="admin-out" title="관리자 나가기">' + ic('power') + '</button><button class="icon-btn" id="admin-close" aria-label="닫기">' + ic('x') + '</button></div>' +
         '<div class="admin__tabs" role="tablist">' +
-          '<button data-tab="edit">교안 편집</button><button data-tab="cap">정원·마감</button><button data-tab="roster">신청 명단</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
+          '<button data-tab="edit">교안 편집</button><button data-tab="cap">정원·마감</button><button data-tab="roster">신청 명단</button><button data-tab="help">도움</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
         '</div><div class="admin__body" id="admin-body"></div></aside>');
     panel = $('#admin');
     $('#admin-close').onclick = function () { MK.admin.close(); };
@@ -34,9 +34,28 @@ window.MK = window.MK || {};
   /* ---------- 탭 그리기 ---------- */
   function render() {
     if (!panel) return;
-    Array.prototype.forEach.call(panel.querySelectorAll('[data-tab]'), function (b) { b.classList.toggle('is-on', b.dataset.tab === tab); });
     var st = MK.store.getStateSync(), S = MK.state, h = '';
+    var helpN = (st.help || []).length;
+    Array.prototype.forEach.call(panel.querySelectorAll('[data-tab]'), function (b) {
+      b.classList.toggle('is-on', b.dataset.tab === tab);
+      if (b.dataset.tab === 'help') b.innerHTML = '도움' + (helpN ? ' <span class="tab-badge">' + helpN + '</span>' : '');
+    });
     if (!MK.store.isShared) h += '<div class="admin__notice"><b>데모 모드</b> · 모든 데이터가 <b>이 브라우저에만</b> 저장됩니다. 다른 연수생의 신청·제출은 여기 보이지 않습니다. 연수 전에 온라인 저장소를 연결해야 합니다.</div>';
+    else if (MK.store.loaded && !MK.store.supports('help')) h += '<div class="admin__notice"><b>서버 코드가 예전 버전</b>입니다. 도움 요청·모두 같은 타이머·작품 하트·수업 아이디어가 꺼져 있어요. <b>backend/Code.gs</b>를 Apps Script에 새로 붙여 넣고 <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</div>';
+
+    if (tab === 'help') {
+      var q = (st.help || []).slice().sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
+      h += '<p class="small">연수생이 「안 될 때 다섯 가지 확인」 쪽에서 보낸 요청입니다. 도와준 뒤 <b>처리</b>를 누르면 줄에서 빠집니다. 연수생이 스스로 「해결됐어요」를 눌러도 빠집니다.</p>';
+      if (!q.length) h += '<div class="acard"><div class="acard__meta">지금 대기 중인 도움 요청이 없습니다.</div></div>';
+      q.forEach(function (x, i) {
+        var c = MK.challengeById(x.challengeId), cat = c ? MK.catOf(c) : null;
+        var mins = Math.max(0, Math.round((MK.store.now() - (x.at || 0)) / 60000));
+        var step = x.step === '9' ? '재료·조립 등 다른 것' : x.step && x.step !== '0' ? x.step + '번에서 막힘' : '어디서 막혔는지 모름';
+        h += '<div class="acard' + (cat ? ' c-' + cat.color : '') + '"><div class="acard__top">' + (cat ? '<span class="cat-dot"></span>' : '') + '<div class="acard__title">' + (i + 1) + '. ' + esc(x.name) +
+          ' <small style="color:var(--muted);font-weight:600">· ' + (mins ? mins + '분 전' : '방금') + '</small></div><button class="ubtn ubtn--sm ubtn--green" data-help-resolve="' + esc(x.id) + '">' + ic('check') + ' 처리</button></div>' +
+          '<div class="acard__meta">' + esc(c ? c.title : '신청 전') + '<br><b>' + esc(step) + '</b>' + (x.checked ? ' · 확인한 것 ' + esc(x.checked.split(',').join('·')) + '번' : '') + (x.note ? '<br>“' + esc(x.note) + '”' : '') + '</div></div>';
+      });
+    }
 
     if (tab === 'edit' && MK.editor) {
       var E = MK.editor, dd = E.detail(), n = E.changes();
@@ -98,18 +117,23 @@ window.MK = window.MK || {};
     if (tab === 'show') {
       var items = MK.showcase.items(st);
       h += '<div class="acard"><div class="acard__title">발표 슬라이드</div><div class="acard__meta">제출물 탭에서 <b>발표에 넣기</b>를 켠 작품이 정한 순서대로 한 장씩 만들어집니다. 지금 ' + items.length + '개.</div>' +
-        '<div class="acard__row"><button class="ubtn" data-show-go>' + ic('play') + ' 발표 슬라이드로 이동</button></div></div>';
+        '<div class="acard__row"><button class="ubtn" data-show-go>' + ic('play') + ' 발표 슬라이드로 이동</button>' +
+        (MK.store.supports('shuffle') && items.length > 1 ? '<button class="ubtn ubtn--ghost" data-shuffle>' + ic('spark') + ' 발표 순서 뽑기</button>' : '') + '</div></div>';
       h += '<div class="acard"><div class="acard__title">단일 HTML로 저장</div><div class="acard__meta">발표 슬라이드만 파일 하나로 저장합니다. 현장 인터넷이 불안할 때 대비용입니다(영상 재생은 인터넷 필요). 로컬 서버나 배포 주소에서 열었을 때 동작합니다.</div>' +
         '<div class="acard__row"><button class="ubtn ubtn--ghost" data-export-html>' + ic('download') + ' 발표 파일 저장</button></div></div>';
       h += '<h4>발표 순서</h4>';
-      items.forEach(function (s, i) { h += '<div class="acard" style="padding:8px 14px"><div class="acard__title" style="font-size:14px">' + (i + 1) + '. ' + esc(s.title) + ' <span style="color:var(--muted);font-weight:600">· ' + esc(s.name) + '</span></div></div>'; });
+      items.forEach(function (s, i) {
+        var hearts = ((st.hearts || {})[s.id] || []).length;
+        h += '<div class="acard" style="padding:8px 14px"><div class="acard__top"><div class="acard__title" style="font-size:14px">' + (i + 1) + '. ' + esc(s.title) + ' <span style="color:var(--muted);font-weight:600">· ' + esc(s.name) + '</span></div>' +
+          (MK.store.supports('hearts') ? '<span class="heart-n" title="하트">' + ic('heart') + ' ' + hearts + '</span>' : '') + '</div></div>';
+      });
     }
 
     if (tab === 'data') {
       h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">신청·제출 기록을 파일로 저장합니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
       h += '<div class="acard"><div class="acard__title">가져오기</div><div class="acard__meta">이 교안에서 내보낸 JSON을 불러옵니다. 지금 데이터는 덮어씁니다.</div><div class="acard__row"><input type="file" accept="application/json,.json" data-import style="font-size:13px"></div></div>';
       h += '<div class="acard"><div class="acard__title">샘플 결과물</div><div class="acard__meta">목업의 샘플 6개를 넣어 발표 슬라이드를 미리 봅니다. "샘플" 표시가 붙습니다.</div><div class="acard__row"><button class="ubtn ubtn--sm" data-seed>샘플 넣기</button><button class="ubtn ubtn--sm ubtn--ghost" data-unseed>샘플 지우기</button></div></div>';
-      h += '<div class="acard"><div class="acard__title">전체 초기화</div><div class="acard__meta">신청·제출·정원 설정을 모두 지웁니다. 되돌릴 수 없으니 먼저 내보내기를 하세요.</div><div class="acard__row"><button class="ubtn ubtn--sm ubtn--danger" data-reset>' + ic('trash') + ' 초기화</button></div></div>';
+      h += '<div class="acard"><div class="acard__title">전체 초기화</div><div class="acard__meta">신청·제출·정원 설정, 도움 요청·하트·수업 아이디어·타이머를 모두 지웁니다. 되돌릴 수 없으니 먼저 내보내기를 하세요.</div><div class="acard__row"><button class="ubtn ubtn--sm ubtn--danger" data-reset>' + ic('trash') + ' 초기화</button></div></div>';
     }
     $('#admin-body').innerHTML = h;
   }
@@ -120,6 +144,7 @@ window.MK = window.MK || {};
     var d = t.dataset, st = MK.store.getStateSync();
     if (d.cap) { var cur = MK.state.capOf(st, d.cap); MK.store.setCapacity(d.cap, cur + parseInt(d.d, 10)).catch(bad); }
     else if (d.remove) MK.store.removeEnrollment(d.remove).then(ok('명단에서 뺐어요.'), bad);
+    else if (d.helpResolve) { t.disabled = true; MK.store.resolveHelp(d.helpResolve).then(ok('처리했어요.'), bad); }
     else if (t.hasAttribute('data-add')) MK.store.addEnrollment($('#add-name').value, $('#add-ch').value).then(ok('추가했어요.'), bad);
     else if (d.up) MK.store.moveSubmission(d.up, -1).catch(bad);
     else if (d.down) MK.store.moveSubmission(d.down, 1).catch(bad);
@@ -130,6 +155,7 @@ window.MK = window.MK || {};
     else if (t.hasAttribute('data-ed-pick')) MK.editor.save(true);
     else if (t.hasAttribute('data-ed-discard')) MK.editor.discard();
     else if (t.hasAttribute('data-show-go')) { MK.deck.refresh(true); MK.deck.goto('s-show'); MK.admin.close(); }
+    else if (t.hasAttribute('data-shuffle')) { /* interact.js가 처리 */ }
     else if (t.hasAttribute('data-export-html')) MK.showcase.exportHtml().then(ok('발표 파일을 저장했어요.'), bad);
     else if (t.hasAttribute('data-export-json')) MK.store.exportAll().then(function (data) { download('신청제출-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json'); }, bad);
     else if (t.hasAttribute('data-export-csv')) MK.store.exportAll().then(function (data) { download('신청제출-' + today() + '.csv', '﻿' + toCsv(data), 'text/csv'); }, bad);
@@ -193,8 +219,9 @@ window.MK = window.MK || {};
   }
 
   MK.admin = {
-    open: function () {
+    open: function (toTab) {
       if (!MK.store.isAdmin()) return login();
+      if (toTab) tab = toTab;
       build(); render(); panel.classList.add('is-open');
     },
     close: function () { if (panel) panel.classList.remove('is-open'); },

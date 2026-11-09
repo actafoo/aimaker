@@ -125,6 +125,8 @@ window.MK = window.MK || {};
     ] }];
   }
   var PIN_NOTE = '비밀번호는 내 신청을 바꾸거나 결과물을 고칠 때만 씁니다. 쉬운 숫자 4자리면 됩니다.';
+  MK.ui.personFields = personFields;
+  MK.ui.PIN_NOTE = PIN_NOTE;
 
   MK.actions = {
     identify: function () {
@@ -288,10 +290,18 @@ window.MK = window.MK || {};
   /* 설정 글자 채우기: <span data-widget="cfg" data-key="date"> */
   MK.widgets.cfg = function (el) { var k = el.getAttribute('data-key'); el.setAttribute('data-field', 'cfg:' + k); el.textContent = MK.config[k] || ''; };
 
-  /* 타이머: <div data-widget="timer" data-minutes="40" data-id="make"> */
+  /* 타이머: <div data-widget="timer" data-minutes="40" data-id="make" data-label="만들기">
+     - 서버가 '같은 타이머'를 지원하면: 강사(관리자)가 시작·멈춤하고, 모든 연수생 화면에 같은 시간이 흐릅니다
+     - 예전 서버면: 이 화면에서만 도는 타이머 */
   var timers = {};
+  function fmtClock(ms) { var s = Math.ceil(ms / 1000), m = Math.floor(s / 60); s = s % 60; return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; }
+  MK.fmtClock = fmtClock;
+  MK.timerMode = function () { return MK.store.supports && MK.store.supports('timer') ? 'shared' : 'local'; };
+  MK.timerLeft = function (t) { return t.running ? Math.max(0, (t.endAt || 0) - MK.store.now()) : (t.left || 0); };
   MK.widgets.timer = function (el) {
     var id = el.getAttribute('data-id') || 'timer', total = (parseFloat(el.getAttribute('data-minutes')) || 10) * 60000;
+    el._mode = MK.timerMode();
+    if (el._mode === 'shared') return sharedTimer(el, total, el.getAttribute('data-label') || '');
     var key = MK.config.storageKey + '-timer-' + id;
     if (!timers[id]) {
       var saved = null; try { saved = JSON.parse(localStorage.getItem(key)); } catch (e) {}
@@ -320,6 +330,35 @@ window.MK = window.MK || {};
     clearInterval(el._iv); el._iv = setInterval(paint, 250); paint();
   };
 
+  function sharedTimer(el, total, label) {
+    function canControl() { return MK.store.kind === 'local' || MK.store.isAdmin(); }
+    function cur() { var t = MK.store.getStateSync().settings.timer || {}; return t.total ? t : { total: total, left: total, running: false }; }
+    el.innerHTML = '<div class="timer"><div class="timer__face"></div><div class="timer__bar"><i></i></div><div class="timer__btns"></div><div class="timer__note"></div></div>';
+    var face = el.querySelector('.timer__face'), bar = el.querySelector('.timer__bar i'), btns = el.querySelector('.timer__btns'),
+        note = el.querySelector('.timer__note'), box = el.querySelector('.timer'), lastKey = '';
+    function paint() {
+      var t = cur(), l = MK.timerLeft(t), started = l < t.total;
+      face.textContent = fmtClock(l); bar.style.width = (t.total ? l / t.total * 100 : 0) + '%';
+      box.classList.toggle('is-done', l <= 0);
+      var ctl = canControl(), key = [ctl, !!t.running, started, l <= 0].join('|');
+      if (key === lastKey) return; // 버튼은 상태가 바뀔 때만 다시 그림 (누르는 중에 사라지지 않게)
+      lastKey = key;
+      btns.innerHTML = ctl ? '<button class="btn" data-t="toggle">' + (t.running ? '멈춤' : ic('play') + (started && l > 0 ? ' 이어서' : ' 시작')) + '</button>' +
+        '<button class="btn btn--ghost" data-t="add">+5분</button><button class="btn btn--ghost" data-t="reset">' + ic('clock') + ' 처음으로</button>' : '';
+      note.textContent = MK.store.kind === 'local' ? '' : ctl ? '모든 연수생 화면에 같은 시간이 흐릅니다' : t.running ? '강사 화면과 같은 시간이 흐릅니다' : '강사가 시작하면 모든 화면에서 함께 흐릅니다';
+    }
+    btns.onclick = function (e) {
+      var b = e.target.closest('[data-t]'); if (!b || b.disabled) return;
+      var t = cur(), k = b.getAttribute('data-t'), o = { total: total, label: label };
+      if (k === 'add') o.ms = 5 * 60000;
+      b.disabled = true;
+      MK.store.setTimer(k === 'toggle' ? (t.running ? 'pause' : 'start') : k, o)
+        .catch(function (err) { MK.ui.toast(err.message, true); })
+        .then(function () { b.disabled = false; lastKey = ''; paint(); });
+    };
+    clearInterval(el._iv); el._iv = setInterval(paint, 250); paint();
+  }
+
   /* =========================================================
      모두 그리기 + 클릭 처리
      ========================================================= */
@@ -328,9 +367,10 @@ window.MK = window.MK || {};
     $$('[data-widget]', root || document).forEach(function (el) {
       var w = MK.widgets[el.getAttribute('data-widget')];
       if (!w) return;
-      if (el.getAttribute('data-widget') === 'timer' && el._iv) return; // 타이머는 한 번만
+      if (el.getAttribute('data-widget') === 'timer' && el._iv && el._mode === MK.timerMode()) return; // 타이머는 한 번만 (서버 지원이 바뀌면 다시)
+      if (w.once && el._done) return; // 한 번만 그리는 위젯 (서보 실험 등)
       var ae = document.activeElement; if (ae && ae.isContentEditable && el.contains(ae)) return; // 고치는 중인 글자는 건드리지 않음
-      try { w(el, st); } catch (e) { console.error(e); }
+      try { w(el, st); el._done = true; } catch (e) { console.error(e); }
     });
     renderMe(st);
   };
@@ -344,7 +384,8 @@ window.MK = window.MK || {};
     if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mine ? ' · ' + esc(MK.challengeById(mine.challengeId).title) : ' · 신청 전') + '</span>' +
       '<button class="ghost" data-act="switch">바꾸기</button>';
     else h += '<span class="me__text">신청하려면 이름을 등록하세요</span><button data-act="identify">이름 등록</button>';
-    if (admin) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff">' + ic('lock') + ' 관리자</button>';
+    var helpN = admin && st.help ? st.help.length : 0; // 대기 중인 도움 요청
+    if (admin) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff">' + ic('lock') + ' 관리자' + (helpN ? ' <span class="me__badge" title="대기 중인 도움 요청">도움 ' + helpN + '</span>' : '') + '</button>';
     box.innerHTML = h;
   }
 
@@ -357,7 +398,7 @@ window.MK = window.MK || {};
       else if (act === 'submit') MK.actions.submit();
       else if (act === 'identify') MK.actions.identify();
       else if (act === 'switch') MK.actions.switchUser();
-      else if (act === 'admin' && MK.admin) MK.admin.open();
+      else if (act === 'admin' && MK.admin) MK.admin.open(a.querySelector('.me__badge') ? 'help' : null); // 도움 요청이 있으면 그 탭으로
       else if (act === 'edit' && MK.editor) { MK.editor.toggle(); renderMe(MK.store.getStateSync()); }
       return;
     }

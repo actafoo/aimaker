@@ -43,12 +43,14 @@ window.MK = window.MK || {};
     var sec = '4. 작품 발표회';
     var h = '<section class="slide slide--pastel" id="s-show" data-section="' + sec + '" data-title="작품 발표회">' +
       '<div class="show-cover"><span class="divider__part">PART 4</span><h2 class="show-cover__title">작품 발표회</h2>' +
-      '<p class="show-cover__text">' + (N ? N + '개의 작품을 함께 봅니다. 작품을 누르면 바로 이동합니다.' : '아직 발표할 작품이 없습니다.') + '</p></div>';
+      '<p class="show-cover__text">' + (N ? N + '개의 작품을 함께 봅니다. 작품을 누르면 바로 이동합니다.' : '아직 발표할 작품이 없습니다.') + '</p></div>' +
+      (N > 1 ? '<button type="button" class="btn btn--sm btn--yellow admin-only show-shuffle" data-shuffle>' + ic('spark') + ' 발표 순서 뽑기</button>' : '');
     if (N) {
       h += '<div class="show-grid">';
       items.slice(0, 25).forEach(function (s, i) {
         var cat = MK.catOf(MK.challengeById(s.challengeId));
-        h += '<button class="show-tile c-' + cat.color + '" data-goto="show-' + s.id + '"><span class="show-tile__n">' + (i + 1) + ' · ' + esc(s.name) + '</span><span class="show-tile__t">' + esc(s.title) + '</span></button>';
+        h += '<button class="show-tile c-' + cat.color + '" data-goto="show-' + s.id + '"><span class="show-tile__n">' + (i + 1) + ' · ' + esc(s.name) + '</span><span class="show-tile__t">' + esc(s.title) + '</span>' +
+          '<span class="show-tile__heart" data-widget="heart-count" data-sub="' + esc(s.id) + '"></span></button>';
       });
       if (N > 25) h += '<div class="show-tile" style="background:#fff"><span class="show-tile__t">외 ' + (N - 25) + '개</span></div>';
       h += '</div>';
@@ -64,6 +66,7 @@ window.MK = window.MK || {};
       h += '<section class="slide slide--body c-' + cat.color + '" id="show-' + s.id + '" data-section="' + sec + '" data-title="' + (i + 1) + '. ' + esc(s.title) + '">' +
         '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(ch.category) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
         '<h2 class="sv-head__title">' + esc(s.title) + '</h2><p class="sv-head__who">' + esc(s.name) + ' · ' + esc(ch.title) + '</p></div>' +
+        '<div class="sv-heart" data-widget="hearts" data-sub="' + esc(s.id) + '"></div>' +
         '<div class="sv-grid">' +
           '<div class="window sv-media"><div class="window__bar">작동 영상' + (MK.isHttpUrl(s.videoUrl) ? '<a class="sv-open" href="' + esc(s.videoUrl) + '" target="_blank" rel="noopener">새 창에서 열기 ' + ic('external') + '</a>' : '') + '</div><div class="window__body window__body--flush" style="aspect-ratio:16/9">' + media(s) + '</div></div>' +
           '<div class="window sv-code"><div class="window__bar">MakeCode 블록' +
