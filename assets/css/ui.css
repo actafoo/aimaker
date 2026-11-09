@@ -14,12 +14,15 @@
 }
 .dock.is-idle { opacity: .0; }
 .dock:hover { opacity: 1; }
-.dock button {
+.dock button, .dock .dock__link {
   height: 36px; min-width: 36px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;
-  font-size: 14px; font-weight: 800; color: var(--navy);
+  font-size: 14px; font-weight: 800; color: var(--navy); text-decoration: none; flex-shrink: 0;
 }
-.dock button:hover { background: var(--blue-soft); }
+.dock button:hover, .dock .dock__link:hover { background: var(--blue-soft); }
+/* 허브 버튼과 목차 사이 구분선 */
+.dock #dock-home { margin-right: 4px; position: relative; }
+.dock #dock-home::after { content: ''; position: absolute; right: -4px; top: 8px; bottom: 8px; width: 1.5px; background: #D3DBEA; }
 .dock .dock__count { min-width: 64px; text-align: center; font-size: 14px; font-weight: 800; color: var(--navy); font-variant-numeric: tabular-nums; }
 .dock .dock__primary { background: var(--blue-tab); color: var(--navy); }
 .dock .dock__primary:hover { background: var(--blue-mid); }
@@ -49,7 +52,7 @@
 .sbar__tip { position: fixed; z-index: 32; transform: translate(-50%, -100%); padding: 6px 10px; border-radius: 8px; background: var(--navy); color: #fff;
   font: 700 13px/1.3 var(--font); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .12s; }
 .sbar__tip.is-on { opacity: 1; }
-@media (max-width: 900px) { .dock.sbar #dock-toc span { display: none; } .sbar__label { font-size: 11px; } }
+@media (max-width: 900px) { .dock.sbar #dock-toc span, .dock.sbar #dock-home span { display: none; } .sbar__label { font-size: 11px; } }
 
 /* ---------- 오른쪽 위: 내 정보 칩 ---------- */
 .me {

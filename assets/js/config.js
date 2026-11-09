@@ -14,7 +14,7 @@ MK.config = {
   instructorRole: '',                  // 예: '○○초등학교 교사'
 
   // 연수생이 노트북에서 열 주소. 배포 뒤 짧은 주소를 적으면 5쪽에 크게 보입니다.
-  shareUrl: 'https://actafoo.github.io/aimaker/910/',
+  shareUrl: 'https://joo.is/aimaker',
 
   // 온라인 저장소(구글 시트 Apps Script 웹 앱) 주소. 비워 두면 이 브라우저에만 저장하는 데모 모드입니다.
   apiUrl: 'https://script.google.com/macros/s/AKfycbw7sm3uzVGkmfLkHtfmGcurtYaklgWFF4taYoBIDclS43XbxbH3VceRWc6_gtGQABCE/exec',

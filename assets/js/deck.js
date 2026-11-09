@@ -193,6 +193,7 @@ MK.generators = MK.generators || {};
     var ic = MK.icon;
     document.body.insertAdjacentHTML('beforeend',
       '<nav class="dock sbar ui" id="dock" aria-label="슬라이드 이동">' +
+        '<a id="dock-home" class="dock__link" href="index.html" title="허브로 돌아가기">' + ic('home') + '<span>허브</span></a>' +
         '<button id="dock-toc" title="목차 (M)">' + ic('list') + '<span>목차</span></button>' +
         '<button id="dock-prev" title="이전 (←)" aria-label="이전">' + ic('left') + '</button>' +
         '<div class="sbar__track" id="sbar-track"></div>' +
