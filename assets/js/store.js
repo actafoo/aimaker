@@ -30,7 +30,8 @@ window.MK = window.MK || {};
     MK.challenges.forEach(function (c) { cap[c.id] = cfg.defaultCapacity; });
     return { version: 1, settings: { open: true, capacity: cap, closed: {}, timer: {} }, enrollments: [], submissions: [], help: [], hearts: [], ideas: [] };
   }
-  var FEATURES = ['help', 'timer', 'hearts', 'ideas', 'shuffle'];
+  var FEATURES = ['help', 'timer', 'hearts', 'ideas', 'shuffle', 'records'];
+  var REC_MAX = 12, FIX_MAX = 60; // 1차·2차 기록, 고친 것
   var IDEA_MAX = 80;
 
   /* 화면에 내보내는 모양: 대기 중인 도움 요청만, 하트는 작품별 이름 목록 */
@@ -166,19 +167,23 @@ window.MK = window.MK || {};
       var en = d.enrollments.filter(function (e) { return e.name === p.name; })[0];
       if (!en) return fail('먼저 도전과제를 신청해 주세요.');
       var title = clean(o.title), desc = String(o.desc || '').trim(), mc = clean(o.makecodeUrl), video = clean(o.videoUrl);
+      var rec1 = clean(o.rec1), rec2 = clean(o.rec2), fix = clean(o.fix);
       if (!title) return fail('작품 제목을 적어 주세요.');
       if (title.length > 40) return fail('작품 제목은 40자 이내로 적어 주세요.');
       if (!desc) return fail('간단한 설명을 적어 주세요.');
       if (desc.length > cfg.descMax) return fail('설명은 ' + cfg.descMax + '자 이내로 적어 주세요.');
       if (!MK.parseMakecode(mc)) return fail('MakeCode 공유 주소를 확인해 주세요. https://makecode.microbit.org/_ 로 시작하는 주소입니다.');
       if (!MK.isHttpUrl(video)) return fail('작동 영상 주소를 확인해 주세요. https:// 로 시작하는 주소입니다.');
+      if (rec1.length > REC_MAX || rec2.length > REC_MAX) return fail('기록은 ' + REC_MAX + '자 이내로 적어 주세요. 숫자만 적어도 됩니다.');
+      if (fix.length > FIX_MAX) return fail('고친 것은 ' + FIX_MAX + '자 이내로 적어 주세요.');
       var now = Date.now();
       var s = d.submissions.filter(function (x) { return x.name === p.name; })[0];
       if (s) {
         s.title = title; s.desc = desc; s.makecodeUrl = mc; s.videoUrl = video; s.challengeId = en.challengeId; s.updatedAt = now;
+        s.rec1 = rec1; s.rec2 = rec2; s.fix = fix;
       } else {
         var maxOrder = d.submissions.reduce(function (m, x) { return Math.max(m, x.order || 0); }, 0);
-        d.submissions.push({ id: uid('s'), name: p.name, pin: p.pin, challengeId: en.challengeId, title: title, desc: desc, makecodeUrl: mc, videoUrl: video, at: now, updatedAt: now, include: true, hidden: false, order: maxOrder + 1 });
+        d.submissions.push({ id: uid('s'), name: p.name, pin: p.pin, challengeId: en.challengeId, title: title, desc: desc, makecodeUrl: mc, videoUrl: video, rec1: rec1, rec2: rec2, fix: fix, at: now, updatedAt: now, include: true, hidden: false, order: maxOrder + 1 });
       }
       try { this._write(d); } catch (e) { return fail(e.message); }
       this.setMe({ name: p.name, pin: o.pin });
@@ -303,7 +308,7 @@ window.MK = window.MK || {};
       return this._admin(function (d) {
         var s = d.submissions.filter(function (x) { return x.id === id; })[0];
         if (!s) throw new Error('제출물을 찾을 수 없습니다.');
-        ['title', 'desc', 'makecodeUrl', 'videoUrl', 'include', 'hidden', 'challengeId'].forEach(function (k) { if (k in patch) s[k] = patch[k]; });
+        ['title', 'desc', 'makecodeUrl', 'videoUrl', 'rec1', 'rec2', 'fix', 'include', 'hidden', 'challengeId'].forEach(function (k) { if (k in patch) s[k] = patch[k]; });
         s.updatedAt = Date.now();
       });
     },
@@ -330,10 +335,13 @@ window.MK = window.MK || {};
       try { d.settings.timer = MK.timerStep(d.settings.timer, cmd, o || {}, Date.now()); this._write(d); } catch (e) { return fail(e.message); }
       return Promise.resolve({});
     },
-    shuffleOrder: function () {
+    shuffleOrder: function () { // 같은 카드끼리 모은 뒤, 카드 안에서 무작위
+      var groups = MK.challenges.map(function (c) { return c.id; });
       return this._admin(function (d) {
         var list = d.submissions.slice();
         for (var i = list.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = list[i]; list[i] = list[j]; list[j] = t; }
+        var gi = function (s) { var k = groups.indexOf(s.challengeId); return k < 0 ? groups.length : k; };
+        list = list.map(function (s, i) { return [gi(s), i, s]; }).sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; }).map(function (x) { return x[2]; });
         list.forEach(function (s, i) { s.order = i + 1; });
       });
     },
@@ -342,7 +350,7 @@ window.MK = window.MK || {};
         var maxOrder = d.submissions.reduce(function (m, x) { return Math.max(m, x.order || 0); }, 0);
         MK.sampleResults.forEach(function (r, i) {
           if (d.submissions.some(function (s) { return s.sample && s.title === r.title; })) return;
-          d.submissions.push({ id: uid('s'), name: r.name, pin: hashPin('0000'), challengeId: r.challengeId, title: r.title, desc: r.desc, makecodeUrl: '', videoUrl: '', at: Date.now(), updatedAt: Date.now(), include: true, hidden: false, order: maxOrder + i + 1, sample: true });
+          d.submissions.push({ id: uid('s'), name: r.name, pin: hashPin('0000'), challengeId: r.challengeId, title: r.title, desc: r.desc, rec1: r.rec1 || '', rec2: r.rec2 || '', fix: r.fix || '', makecodeUrl: '', videoUrl: '', at: Date.now(), updatedAt: Date.now(), include: true, hidden: false, order: maxOrder + i + 1, sample: true });
           if (!d.enrollments.some(function (e) { return e.name === r.name; })) d.enrollments.push({ id: uid('e'), name: r.name, pin: hashPin('0000'), challengeId: r.challengeId, at: Date.now(), sample: true });
         });
       });
@@ -386,10 +394,13 @@ window.MK = window.MK || {};
     if (!st) return d;
     d.settings.open = st.settings ? st.settings.open !== false : true;
     var cap = (st.settings && st.settings.capacity) || {};
+    d.settings.capacity = {}; // 서버가 정한 정원만. 나머지는 서버의 기본 정원(defaultCapacity)을 씀
     Object.keys(cap).forEach(function (k) { if (cap[k] !== '' && cap[k] != null) d.settings.capacity[k] = Number(cap[k]); });
     d.settings.closed = (st.settings && st.settings.closed) || {};
     d.settings.timer = (st.settings && st.settings.timer) || {};
     d.features = st.features || []; // 예전 서버면 비어 있음 → 새 기능은 꺼진 채로
+    // 서버의 기본 정원 (정원을 따로 안 정한 카드). 예전 서버는 이 값을 안 보내는데, 그때 기본 정원은 4명이었음
+    d.defaultCapacity = st.defaultCapacity != null ? Number(st.defaultCapacity) : 4;
     d.help = st.help || [];
     d.hearts = st.hearts || {};
     d.ideas = st.ideas || [];
@@ -539,7 +550,7 @@ window.MK = window.MK || {};
     },
     submit: function (o) {
       var self = this;
-      return this._call('submit', { name: o.name, pin: o.pin, title: o.title, desc: o.desc, makecodeUrl: o.makecodeUrl, videoUrl: o.videoUrl })
+      return this._call('submit', { name: o.name, pin: o.pin, title: o.title, desc: o.desc, makecodeUrl: o.makecodeUrl, videoUrl: o.videoUrl, rec1: o.rec1, rec2: o.rec2, fix: o.fix })
         .then(function (r) { self.setMe({ name: clean(o.name), pin: clean(o.pin) }); return r; });
     },
 
@@ -565,7 +576,7 @@ window.MK = window.MK || {};
     deleteSubmission: function (id) { return this._call('deleteSubmission', { id: id }, true); },
     resolveHelp: function (id) { return this._call('helpDone', { id: id }, true); },
     setTimer: function (cmd, o) { o = o || {}; return this._call('setTimer', { cmd: cmd, total: o.total, ms: o.ms, label: o.label }, true); },
-    shuffleOrder: function () { return this._call('shuffleOrder', {}, true); },
+    shuffleOrder: function () { return this._call('shuffleOrder', { groups: MK.challenges.map(function (c) { return c.id; }) }, true); },
     seedSamples: function () { return this._call('seedSamples', { samples: MK.sampleResults }, true); },
     clearSamples: function () { return this._call('clearSamples', {}, true); },
     exportAll: function () { return this._call('exportAll', {}, true).then(function (r) { return r.data; }); },

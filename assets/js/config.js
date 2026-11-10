@@ -7,7 +7,7 @@ MK.config = {
   course: '2026 AI·디지털 기반 융합·메이커교육 역량강화 직무연수',
   session: '9~10차시',
   title: '링비트와 AI모델을 활용한 문제해결 작품 제작 및 수업 적용',
-  tagline: '도전과제 하나를 골라 30초 동안 움직이는 작품을 만듭니다',
+  tagline: '카드 한 장의 문제를 풀고, 재고, 고쳐서 우리 반으로 가져갑니다',
   date: '2026. 11. 21.(토) 16:00~17:50',
   place: '중부과학교육센터',
   instructor: '지주선',            // ← 강사 이름을 적어 주세요
@@ -25,6 +25,6 @@ MK.config = {
 
   storageKey: 'mk910-data-v1',
 
-  defaultCapacity: 4,
+  defaultCapacity: 6,                  // 카드마다 기본 정원 (서버를 쓰면 Code.gs의 DEFAULT_CAPACITY가 정함)
   descMax: 300
 };

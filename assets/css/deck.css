@@ -536,3 +536,89 @@ a.code-link:hover { background: var(--c-mid); }
 @media (prefers-reduced-motion: reduce) {
   .show-grid.is-shuffling .show-tile, .show-tile.is-dealt, .heart.is-pop .i { animation: none; }
 }
+
+/* =========================================================
+   도전과제 카드 흐름 (2026-11-10)
+   카드 네 칸 · 기록 메모 · 어디서 틀렸나 · 우리 반 카드 · 발표 기록
+   ========================================================= */
+/* 카드 목록: 5장 + 안내 = 3열 */
+.ch-overview { grid-template-columns: repeat(3, 1fr); }
+.ch-overview .ch-card__img { height: 132px; }
+/* 사진이 없는 카드: 모델 아이콘 */
+.pic-icon { display: grid; place-items: center; background: var(--c-soft, var(--sky)); color: var(--c-deep, var(--navy)); }
+.pic-icon .i { width: 76px; height: 76px; stroke-width: 1.6; }
+.ch-photo.pic-icon .i { width: 120px; height: 120px; }
+/* 카드 상세: 칸 이름 옆 작은 설명, 기록 이름 */
+.ch-sec__k { font-size: 18px; font-weight: 700; color: var(--muted); margin-left: 4px; }
+.ch-measure { display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; padding: 6px 16px 6px 6px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--purple-soft); font-size: 20px; font-weight: 800; color: var(--navy); }
+.ch-measure__k { padding: 2px 12px; border-radius: 999px; background: var(--purple-tab); font-size: 17px; }
+
+/* 오늘의 흐름: 다섯 단계 */
+.steps--5 .step__title { font-size: 28px; }
+.steps--5 .step__text { font-size: 20px; }
+/* 지난 시간 정리: 피드백 칸 강조 */
+.recap-row .t-lg { font-size: 27px; }
+.recap-feedback { border-width: 3px; box-shadow: 0 0 0 4px var(--purple-soft); }
+
+/* 카드 한 장, 네 칸 */
+.card4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.card4__col { display: flex; flex-direction: column; gap: 14px; }
+.card4__box { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 22px 18px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); }
+.card4__n { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; border: var(--stroke) solid var(--navy); background: var(--c-mid); font-size: 30px; font-weight: 800; color: var(--navy); }
+.card4__name { font-size: 38px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.card4__q { font-size: 23px; font-weight: 600; color: var(--ink); line-height: 1.4; min-height: 2.8em; }
+.card4__tag { margin-top: 6px; padding: 5px 16px; border-radius: 999px; background: #fff; border: var(--stroke) solid var(--navy); font-size: 19px; font-weight: 600; color: var(--ink); }
+.card4__tag b { color: var(--c-deep); margin-right: 4px; }
+.card4__ex { flex: 1; padding: 14px 18px; border: 2px dashed var(--c-tab, var(--line)); border-radius: var(--r-md); background: var(--paper); font-size: 21px; line-height: 1.45; color: var(--ink); }
+.card4__ex::before { content: '예시 · 디스펜서 카드'; display: block; margin-bottom: 6px; font-size: 15px; font-weight: 800; color: var(--c-deep); }
+.card4__ex--open { display: flex; flex-direction: column; justify-content: center; color: var(--muted); font-weight: 700; }
+
+/* 1차 기록 메모 */
+.rnote { height: 100%; display: flex; flex-direction: column; gap: 16px; padding: 22px 26px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); }
+.rnote--empty { align-items: center; justify-content: center; background: var(--blue-soft); }
+.rnote__head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.rnote__measure { font-size: 20px; font-weight: 700; color: var(--muted); }
+.rnote__nums { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rnote__num { display: flex; flex-direction: column; gap: 6px; font-size: 20px; font-weight: 800; color: var(--navy); }
+.rnote__num small { font-weight: 600; color: var(--muted); }
+.rnote input { width: 100%; height: 64px; padding: 0 18px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: #fff; font: inherit; font-size: 34px; font-weight: 800; color: var(--navy); }
+.rnote__fix input { height: 56px; font-size: 24px; font-weight: 600; }
+.rnote input:focus { outline: 3px solid var(--blue-tab); outline-offset: 1px; }
+.rnote__lbl { display: block; margin-bottom: 6px; font-size: 20px; font-weight: 800; color: var(--navy); }
+.rnote__where { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.rnote__where .rnote__lbl { grid-column: 1 / -1; margin: 0; }
+.rnote__chip { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 14px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: #fff; font: inherit; font-size: 16px; font-weight: 600; color: var(--muted); text-align: left; cursor: pointer; }
+.rnote__chip b { font-size: 22px; color: var(--navy); }
+.rnote__chip.is-on { background: var(--yellow-mid); color: var(--navy); }
+.rnote__foot { margin-top: auto; display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; color: var(--muted); }
+
+/* 어디서 틀렸나요: 감지 · 판단 · 행동 */
+.fix3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.fix3__col { display: flex; flex-direction: column; gap: 14px; padding: 22px 26px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); }
+.fix3__h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.fix3__n { font-size: 36px; font-weight: 800; color: var(--navy); }
+.fix3__who { font-size: 20px; font-weight: 800; color: var(--c-deep); }
+.fix3__sym { padding: 12px 16px; border-radius: var(--r-md); background: #fff; border: 2px dashed var(--c-tab); font-size: 21px; line-height: 1.45; color: var(--ink); }
+.fix3__sym b { display: block; font-size: 16px; color: var(--c-deep); margin-bottom: 2px; }
+.fix3__do { margin: 0; padding-left: 26px; font-size: 23px; line-height: 1.6; color: var(--navy); font-weight: 600; }
+
+/* 우리 반 카드 양식 */
+.mycard { border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); overflow: hidden; }
+.mycard__h { padding: 14px 24px; background: var(--yellow-mid); border-bottom: var(--stroke) solid var(--navy); font-size: 26px; font-weight: 800; color: var(--navy); }
+.mycard__row { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 10px; min-height: 96px; padding: 10px 22px; border-bottom: 1.5px solid var(--line); border-left: 10px solid var(--c-tab); }
+.mycard__row:last-child { border-bottom: 0; }
+.mycard__row b { font-size: 23px; color: var(--navy); }
+.mycard__row span { font-size: 21px; line-height: 1.4; color: var(--ink); }
+.class-table th, .class-table td { font-size: 21px; padding: 13px 18px; }
+
+/* 발표 슬라이드: 기록 */
+.sv-grid--rec .sv-desc { grid-column: 2; }
+.sv-rec { grid-column: 1; align-self: start; display: flex; flex-direction: column; gap: 6px; padding: 12px 22px 14px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--c-soft); }
+.sv-rec__k { font-size: 17px; font-weight: 800; color: var(--c-deep); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sv-rec__nums { display: flex; align-items: center; gap: 18px; }
+.sv-rec__n { display: inline-flex; align-items: baseline; gap: 8px; font-size: 44px; font-weight: 800; color: var(--muted); line-height: 1.1; }
+.sv-rec__n small { font-size: 18px; font-weight: 800; }
+.sv-rec__n.is-2 { color: var(--navy); }
+.sv-rec__arrow .i { width: 34px; height: 34px; stroke-width: 3; color: var(--c-deep); }
+.sv-rec__fix { font-size: 18px; line-height: 1.4; color: var(--ink); }
+.sv-rec__fix b { color: var(--c-deep); margin-right: 4px; }

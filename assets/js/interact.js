@@ -7,8 +7,9 @@
    - 지금 여기 (오늘의 흐름)
    - 서보 각도 실험 (만들기)
    - 작품 하트 · 발표 순서 뽑기 (작품 발표회)
-   - 수업 아이디어 모으기 (수업으로)
-   도움 요청·같은 타이머·하트·아이디어는 서버(Code.gs)가 새 버전일 때만 켜집니다.
+   - 우리 반 카드 모으기 (수업으로)
+   - 기록 메모 (1차 기록 · 이 노트북에만 저장, 제출 창에 자동으로 채움)
+   도움 요청·같은 타이머·하트·카드 모으기·기록은 서버(Code.gs)가 새 버전일 때만 켜집니다.
    ========================================================= */
 window.MK = window.MK || {};
 
@@ -80,7 +81,7 @@ window.MK = window.MK || {};
      ========================================================= */
   function myChallenge(s) { var e = MK.state.myEnrollment(s); return e ? MK.challengeById(e.challengeId) : null; }
   function applyPersonal(s) {
-    var c = myChallenge(s), cat = c && c.category !== '자유발명' ? c.category : null;
+    var c = myChallenge(s), cat = c && c.category !== '내 카드' ? c.category : null;
     $$('[data-model]').forEach(function (el) {
       var mine = !!cat && el.getAttribute('data-model').split(/\s+/).indexOf(cat) >= 0;
       el.classList.toggle('is-mine', mine);
@@ -90,11 +91,11 @@ window.MK = window.MK || {};
   MK.widgets['my-model'] = function (el, s) {
     var m = me(), c = myChallenge(s);
     if (!m) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-act="identify">' + ic('user') + ' 이름을 등록하면 내 모델이 강조돼요</button>'; return; }
-    if (!c) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-goto="s-overview">' + ic('hand') + ' 도전과제를 신청하면 내 모델이 강조돼요</button>'; return; }
+    if (!c) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-goto="s-overview">' + ic('hand') + ' 카드를 신청하면 내 모델이 강조돼요</button>'; return; }
     var cat = MK.catOf(c);
-    el.innerHTML = '<div class="my-model c-' + cat.color + '"><span class="my-model__k">내 과제</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span>' +
+    el.innerHTML = '<div class="my-model c-' + cat.color + '"><span class="my-model__k">내 카드</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span>' +
       '<span class="my-model__t">' + esc(c.title) + '</span></div>' +
-      (c.category === '자유발명' ? '<div class="my-model__hint">자유발명은 고른 모델의 코드를 여세요</div>' : '');
+      (c.category === '내 카드' ? '<div class="my-model__hint">내가 쓰는 카드는 고른 모델의 코드를 여세요</div>' : '');
   };
 
   /* =========================================================
@@ -102,7 +103,7 @@ window.MK = window.MK || {};
      ========================================================= */
   var CHECK_KEY = MK.config.storageKey + '-check5';
   var STEPS = [
-    { v: '1', t: '1 · AI 연결용 코드' }, { v: '2', t: '2 · 내 장치 이름 연결' }, { v: '3', t: '3 · 클래스 이름 (얼굴인식은 숫자 자리)' },
+    { v: '1', t: '1 · AI 연결용 코드' }, { v: '2', t: '2 · 내 장치 이름 연결' }, { v: '3', t: '3 · 클래스 이름 (모션인식은 예제 코드)' },
     { v: '4', t: '4 · 웹앱에서 ‘시작’' }, { v: '5', t: '5 · 링비트 전원' }, { v: '9', t: '재료·조립 등 다른 것' }, { v: '0', t: '잘 모르겠어요' }
   ];
   function stepText(v) { var x = STEPS.filter(function (s) { return s.v === String(v); })[0]; return x ? x.t.replace(/ \(.*\)$/, '') : '잘 모르겠어요'; }
@@ -408,7 +409,7 @@ window.MK = window.MK || {};
   var dealtAt = 0;
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-shuffle]'); if (!b || !MK.store.isAdmin()) return;
-    MK.ui.confirm({ kicker: '작품 발표회', title: '발표 순서를 뽑을까요?', desc: '모든 작품의 발표 순서를 무작위로 섞습니다. 관리자 › 제출물에서 다시 바꿀 수 있어요.', okText: '순서 뽑기' }).then(function (ok) {
+    MK.ui.confirm({ kicker: '작품 발표회', title: '발표 순서를 뽑을까요?', desc: '같은 카드끼리 모은 뒤, 카드 안에서 발표 순서를 무작위로 섞습니다. 관리자 › 제출물에서 다시 바꿀 수 있어요.', okText: '순서 뽑기' }).then(function (ok) {
       if (!ok) return;
       var grid = $('.show-grid'); if (grid) grid.classList.add('is-shuffling');
       MK.store.shuffleOrder().then(function () { dealtAt = Date.now(); MK.ui.toast('발표 순서를 뽑았어요.'); }, bad)
@@ -424,11 +425,11 @@ window.MK = window.MK || {};
      8. 수업 아이디어 모으기
      ========================================================= */
   MK.widgets['idea-wall'] = function (el, s) {
-    if (!has('ideas')) { el.innerHTML = '<div class="dashed idea-empty">아이디어 모으기는 서버를 새 버전으로 바꾸면 열립니다.</div>'; return; }
+    if (!has('ideas')) { el.innerHTML = '<div class="dashed idea-empty">카드 모으기는 서버를 새 버전으로 바꾸면 열립니다.</div>'; return; }
     var list = (s.ideas || []).slice().sort(function (a, b) { return (b.at || 0) - (a.at || 0); }), m = me(), admin = MK.store.isAdmin();
-    var h = '<div class="idea-bar"><div class="idea-bar__n">' + ic('bulb') + '<span>모인 아이디어 <b>' + list.length + '</b>개</span></div>' +
-      '<button type="button" class="btn" data-idea="new">' + ic('edit') + ' 내 아이디어 쓰기</button></div>';
-    if (!list.length) h += '<div class="dashed idea-empty">아직 아이디어가 없어요. 첫 번째로 적어 보세요!</div>';
+    var h = '<div class="idea-bar"><div class="idea-bar__n">' + ic('bulb') + '<span>모인 카드 <b>' + list.length + '</b>장</span></div>' +
+      '<button type="button" class="btn" data-idea="new">' + ic('edit') + ' 우리 반 카드 쓰기</button></div>';
+    if (!list.length) h += '<div class="dashed idea-empty">아직 카드가 없어요. 첫 번째로 적어 보세요!</div>';
     else h += '<div class="idea-wall">' + list.map(function (x) {
       var c = MK.challengeById(x.challengeId), color = c ? MK.catOf(c).color : 'blue';
       return '<div class="idea c-' + color + '"><p class="idea__text">' + esc(x.text) + '</p><div class="idea__meta">' +
@@ -440,25 +441,74 @@ window.MK = window.MK || {};
   document.addEventListener('click', function (e) {
     if (e.target.closest('[data-idea="new"]')) {
       withMe(function (m) {
-        MK.ui.form({ kicker: '수업 아이디어', title: '우리 반에서 해 볼 아이디어', desc: '오늘 만든 작품을 우리 반 수업에 어떻게 쓸지 한 줄로 적어 주세요. 모두의 화면에 바로 보입니다.',
+        MK.ui.form({ kicker: '우리 반 카드', title: '우리 반 아이들에게 줄 카드', desc: '① 상황(누구의 어떤 불편)과 ③ 성공 기준(어떻게 잴지)을 한두 문장으로 적어 주세요. 모두의 화면에 바로 보입니다.',
           fields: [
             { name: 'grade', label: '학년·교과', small: '없어도 됩니다', placeholder: '예: 4학년 과학', maxlength: 20 },
-            { name: 'text', label: '아이디어', type: 'textarea', maxlength: 80, placeholder: '예: 분류 챌린지로 분리배출 도우미를 만들어 환경 단원과 잇기' }
+            { name: 'text', label: '카드', small: '상황 + 성공 기준', type: 'textarea', maxlength: 80, placeholder: '예: 급식 뒤 섞인 수저를 종류별로 나누는 장치. 1분 동안 바르게 나눈 개수' }
           ],
           submitText: '올리기',
           onSubmit: function (v) {
             return MK.store.postIdea({ name: m.name, pin: m.pin, grade: v.grade, text: v.text })
-              .then(function (r) { MK.ui.toast(r.already ? '이미 올린 아이디어예요.' : '아이디어를 올렸어요!'); });
+              .then(function (r) { MK.ui.toast(r.already ? '이미 올린 카드예요.' : '카드를 올렸어요!'); });
           } });
-      }, '아이디어에 이름이 함께 보여요.');
+      }, '카드에 이름이 함께 보여요.');
       return;
     }
     var d = e.target.closest('[data-idea-del]');
     if (d) {
-      MK.ui.confirm({ title: '이 아이디어를 지울까요?', okText: '지우기', danger: true }).then(function (ok) {
+      MK.ui.confirm({ title: '이 카드를 지울까요?', okText: '지우기', danger: true }).then(function (ok) {
         if (ok) MK.store.deleteIdea(d.getAttribute('data-idea-del'), me()).then(function () { MK.ui.toast('지웠어요.'); }, bad);
       });
     }
+  });
+
+  /* =========================================================
+     9. 기록 메모 — 1차 기록과 고칠 곳을 이 노트북에 적어 두면
+        제출 창의 1차·2차 기록, 고친 것 칸에 자동으로 들어갑니다
+     ========================================================= */
+  var NOTE_KEY = MK.config.storageKey + '-rnote-';
+  var WHERE = [{ k: '감지', t: 'AI가 잘못 알아봄' }, { k: '판단', t: '코드가 잘못 정함' }, { k: '행동', t: '구조·서보가 잘못 움직임' }];
+  function readNote(name) { try { return JSON.parse(localStorage.getItem(NOTE_KEY + name)) || {}; } catch (e) { return {}; } }
+  function writeNote(name, n) { try { localStorage.setItem(NOTE_KEY + name, JSON.stringify(n)); } catch (e) {} }
+  MK.recordNote = {
+    get: function (name) {
+      var n = readNote(name), fix = clean(n.fix);
+      return { rec1: clean(n.rec1), rec2: clean(n.rec2), fix: (n.where ? n.where + (fix ? ' · ' : '') : '') + fix };
+    }
+  };
+  function clean(v) { return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
+
+  MK.widgets['record-note'] = function (el, s) {
+    if (el.contains(document.activeElement) && document.activeElement !== el) return; // 적는 중에는 다시 그리지 않음
+    var m = me(), c = m ? myChallenge(s) : null, key = (m ? m.name : '') + '|' + (c ? c.id : '');
+    if (el._key === key && el.innerHTML) return;
+    el._key = key;
+    if (!m) { el.innerHTML = '<div class="rnote rnote--empty"><button type="button" class="btn" data-act="identify">' + ic('user') + ' 이름 등록하고 기록 적기</button></div>'; return; }
+    var n = readNote(m.name), cat = c ? MK.catOf(c) : null;
+    el.innerHTML = '<div class="rnote' + (cat ? ' c-' + cat.color : '') + '">' +
+      '<div class="rnote__head">' + (c ? '<span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.title) + '</span><span class="rnote__measure">기록: ' + esc(c.measure || '') + '</span>'
+                                       : '<span class="rnote__measure">카드를 신청하면 내 카드의 기록 방법이 여기에 보여요</span>') + '</div>' +
+      '<div class="rnote__nums">' +
+        '<label class="rnote__num"><span>1차 기록</span><input data-rn="rec1" maxlength="12" value="' + esc(n.rec1 || '') + '" placeholder="예: 2"></label>' +
+        '<label class="rnote__num"><span>2차 기록 <small>고친 뒤</small></span><input data-rn="rec2" maxlength="12" value="' + esc(n.rec2 || '') + '" placeholder="예: 4"></label>' +
+      '</div>' +
+      '<div class="rnote__where"><span class="rnote__lbl">어디서 틀렸나요?</span>' + WHERE.map(function (w) {
+        return '<button type="button" class="rnote__chip' + (n.where === w.k ? ' is-on' : '') + '" data-rn-where="' + w.k + '"><b>' + w.k + '</b>' + w.t + '</button>';
+      }).join('') + '</div>' +
+      '<label class="rnote__fix"><span class="rnote__lbl">무엇을 고칠까요?</span><input data-rn="fix" maxlength="50" value="' + esc(n.fix || '') + '" placeholder="예: 다른 사람 손으로도 학습시키기"></label>' +
+      '<div class="rnote__foot">' + ic('lock') + ' 이 노트북에만 저장됩니다. 결과물을 제출할 때 자동으로 채워져요.</div></div>';
+  };
+  document.addEventListener('input', function (e) {
+    var inp = e.target.closest && e.target.closest('[data-rn]'); if (!inp) return;
+    var m = me(); if (!m) return;
+    var n = readNote(m.name); n[inp.getAttribute('data-rn')] = inp.value; writeNote(m.name, n);
+  });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-rn-where]'); if (!b) return;
+    var m = me(); if (!m) return;
+    var n = readNote(m.name), k = b.getAttribute('data-rn-where');
+    n.where = n.where === k ? '' : k; writeNote(m.name, n);
+    $$('[data-rn-where]', b.parentNode).forEach(function (x) { x.classList.toggle('is-on', x.getAttribute('data-rn-where') === n.where); });
   });
 
   /* =========================================================
