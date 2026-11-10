@@ -30,10 +30,9 @@ window.MK = window.MK || {};
   function media(s) {
     var v = MK.showcase.video(s.videoUrl);
     var img = MK.challengeImage(s.challengeId);
-    var bg = img ? ' style="background-image:url(' + img + ')"' : '';
     if (v && v.kind === 'iframe') return '<iframe data-src="' + esc(v.src) + '" title="' + esc(s.title) + ' 작동 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
     if (v && v.kind === 'video') return '<video data-src="' + esc(v.src) + '" controls playsinline></video>';
-    return '<div class="sv-media__fallback"' + bg + '>' +
+    return '<div class="sv-media__fallback" style="background-image:url(' + img + ')">' +
       (v ? '<a class="btn" href="' + esc(v.src) + '" target="_blank" rel="noopener">' + ic('play') + ' 영상 열기</a><div class="sv-media__note">새 창에서 재생됩니다</div>'
          : '<div class="sv-media__note">' + (s.sample ? '샘플 결과물 · 영상이 없습니다' : '영상 주소가 없습니다') + '</div>') + '</div>';
   }
@@ -44,7 +43,7 @@ window.MK = window.MK || {};
     var sec = '4. 작품 발표회';
     var h = '<section class="slide slide--pastel" id="s-show" data-section="' + sec + '" data-title="작품 발표회">' +
       '<div class="show-cover"><span class="divider__part">PART 4</span><h2 class="show-cover__title">작품 발표회</h2>' +
-      '<p class="show-cover__text">' + (N ? N + '개의 작품을 함께 봅니다. 같은 카드끼리 어떻게 다르게 풀었는지 봐 주세요.' : '아직 발표할 작품이 없습니다.') + '</p></div>' +
+      '<p class="show-cover__text">' + (N ? N + '개의 작품을 함께 봅니다. 작품을 누르면 바로 이동합니다.' : '아직 발표할 작품이 없습니다.') + '</p></div>' +
       (N > 1 ? '<button type="button" class="btn btn--sm btn--yellow admin-only show-shuffle" data-shuffle>' + ic('spark') + ' 발표 순서 뽑기</button>' : '');
     if (N) {
       h += '<div class="show-grid">';
@@ -64,12 +63,11 @@ window.MK = window.MK || {};
       var ch = MK.challengeById(s.challengeId) || MK.challenges[0], cat = MK.catOf(ch);
       var mcId = MK.parseMakecode(s.makecodeUrl);
       var long = (s.desc || '').length > 170;
-      var rec = s.rec1 || s.rec2 || s.fix; // 기록이 있으면 설명 왼쪽에 기록 칸
       h += '<section class="slide slide--body c-' + cat.color + '" id="show-' + s.id + '" data-section="' + sec + '" data-title="' + (i + 1) + '. ' + esc(s.title) + '">' +
         '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(ch.category) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
         '<h2 class="sv-head__title">' + esc(s.title) + '</h2><p class="sv-head__who">' + esc(s.name) + ' · ' + esc(ch.title) + '</p></div>' +
         '<div class="sv-heart" data-widget="hearts" data-sub="' + esc(s.id) + '"></div>' +
-        '<div class="sv-grid' + (rec ? ' sv-grid--rec' : '') + '">' +
+        '<div class="sv-grid">' +
           '<div class="window sv-media"><div class="window__bar">작동 영상' + (MK.isHttpUrl(s.videoUrl) ? '<a class="sv-open" href="' + esc(s.videoUrl) + '" target="_blank" rel="noopener">새 창에서 열기 ' + ic('external') + '</a>' : '') + '</div><div class="window__body window__body--flush" style="aspect-ratio:16/9">' + media(s) + '</div></div>' +
           '<div class="window sv-code"><div class="window__bar">MakeCode 블록' +
             (mcId ? '<a class="sv-open" href="' + esc(s.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode에서 열기 ' + ic('external') + '</a>' : '') + '</div>' +
@@ -77,16 +75,13 @@ window.MK = window.MK || {};
               (mcId ? '<button class="sv-code__view" data-mc="' + esc(mcId) + '" data-title="' + esc(s.title) + '" title="눌러서 크게 보기"><span class="sv-code__msg">블록을 불러오는 중…</span></button>'
                     : '<div class="sv-code__view is-empty"><span class="sv-code__msg">' + (s.sample ? '샘플 결과물 · MakeCode 주소가 없습니다' : 'MakeCode 주소가 없습니다') + '</span></div>') +
             '</div></div>' +
-          (rec ? '<div class="sv-rec"><div class="sv-rec__k">기록' + (ch.measure ? ' · ' + esc(ch.measure) : '') + '</div>' +
-            '<div class="sv-rec__nums"><span class="sv-rec__n"><small>1차</small>' + esc(s.rec1 || '-') + '</span><span class="sv-rec__arrow">' + ic('right') + '</span><span class="sv-rec__n is-2"><small>2차</small>' + esc(s.rec2 || '-') + '</span></div>' +
-            (s.fix ? '<div class="sv-rec__fix"><b>고친 것</b> ' + esc(s.fix) + '</div>' : '') + '</div>' : '') +
           '<div class="callout sv-desc"' + (long ? ' style="font-size:19px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +
         '</div></section>';
     });
     return h;
   }
   generate.signature = function (st) {
-    return JSON.stringify(MK.showcase.items(st).map(function (s) { return [s.id, s.title, s.name, s.desc, s.makecodeUrl, s.videoUrl, s.challengeId, s.sample, s.rec1, s.rec2, s.fix]; }));
+    return JSON.stringify(MK.showcase.items(st).map(function (s) { return [s.id, s.title, s.name, s.desc, s.makecodeUrl, s.videoUrl, s.challengeId, s.sample]; }));
   };
   MK.generators.showcase = generate;
 

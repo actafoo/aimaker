@@ -41,7 +41,7 @@ window.MK = window.MK || {};
       if (b.dataset.tab === 'help') b.innerHTML = '도움' + (helpN ? ' <span class="tab-badge">' + helpN + '</span>' : '');
     });
     if (!MK.store.isShared) h += '<div class="admin__notice"><b>데모 모드</b> · 모든 데이터가 <b>이 브라우저에만</b> 저장됩니다. 다른 연수생의 신청·제출은 여기 보이지 않습니다. 연수 전에 온라인 저장소를 연결해야 합니다.</div>';
-    else if (MK.store.loaded && !MK.store.supports('records')) h += '<div class="admin__notice"><b>서버 코드가 예전 버전</b>입니다. 도움 요청·모두 같은 타이머·작품 하트·우리 반 카드·기록 칸이 꺼져 있어요. <b>backend/Code.gs</b>를 Apps Script에 새로 붙여 넣고 <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</div>';
+    else if (MK.store.loaded && !MK.store.supports('help')) h += '<div class="admin__notice"><b>서버 코드가 예전 버전</b>입니다. 도움 요청·모두 같은 타이머·작품 하트·수업 아이디어가 꺼져 있어요. <b>backend/Code.gs</b>를 Apps Script에 새로 붙여 넣고 <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</div>';
 
     if (tab === 'help') {
       var q = (st.help || []).slice().sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
@@ -108,7 +108,6 @@ window.MK = window.MK || {};
         h += '<div class="acard c-' + cat.color + (s.hidden ? ' is-hidden' : '') + '"><div class="acard__top"><span class="cat-dot"></span><div class="acard__title">' + (i + 1) + '. ' + esc(s.title) + (s.sample ? ' <small style="color:var(--muted)">샘플</small>' : '') + '</div>' +
           '<button class="icon-btn" data-up="' + s.id + '" title="앞으로">' + ic('up') + '</button><button class="icon-btn" data-down="' + s.id + '" title="뒤로">' + ic('down') + '</button></div>' +
           '<div class="acard__meta">' + esc(s.name) + ' · ' + esc(c.title || '') + '<br>' + esc(s.desc) + '<br>' +
-            (s.rec1 || s.rec2 ? '기록 1차 ' + esc(s.rec1 || '-') + ' → 2차 ' + esc(s.rec2 || '-') + (s.fix ? ' · ' + esc(s.fix) : '') + '<br>' : '') +
             (s.makecodeUrl ? '<a href="' + esc(s.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode</a> · ' : '') + (s.videoUrl ? '<a href="' + esc(s.videoUrl) + '" target="_blank" rel="noopener">영상</a>' : '') + '</div>' +
           '<div class="acard__row"><label class="switch"><input type="checkbox" data-include="' + s.id + '" ' + (s.include ? 'checked' : '') + '>발표에 넣기</label><label class="switch"><input type="checkbox" data-hide="' + s.id + '" ' + (s.hidden ? 'checked' : '') + '>숨기기</label><span style="flex:1"></span>' +
           '<button class="ubtn ubtn--sm ubtn--ghost" data-edit="' + s.id + '">' + ic('edit') + ' 고치기</button><button class="icon-btn" data-del="' + s.id + '" title="삭제">' + ic('trash') + '</button></div></div>';
@@ -117,7 +116,7 @@ window.MK = window.MK || {};
 
     if (tab === 'show') {
       var items = MK.showcase.items(st);
-      h += '<div class="acard"><div class="acard__title">발표 슬라이드</div><div class="acard__meta">제출물 탭에서 <b>발표에 넣기</b>를 켠 작품이 정한 순서대로 한 장씩 만들어집니다. 지금 ' + items.length + '개. <b>발표 순서 뽑기</b>는 같은 카드끼리 모은 뒤 섞습니다.</div>' +
+      h += '<div class="acard"><div class="acard__title">발표 슬라이드</div><div class="acard__meta">제출물 탭에서 <b>발표에 넣기</b>를 켠 작품이 정한 순서대로 한 장씩 만들어집니다. 지금 ' + items.length + '개.</div>' +
         '<div class="acard__row"><button class="ubtn" data-show-go>' + ic('play') + ' 발표 슬라이드로 이동</button>' +
         (MK.store.supports('shuffle') && items.length > 1 ? '<button class="ubtn ubtn--ghost" data-shuffle>' + ic('spark') + ' 발표 순서 뽑기</button>' : '') + '</div></div>';
       h += '<div class="acard"><div class="acard__title">단일 HTML로 저장</div><div class="acard__meta">발표 슬라이드만 파일 하나로 저장합니다. 현장 인터넷이 불안할 때 대비용입니다(영상 재생은 인터넷 필요). 로컬 서버나 배포 주소에서 열었을 때 동작합니다.</div>' +
@@ -186,8 +185,6 @@ window.MK = window.MK || {};
       fields: [
         { name: 'title', label: '작품 제목', value: s.title, maxlength: 40 },
         { name: 'desc', label: '간단한 설명', type: 'textarea', value: s.desc, maxlength: MK.config.descMax },
-        { pair: [{ name: 'rec1', label: '1차 기록', value: s.rec1 || '', maxlength: 12 }, { name: 'rec2', label: '2차 기록', value: s.rec2 || '', maxlength: 12 }] },
-        { name: 'fix', label: '고친 것', value: s.fix || '', maxlength: 60 },
         { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: s.makecodeUrl },
         { name: 'videoUrl', label: '작동 영상 주소', value: s.videoUrl },
         { name: 'challengeId', label: '도전과제', type: 'select', value: s.challengeId, options: MK.challenges.map(function (c) { return { value: c.id, label: c.title }; }) }
@@ -204,13 +201,13 @@ window.MK = window.MK || {};
   function toCsv(d) {
     var q = function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var subBy = {}; d.submissions.forEach(function (s) { subBy[s.name] = s; });
-    var rows = [['이름', '도전과제', '분류', '신청 시각', '작품 제목', '간단한 설명', '1차 기록', '2차 기록', '고친 것', 'MakeCode', '작동 영상', '발표 포함']];
+    var rows = [['이름', '도전과제', '분류', '신청 시각', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
     var names = {};
     d.enrollments.forEach(function (e) { names[e.name] = e; });
     d.submissions.forEach(function (s) { if (!names[s.name]) names[s.name] = { name: s.name, challengeId: s.challengeId }; });
     Object.keys(names).forEach(function (n) {
       var e = names[n], s = subBy[n] || {}, c = MK.challengeById(s.challengeId || e.challengeId) || {};
-      rows.push([n, c.title, c.category, e.at ? new Date(e.at).toLocaleString('ko-KR') : '', s.title, s.desc, s.rec1, s.rec2, s.fix, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
+      rows.push([n, c.title, c.category, e.at ? new Date(e.at).toLocaleString('ko-KR') : '', s.title, s.desc, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
     });
     return rows.map(function (r) { return r.map(q).join(','); }).join('\r\n');
   }

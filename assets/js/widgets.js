@@ -114,10 +114,7 @@ window.MK = window.MK || {};
     return state.submissions.filter(function (s) { return s.name === m.name; })[0] || null;
   }
   function enrolledIn(state, id) { return state.enrollments.filter(function (e) { return e.challengeId === id; }).sort(function (a, b) { return a.at - b.at; }); }
-  function capOf(state, id) {
-    if (state.settings.capacity[id] != null) return state.settings.capacity[id];
-    return state.defaultCapacity != null ? state.defaultCapacity : MK.config.defaultCapacity; // 서버가 알려 준 기본 정원이 먼저
-  }
+  function capOf(state, id) { return state.settings.capacity[id] != null ? state.settings.capacity[id] : MK.config.defaultCapacity; }
   function isClosed(state, id) { return !state.settings.open || !!state.settings.closed[id]; }
   MK.state = { me: me, myEnrollment: myEnrollment, mySubmission: mySubmission, enrolledIn: enrolledIn, capOf: capOf, isClosed: isClosed };
 
@@ -141,10 +138,10 @@ window.MK = window.MK || {};
       var ch = MK.challengeById(challengeId), st = MK.store.getStateSync(), mine = myEnrollment(st);
       var note = PIN_NOTE;
       if (mine && mine.challengeId !== challengeId) note = '<b>지금 신청한 「' + esc(MK.challengeById(mine.challengeId).title) + '」은 자동으로 취소됩니다.</b><br>' + PIN_NOTE;
-      MK.ui.form({ kicker: ch.category, title: ch.title + ' 신청', desc: '카드는 한 사람이 하나만 신청합니다. 정원 ' + capOf(st, challengeId) + '명.', fields: personFields(me()), note: note, submitText: '이 카드로 신청하기',
+      MK.ui.form({ kicker: ch.category, title: ch.title + ' 신청', desc: '도전과제는 한 사람이 하나만 신청합니다. 정원 ' + capOf(st, challengeId) + '명.', fields: personFields(me()), note: note, submitText: '이 도전 신청하기',
         onSubmit: function (v) {
           return MK.store.apply({ name: v.name, pin: v.pin, challengeId: challengeId }).then(function (r) {
-            MK.ui.toast(r.already ? '이미 신청한 카드입니다.' : '「' + ch.title + '」 카드로 신청했어요. 이제 만들어 보세요!');
+            MK.ui.toast(r.already ? '이미 신청한 도전과제입니다.' : '「' + ch.title + '」에 신청했어요. 이제 만들어 보세요!');
           });
         } });
     },
@@ -156,21 +153,12 @@ window.MK = window.MK || {};
     },
     submit: function () {
       var st = MK.store.getStateSync(), m = me(), mine = myEnrollment(st), sub = mySubmission(st);
-      if (!mine) { MK.ui.toast('먼저 카드를 신청해 주세요.', true); return; }
+      if (!mine) { MK.ui.toast('먼저 도전과제를 신청해 주세요.', true); return; }
       var ch = MK.challengeById(mine.challengeId);
-      var note = (MK.recordNote && m && MK.recordNote.get(m.name)) || {}; // 1차 기록 쪽에 적어 둔 메모
-      var recs = MK.store.supports('records') ? [
-        { pair: [
-          { name: 'rec1', label: '1차 기록', value: sub && sub.rec1 ? sub.rec1 : (note.rec1 || ''), placeholder: '예: 2', maxlength: 12 },
-          { name: 'rec2', label: '2차 기록', small: '고친 뒤', value: sub && sub.rec2 ? sub.rec2 : (note.rec2 || ''), placeholder: '예: 4', maxlength: 12 }
-        ] },
-        { name: 'fix', label: '고친 것', small: '어디서 틀렸고(감지·판단·행동) 무엇을 고쳤나요?', value: sub && sub.fix ? sub.fix : (note.fix || ''), maxlength: 60, placeholder: '예: 감지 · 다른 사람 손으로도 학습시킴' }
-      ] : [];
-      MK.ui.form({ wide: true, kicker: ch.title + (ch.measure ? ' · 기록: ' + ch.measure : ''), title: sub ? '내 결과물 고치기' : '내 결과물 제출', desc: '30초 이내 영상에 작동하는 모습과 기록 재는 장면을 담아 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
+      MK.ui.form({ wide: true, kicker: ch.title, title: sub ? '내 결과물 고치기' : '내 결과물 제출', desc: '30초 이내 영상으로 서로 다른 행동 두 가지 이상을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
         fields: personFields(m).concat([
-          { name: 'title', label: '작품 제목', value: sub ? sub.title : '', placeholder: '예: 딱 하나씩 약 상자', maxlength: 40 },
-          { name: 'desc', label: '간단한 설명', small: '무엇을 알아보면 어떻게 움직이는지 2~3문장', type: 'textarea', value: sub ? sub.desc : '', maxlength: MK.config.descMax, placeholder: '예: 손가락 하나를 보이면 탁구공 하나, 둘을 보이면 둘이 떨어집니다.' }
-        ], recs, [
+          { name: 'title', label: '작품 제목', value: sub ? sub.title : '', placeholder: '예: 손끝으로 지휘하는 작은 무대', maxlength: 40 },
+          { name: 'desc', label: '간단한 설명', small: '무엇을 인식하면 어떻게 움직이는지 2~3문장', type: 'textarea', value: sub ? sub.desc : '', maxlength: MK.config.descMax, placeholder: '예: 주먹을 쥐면 서보가 북을 치고, 손바닥을 펴면 탬버린을 흔듭니다.' },
           { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: sub ? sub.makecodeUrl : '', placeholder: 'https://makecode.microbit.org/_…', help: 'MakeCode 오른쪽 위 <b>공유</b> → 공유 링크 만들기 → 주소 복사' },
           { name: 'videoUrl', label: '작동 영상 주소', value: sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '구글 드라이브 영상은 <b>링크가 있는 모든 사용자</b>로 공유해야 발표 때 재생됩니다.' }
         ]), submitText: sub ? '고친 내용 제출' : '결과물 제출하기',
@@ -201,14 +189,6 @@ window.MK = window.MK || {};
     }).join('');
   }
 
-  /* 카드 사진: 사진이 없으면 모델 아이콘 */
-  function cardPic(c, cls) {
-    var img = MK.challengeImage(c.id);
-    return img ? '<div class="' + cls + '" style="background-image:url(' + img + ')"></div>'
-               : '<div class="' + cls + ' pic-icon">' + ic(MK.catOf(c).icon) + '</div>';
-  }
-  MK.ui.cardPic = cardPic;
-
   /* 도전과제 한눈에 보기 */
   MK.widgets['challenge-overview'] = function (el, st) {
     var mine = myEnrollment(st);
@@ -217,15 +197,15 @@ window.MK = window.MK || {};
       var cat = MK.catOf(c), n = enrolledIn(st, c.id).length, cap = capOf(st, c.id), left = cap - n;
       var closed = isClosed(st, c.id);
       h += '<button class="ch-card c-' + cat.color + (mine && mine.challengeId === c.id ? ' is-mine' : '') + '" data-goto="ch-' + c.id + '">' +
-        cardPic(c, 'ch-card__img') +
+        '<div class="ch-card__img" style="background-image:url(' + MK.challengeImage(c.id) + ')"></div>' +
         (mine && mine.challengeId === c.id ? '<span class="tag tag--solid c-yellow ch-card__mine">내 신청</span>' : '') +
         '<div class="ch-card__body"><div class="ch-card__cat">' + ic(cat.icon) + ' ' + esc(c.category) + ' · ' + (i + 1) + '</div>' +
         '<div class="ch-card__title">' + esc(c.title) + '</div>' +
         '<div class="ch-card__seats">' + seatDots(n, cap) + (closed ? '<span class="full">마감</span>' : left > 0 ? '<span class="left">' + left + '자리 남음</span>' : '<span class="full">정원 마감</span>') + '</div></div></button>';
     });
     h += '<div class="dashed" style="display:flex;flex-direction:column;justify-content:center;gap:12px;padding:22px 26px">' +
-      '<div class="t-lg" style="font-size:24px">카드를 누르면<br>네 칸을 자세히 볼 수 있습니다.</div>' +
-      '<div class="t-sm t-muted" style="font-size:20px;line-height:1.45">7~8차시에 고른 카드로 신청하세요.<br>직접 쓴 카드는 <b>내가 쓰는 카드</b>로.<br>신청은 1인당 하나이고, 다른 카드를<br>신청하면 기존 신청은 취소됩니다.</div></div>';
+      '<div class="t-lg" style="font-size:24px">카드를 누르면<br>자세한 설명을 볼 수 있습니다.</div>' +
+      '<div class="t-sm t-muted" style="font-size:20px;line-height:1.45">신청은 1인당 하나만 가능합니다.<br>다른 항목을 신청하면<br>기존 신청은 자동으로 취소됩니다.</div></div>';
     el.innerHTML = h + '</div>';
   };
 
@@ -244,7 +224,7 @@ window.MK = window.MK || {};
       '<div class="apply__count">' + n + '<small> / ' + cap + '명</small></div>' + seatDots(n, cap).replace('class="seats"', 'class="seats seats--lg"') +
       '<div class="apply__names">' + (n ? nameChips(list) : '<span class="apply__empty">아직 신청한 사람이 없어요.<br>첫 번째 도전자가 되어 보세요.</span>') + '</div>' +
       (isMine ? '' : mine ? '<div class="apply__state">지금 신청: ' + esc(MK.challengeById(mine.challengeId).title) + '</div>' : '') +
-      btn + '<button class="apply__back" data-goto="s-overview">' + ic('left') + ' 다른 카드 보기</button></div>';
+      btn + '<button class="apply__back" data-goto="s-overview">' + ic('left') + ' 다른 도전과제 보기</button></div>';
   };
 
   /* 신청 현황판 */
@@ -275,14 +255,12 @@ window.MK = window.MK || {};
     };
     var h = '<div class="window fill"><div class="window__bar">내 결과물' + (sub ? ' · 제출 완료' : '') + '</div><div class="window__body" style="display:flex;flex-direction:column;gap:22px">';
     if (!m) {
-      h += '<div class="t-lg">먼저 이름을 등록하고 카드를 신청해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 이름 등록</button><button class="btn btn--ghost" data-goto="s-overview">카드 보러 가기</button></div>';
+      h += '<div class="t-lg">먼저 이름을 등록하고 도전과제를 신청해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 이름 등록</button><button class="btn btn--ghost" data-goto="s-overview">도전과제 보러 가기</button></div>';
     } else if (!mine) {
-      h += '<div class="t-lg">' + esc(m.name) + ' 선생님, 아직 신청한 카드가 없어요.</div><div class="row"><button class="btn" data-goto="s-overview">카드 고르러 가기</button></div>';
+      h += '<div class="t-lg">' + esc(m.name) + ' 선생님, 아직 신청한 도전과제가 없어요.</div><div class="row"><button class="btn" data-goto="s-overview">도전과제 고르러 가기</button></div>';
     } else {
       var ch = MK.challengeById(mine.challengeId);
-      var rec = sub && (sub.rec1 || sub.rec2) ? '1차 ' + (sub.rec1 || '-') + ' → 2차 ' + (sub.rec2 || '-') + (sub.fix ? ' · ' + sub.fix : '') : '';
-      h += '<dl class="mine" style="margin:0">' + rows('이름', m.name) + rows('카드', ch.title) + rows('작품 제목', sub && sub.title) + rows('간단한 설명', sub && sub.desc) +
-        (MK.store.supports('records') ? rows('기록', rec) : '') + rows('MakeCode', sub && sub.makecodeUrl, true) + rows('작동 영상', sub && sub.videoUrl, true) + '</dl>' +
+      h += '<dl class="mine" style="margin:0">' + rows('이름', m.name) + rows('도전과제', ch.title) + rows('작품 제목', sub && sub.title) + rows('간단한 설명', sub && sub.desc) + rows('MakeCode', sub && sub.makecodeUrl, true) + rows('작동 영상', sub && sub.videoUrl, true) + '</dl>' +
         '<div class="row" style="margin-top:auto"><button class="btn ' + (sub ? 'btn--ghost' : 'btn--green') + '" data-act="submit">' + ic(sub ? 'edit' : 'send') + (sub ? ' 고치기' : ' 결과물 제출하기') + '</button></div>';
     }
     el.innerHTML = h + '</div></div>';
@@ -441,27 +419,24 @@ window.MK = window.MK || {};
   });
 
   /* =========================================================
-     동적 슬라이드: 카드 상세 (카드마다 한 장)
-     ① 상황 ② 조건 ③ 성공 기준 ④ 해결 — challenges.js 맨 위 설명 참고
+     동적 슬라이드: 도전과제 상세 7장
      ========================================================= */
   MK.generators.challenges = function () {
     return MK.challenges.map(function (c, i) {
       var cat = MK.catOf(c), guide = MK.guideUrl(c.ref);
-      return '<section class="slide slide--body c-' + cat.color + '" id="ch-' + c.id + '" data-section="1. 카드 확인" data-title="카드 ' + (i + 1) + ' · ' + esc(c.title) + '">' +
-        '<div class="ch-head"><div class="ch-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span><span class="tag">카드 ' + (i + 1) + ' / ' + MK.challenges.length + '</span>' +
-        '<button class="btn btn--ghost btn--sm ch-back" data-goto="s-overview">' + ic('left') + ' 카드 목록</button></div>' +
+      return '<section class="slide slide--body c-' + cat.color + '" id="ch-' + c.id + '" data-section="1. 도전과제 고르기" data-title="도전과제 ' + (i + 1) + ' · ' + esc(c.title) + '">' +
+        '<div class="ch-head"><div class="ch-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span><span class="tag">도전과제 ' + (i + 1) + ' / ' + MK.challenges.length + '</span>' +
+        '<button class="btn btn--ghost btn--sm ch-back" data-goto="s-overview">' + ic('left') + ' 도전과제 목록</button></div>' +
         '<h2 class="ch-head__title" data-field="ch:' + c.id + ':title">' + esc(c.title) + '</h2><p class="ch-head__q" data-field="ch:' + c.id + ':question">' + esc(c.question) + '</p></div>' +
         '<div class="ch-grid">' +
           '<div class="col">' +
-            '<div>' + cardPic(c, 'ch-photo') + '<div class="ch-photo-note">참고 이미지</div></div>' +
-            '<div class="ch-sec ch-materials"><div class="ch-sec__h"><span class="ico c-green">' + ic('gear') + '</span>② 조건</div><p data-field="ch:' + c.id + ':materials">' + esc(c.materials) + '</p></div>' +
+            '<div><div class="ch-photo" style="background-image:url(' + MK.challengeImage(c.id) + ')"></div><div class="ch-photo-note">참고 이미지</div></div>' +
+            '<div class="ch-sec ch-materials"><div class="ch-sec__h"><span class="ico c-green">' + ic('gear') + '</span>준비물</div><p data-field="ch:' + c.id + ':materials">' + esc(c.materials) + '</p></div>' +
           '</div>' +
           '<div class="col" style="gap:22px">' +
-            '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-blue">' + ic('doc') + '</span>① 상황 <small class="ch-sec__k">누구의, 어떤 불편?</small></div><p data-field="ch:' + c.id + ':problem">' + esc(c.problem) + '</p></div>' +
-            '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-purple">' + ic('flag') + '</span>③ 성공 기준 <small class="ch-sec__k">짝이 심판</small></div><p data-field="ch:' + c.id + ':success">' + esc(c.success) + '</p>' +
-              (c.measure ? '<div class="ch-measure"><span class="ch-measure__k">기록</span><span data-field="ch:' + c.id + ':measure">' + esc(c.measure) + '</span></div>' : '') + '</div>' +
-            '<div class="callout ch-hint"><div class="ch-hint__h"><span class="ico c-yellow">' + ic('bulb') + '</span>④ 해결은 자유' + (c.start ? ' · 막히면 이렇게 시작' : '') + '</div>' +
-              (c.start ? '<div class="ch-hint__body" data-field="ch:' + c.id + ':start">' + c.start + '</div>' : '<div class="ch-hint__body">같은 카드여도 모두 다른 장치가 나와야 합니다.</div>') + '</div>' +
+            '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-blue">' + ic('doc') + '</span>문제 상황</div><p data-field="ch:' + c.id + ':problem">' + esc(c.problem) + '</p></div>' +
+            '<div class="ch-sec"><div class="ch-sec__h"><span class="ico c-purple">' + ic('flag') + '</span>성공 기준</div><p data-field="ch:' + c.id + ':success">' + esc(c.success) + '</p></div>' +
+            (c.start ? '<div class="callout ch-hint"><div class="ch-hint__h"><span class="ico c-yellow">' + ic('bulb') + '</span>이렇게 시작해 보세요</div><div class="ch-hint__body" data-field="ch:' + c.id + ':start">' + c.start + '</div></div>' : '') +
           '</div>' +
           '<div class="col">' +
             '<div data-widget="apply-panel" data-challenge="' + c.id + '"></div>' +

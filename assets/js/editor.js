@@ -277,7 +277,7 @@ window.MK = window.MK || {};
       var i = text.indexOf("id: '" + c.id + "'"); if (i < 0) return;
       var j = text.indexOf('\n  }', i); if (j < 0) return;
       var block = text.slice(i, j);
-      ['title', 'question', 'problem', 'materials', 'success', 'measure', 'start'].forEach(function (k) {
+      ['title', 'question', 'problem', 'materials', 'success', 'start'].forEach(function (k) {
         block = block.replace(new RegExp('(\\b' + k + ':\\s*)' + STR), function (m, pre) { return pre + jsStr(c[k] || ''); });
       });
       text = text.slice(0, i) + block + text.slice(j);
