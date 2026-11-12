@@ -981,3 +981,94 @@ a.code-link:hover { background: var(--c-mid); }
 #s-bt .warn, #s-bt .code-link { margin-top: 32px; }
 #s-wrap .motto { margin-top: 56px; padding: 24px 34px; }
 #s-swap .callout { margin-top: 56px; }
+
+/* =========================================================
+   9~10차시: 내 도전과제 = 7~8차시 아이디어 카드 (cards.js)
+   ========================================================= */
+/* 아이디어 카드 다듬기 */
+.cc-list li { cursor: pointer; user-select: none; transition: background-color .15s; }
+.cc-list li:hover { background: var(--sky); }
+.cc-list li.is-done { background: var(--green-soft); }
+.cc-list li.is-done .box { background: var(--green-tab); }
+.cc-list li.is-done .box::after { content: ''; width: 14px; height: 8px; border-left: 3.5px solid var(--navy); border-bottom: 3.5px solid var(--navy); transform: translateY(-2px) rotate(-45deg); }
+.cc-frame { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 24px 28px; }
+.cc-frame__s { margin: 0; font-size: 26px; font-weight: 700; color: var(--navy); line-height: 1.9; letter-spacing: -0.02em; }
+.cc-b { display: inline-block; padding: 0 10px; margin: 0 2px; border: 2px dashed var(--navy); border-radius: 10px; background: var(--c-soft); color: var(--c-deep); font-weight: 800; line-height: 1.45; }
+.cc-stuck { padding: 20px 24px; }
+
+/* 내 도전과제 등록 */
+.mc { display: grid; grid-template-columns: 1fr 460px; gap: 34px; height: 100%; }
+.mc-card { display: flex; flex-direction: column; gap: 16px; padding: 24px 32px; border: 3px solid var(--navy); border-radius: var(--r-lg); background: var(--paper); box-shadow: 6px 6px 0 var(--blue-mid); min-width: 0; }
+.mc-k { display: inline-block; font-size: 19px; font-weight: 800; color: var(--blue); letter-spacing: -0.01em; }
+.mc input { font-family: var(--font); color: var(--navy); outline: none; }
+.mc input::placeholder { color: #9AA6C4; font-weight: 600; }
+.mc-title { display: flex; flex-direction: column; gap: 4px; }
+.mc-title__in { width: 100%; height: 56px; padding: 0 4px; border: 0; border-bottom: 2.5px dashed #9AA6C4; background: transparent; font-size: 34px; font-weight: 800; letter-spacing: -0.02em; }
+.mc-title__in:focus, .mc-servo input:focus, .mc-team input:focus { border-bottom-color: var(--blue); }
+.mc-sec { display: flex; flex-direction: column; gap: 6px; }
+.mc-row { flex-direction: row; align-items: center; gap: 16px; flex-wrap: wrap; }
+.mc-frame { margin: 0; font-size: 26px; font-weight: 700; color: var(--navy); line-height: 2.05; letter-spacing: -0.02em; }
+.mc-blank { display: inline-block; height: 46px; min-width: 90px; max-width: 520px; margin: 0 3px; padding: 0 12px; border: 2px dashed var(--navy); border-radius: 10px; background: var(--c-soft); color: var(--c-deep) !important; font-size: 25px; font-weight: 800; text-align: center; vertical-align: 2px; }
+.mc-blank:focus { border-style: solid; box-shadow: 0 0 0 4px var(--c-mid); }
+.mc-josa { color: var(--navy); }
+.mc-models { display: flex; gap: 12px; flex-wrap: wrap; }
+.mc-model { height: 48px; padding: 0 20px; font-size: 22px; cursor: pointer; }
+.mc-model .i { font-size: 22px; }
+.mc-model.is-on { box-shadow: 0 0 0 4px var(--yellow-tab); }
+.mc-servo { display: flex; align-items: center; gap: 12px; font-size: 22px; color: var(--navy); }
+.mc-servo .pin { min-width: 56px; height: 38px; font-size: 20px; border-radius: 10px; }
+.mc-servo b { flex: none; width: 70px; font-weight: 800; }
+.mc-servo input, .mc-team input { flex: 1; min-width: 0; height: 44px; padding: 0 4px; border: 0; border-bottom: 2px dashed #9AA6C4; background: transparent; font-size: 23px; font-weight: 700; }
+.mc-team input { font-size: 21px; }
+.mc-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.mc-st { display: flex; gap: 14px; align-items: flex-start; padding: 16px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--sky); font-size: 21px; color: var(--navy); line-height: 1.45; }
+.mc-st > .i { flex: none; font-size: 28px; margin-top: 2px; }
+.mc-st--ok { background: var(--green-soft); }
+.mc-st--warn { background: var(--yellow-soft); }
+.mc-save { width: 100%; height: 64px; font-size: 26px; }
+.mc-preview { flex: 1; min-height: 0; padding: 16px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--yellow-soft); overflow: hidden; }
+.mc-preview p { margin: 6px 0 0; font-size: 22px; font-weight: 700; color: var(--navy); line-height: 1.55; }
+.mc-from { font-size: 18px; color: var(--navy); line-height: 1.45; }
+.mc-from:empty { display: none; }
+.mc-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.linkish { padding: 0; border: 0; background: none; font: 800 1em var(--font); color: var(--blue); text-decoration: underline; cursor: pointer; }
+.mc-measure { position: absolute; left: -9999px; top: -9999px; white-space: pre; visibility: hidden; }
+
+/* 우리 반 도전과제 보드 */
+.cb { display: flex; flex-direction: column; gap: 16px; height: 100%; }
+.cb-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cb-f { cursor: pointer; }
+.cb-f b { margin-left: 2px; }
+.cb-bar__sp { flex: 1; }
+.cb-bar__n { display: inline-flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 800; color: var(--muted); }
+.cb-grid { flex: 1; min-height: 0; overflow: auto; display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: min-content; gap: 16px; padding: 4px 8px 8px 4px; }
+.cb-tile { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 168px; padding: 14px 16px; border: var(--stroke) solid var(--navy); border-radius: 18px; background: var(--paper); text-align: left; font: inherit; color: inherit; cursor: pointer; transition: transform .12s, box-shadow .12s; border-top: 8px solid var(--c-tab); }
+.cb-tile:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11, 26, 78, .10); }
+.cb-tile.is-mine { outline: 4px solid var(--yellow-tab); outline-offset: 3px; }
+.cb-tile.is-hidden { opacity: .45; }
+.cb-tile__top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cb-tile__top .tag { height: 30px; padding: 0 10px; font-size: 15px; }
+.cb-tile__ok { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green-tab); border: 2px solid var(--navy); font-size: 16px; }
+.cb-tile__me { padding: 2px 10px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 14px; font-weight: 800; }
+.cb-tile__t { font-size: 22px; font-weight: 800; color: var(--navy); line-height: 1.3; letter-spacing: -0.02em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cb-tile__s { font-size: 16px; font-weight: 600; color: var(--c-deep); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cb-tile__who { margin-top: auto; font-size: 16px; font-weight: 700; color: var(--muted); }
+.cb-empty { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 36px 40px; }
+
+/* 수업 아이디어 갤러리 */
+.ig-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.ig-bar .tag { cursor: pointer; }
+.ig-grid .ch-card.is-dim { opacity: .35; }
+.ig-q { font-size: 16px; font-weight: 600; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ig-note { display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 22px 26px; }
+
+/* 시작 전 코드: 7~8차시 기본 코드 캡처 */
+.sc-shot { align-self: center; line-height: 0; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; }
+.sc-shot img { display: block; width: auto; max-width: 100%; height: 330px; }
+.mcb-legend .fixbox__sw { display: inline-block; vertical-align: -3px; margin-right: 8px; }
+
+/* 제출 현황: 카드 */
+.board__names--cards .name-chip small { margin-left: 6px; font-size: 15px; font-weight: 600; color: var(--muted); }
+
+/* 발표 슬라이드: 아이디어 카드 문장 */
+.sv-head__card { margin: 6px 0 0; font-size: 20px; font-weight: 600; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

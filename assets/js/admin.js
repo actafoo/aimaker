@@ -8,7 +8,7 @@ window.MK = window.MK || {};
   var esc = function (s) { return MK.esc(s); };
   var ic = function (n, c) { return MK.icon(n, c); };
   function $(s, r) { return (r || document).querySelector(s); }
-  var tab = 'cap', panel;
+  var tab = 'cards', panel;
 
   function ok(msg) { return function () { if (msg) MK.ui.toast(msg); }; }
   function bad(err) { MK.ui.toast(err.message, true); }
@@ -19,7 +19,7 @@ window.MK = window.MK || {};
       '<aside class="admin ui" id="admin" aria-label="관리자">' +
         '<div class="admin__head">' + ic('lock') + '<b>관리자</b><button class="icon-btn" id="admin-out" title="관리자 나가기">' + ic('power') + '</button><button class="icon-btn" id="admin-close" aria-label="닫기">' + ic('x') + '</button></div>' +
         '<div class="admin__tabs" role="tablist">' +
-          '<button data-tab="edit">교안 편집</button><button data-tab="review">편집·메모</button><button data-tab="cap">정원·마감</button><button data-tab="roster">신청 명단</button><button data-tab="help">도움</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
+          '<button data-tab="edit">교안 편집</button><button data-tab="review">편집·메모</button><button data-tab="cards">도전과제</button><button data-tab="help">도움</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
         '</div><div class="admin__body" id="admin-body"></div></aside>');
     panel = $('#admin');
     $('#admin-close').onclick = function () { MK.admin.close(); };
@@ -56,12 +56,13 @@ window.MK = window.MK || {};
       h += '<p class="small">연수생이 「안 될 때 다섯 가지 확인」 쪽에서 보낸 요청입니다. 도와준 뒤 <b>처리</b>를 누르면 줄에서 빠집니다. 연수생이 스스로 「해결됐어요」를 눌러도 빠집니다.</p>';
       if (!q.length) h += '<div class="acard"><div class="acard__meta">지금 대기 중인 도움 요청이 없습니다.</div></div>';
       q.forEach(function (x, i) {
-        var c = MK.challengeById(x.challengeId), cat = c ? MK.catOf(c) : null;
+        var card = MK.state.cardOf ? MK.state.cardOf(st, x.name) : null;
+        var c = card ? { title: card.title } : MK.challengeById(x.challengeId), cat = card ? MK.categories[card.model] : c ? MK.catOf(c) : null;
         var mins = Math.max(0, Math.round((MK.store.now() - (x.at || 0)) / 60000));
         var step = x.step === '9' ? '재료·조립 등 다른 것' : x.step && x.step !== '0' ? x.step + '번에서 막힘' : '어디서 막혔는지 모름';
         h += '<div class="acard' + (cat ? ' c-' + cat.color : '') + '"><div class="acard__top">' + (cat ? '<span class="cat-dot"></span>' : '') + '<div class="acard__title">' + (i + 1) + '. ' + esc(x.name) +
           ' <small style="color:var(--muted);font-weight:600">· ' + (mins ? mins + '분 전' : '방금') + '</small></div><button class="ubtn ubtn--sm ubtn--green" data-help-resolve="' + esc(x.id) + '">' + ic('check') + ' 처리</button></div>' +
-          '<div class="acard__meta">' + esc(c ? c.title : '신청 전') + '<br><b>' + esc(step) + '</b>' + (x.checked ? ' · 확인한 것 ' + esc(x.checked.split(',').join('·')) + '번' : '') + (x.note ? '<br>“' + esc(x.note) + '”' : '') + '</div></div>';
+          '<div class="acard__meta">' + esc(c ? c.title : '도전과제 등록 전') + '<br><b>' + esc(step) + '</b>' + (x.checked ? ' · 확인한 것 ' + esc(x.checked.split(',').join('·')) + '번' : '') + (x.note ? '<br>“' + esc(x.note) + '”' : '') + '</div></div>';
       });
     }
 
@@ -86,6 +87,28 @@ window.MK = window.MK || {};
         '<br>저장 전 원래 파일은 <b>site/_backup</b> 폴더에 남깁니다.</div>' +
         (E.canWriteFolder ? '<div class="acard__row"><button class="ubtn ubtn--sm ubtn--ghost" data-ed-pick>다른 폴더로 저장</button></div>' : '') + '</div>';
       h += '<div class="acard"><div class="acard__title">여기서 못 바꾸는 것</div><div class="acard__meta">그림, 배치, 색, 슬라이드 추가·삭제·순서는 파일에서 고칩니다(README 참고). 편집 중에는 다른 편집기로 같은 파일을 고치지 마세요.</div></div>';
+    }
+
+    if (tab === 'cards') {
+      var cards = (st.cards || []).slice().sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
+      var subBy = {}; st.submissions.forEach(function (x) { subBy[x.name] = x; });
+      if (MK.store.isShared && MK.store.loaded && !MK.store.supports('cards')) h += '<div class="admin__notice"><b>서버 코드가 예전 버전</b>이라 내 도전과제(아이디어 카드) 등록이 꺼져 있어요. <b>backend/Code.gs</b>를 새로 붙여 넣고 <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</div>';
+      h += '<p class="small">연수생이 「내 도전과제 등록」에서 올린 아이디어 카드 ' + cards.length + '장 · 제출 ' + cards.filter(function (c) { return subBy[c.name]; }).length + '명. 숨긴 카드는 연수생 보드에 보이지 않습니다.</p>';
+      (MK.cardModels || []).forEach(function (k) {
+        var cat = MK.categories[k], list = cards.filter(function (c) { return c.model === k; });
+        h += '<h4 class="c-' + cat.color + '" style="display:flex;align-items:center;gap:8px"><span class="cat-dot"></span>' + esc(k) + ' · ' + list.length + '장</h4>';
+        if (!list.length) h += '<p class="small">아직 없습니다.</p>';
+        list.forEach(function (c) {
+          h += '<div class="acard c-' + cat.color + (c.hidden ? ' is-hidden' : '') + '"><div class="acard__top"><div class="acard__title">' + esc(c.title) + ' <small style="color:var(--muted);font-weight:600">· ' + esc(c.name) + (c.sample ? ' · 샘플' : '') + '</small></div>' +
+            (subBy[c.name] ? '<span class="tab-badge" style="background:var(--green-deep)">제출</span>' : '') + '</div>' +
+            '<div class="acard__meta">' + esc(MK.cardSentence ? MK.cardSentence(c) : '') + (c.servo1 || c.servo2 ? '<br>서보 1: ' + esc(c.servo1 || '-') + ' · 서보 2: ' + esc(c.servo2 || '-') : '') + (c.team ? '<br>함께: ' + esc(c.team) : '') + '</div>' +
+            '<div class="acard__row"><label class="switch"><input type="checkbox" data-card-hide="' + esc(c.id) + '" ' + (c.hidden ? 'checked' : '') + '>숨기기</label><span style="flex:1"></span>' +
+            '<button class="icon-btn" data-card-del="' + esc(c.id) + '" title="지우기">' + ic('trash') + '</button></div></div>';
+        });
+      });
+      var other = cards.filter(function (c) { return (MK.cardModels || []).indexOf(c.model) < 0; });
+      if (other.length) h += '<h4>모델 미정 · ' + other.length + '장</h4>' + other.map(function (c) { return '<div class="acard"><div class="acard__title">' + esc(c.title) + ' · ' + esc(c.name) + '</div></div>'; }).join('');
+      if (st.enrollments.length) h += '<p class="small" style="margin-top:16px">예전 방식(도전과제 신청) 기록 ' + st.enrollments.length + '건이 있습니다. 데이터 탭에서 내보내거나 초기화할 수 있어요.</p>';
     }
 
     if (tab === 'cap') {
@@ -120,7 +143,8 @@ window.MK = window.MK || {};
       h += '<p class="small">제출 ' + subs.length + '개 · 발표에 넣은 것 ' + MK.showcase.items(st).length + '개. 순서는 발표 순서입니다.</p>';
       if (!subs.length) h += '<div class="acard"><div class="acard__meta">아직 제출물이 없습니다. 테스트하려면 데이터 탭의 <b>샘플 넣기</b>를 누르세요.</div></div>';
       subs.forEach(function (s, i) {
-        var c = MK.challengeById(s.challengeId) || {}, cat = MK.catOf(c);
+        var inf = MK.showcase && MK.showcase.infoOf ? MK.showcase.infoOf(s, st) : null;
+        var c = inf ? { title: inf.label } : (MK.challengeById(s.challengeId) || {}), cat = inf ? inf.cat : MK.catOf(c);
         h += '<div class="acard c-' + cat.color + (s.hidden ? ' is-hidden' : '') + '"><div class="acard__top"><span class="cat-dot"></span><div class="acard__title">' + (i + 1) + '. ' + esc(s.title) + (s.sample ? ' <small style="color:var(--muted)">샘플</small>' : '') + '</div>' +
           '<button class="icon-btn" data-up="' + s.id + '" title="앞으로">' + ic('up') + '</button><button class="icon-btn" data-down="' + s.id + '" title="뒤로">' + ic('down') + '</button></div>' +
           '<div class="acard__meta">' + esc(s.name) + ' · ' + esc(c.title || '') + '<br>' + esc(s.desc) + '<br>' +
@@ -148,8 +172,8 @@ window.MK = window.MK || {};
     if (tab === 'data') {
       h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">신청·제출 기록을 파일로 저장합니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
       h += '<div class="acard"><div class="acard__title">가져오기</div><div class="acard__meta">이 교안에서 내보낸 JSON을 불러옵니다. 지금 데이터는 덮어씁니다.</div><div class="acard__row"><input type="file" accept="application/json,.json" data-import style="font-size:13px"></div></div>';
-      h += '<div class="acard"><div class="acard__title">샘플 결과물</div><div class="acard__meta">목업의 샘플 6개를 넣어 발표 슬라이드를 미리 봅니다. "샘플" 표시가 붙습니다.</div><div class="acard__row"><button class="ubtn ubtn--sm" data-seed>샘플 넣기</button><button class="ubtn ubtn--sm ubtn--ghost" data-unseed>샘플 지우기</button></div></div>';
-      h += '<div class="acard"><div class="acard__title">전체 초기화</div><div class="acard__meta">신청·제출·정원 설정, 도움 요청·하트·수업 아이디어·타이머를 모두 지웁니다. 되돌릴 수 없으니 먼저 내보내기를 하세요.</div><div class="acard__row"><button class="ubtn ubtn--sm ubtn--danger" data-reset>' + ic('trash') + ' 초기화</button></div></div>';
+      h += '<div class="acard"><div class="acard__title">샘플 결과물</div><div class="acard__meta">샘플 아이디어 카드와 결과물 6개를 넣어 보드와 발표 슬라이드를 미리 봅니다. "샘플" 표시가 붙습니다.</div><div class="acard__row"><button class="ubtn ubtn--sm" data-seed>샘플 넣기</button><button class="ubtn ubtn--sm ubtn--ghost" data-unseed>샘플 지우기</button></div></div>';
+      h += '<div class="acard"><div class="acard__title">전체 초기화</div><div class="acard__meta">내 도전과제(카드)·제출·신청 기록, 도움 요청·하트·수업 아이디어·타이머를 모두 지웁니다. 되돌릴 수 없으니 먼저 내보내기를 하세요.</div><div class="acard__row"><button class="ubtn ubtn--sm ubtn--danger" data-reset>' + ic('trash') + ' 초기화</button></div></div>';
     }
     $('#admin-body').innerHTML = h;
   }
@@ -160,6 +184,7 @@ window.MK = window.MK || {};
     var d = t.dataset, st = MK.store.getStateSync();
     if (d.cap) { var cur = MK.state.capOf(st, d.cap); MK.store.setCapacity(d.cap, cur + parseInt(d.d, 10)).catch(bad); }
     else if (d.remove) MK.store.removeEnrollment(d.remove).then(ok('명단에서 뺐어요.'), bad);
+    else if (d.cardDel) MK.ui.confirm({ title: '이 도전과제를 지울까요?', desc: '되돌릴 수 없습니다. 제출한 결과물은 남습니다.', okText: '지우기', danger: true }).then(function (y) { if (y) MK.store.deleteCard(d.cardDel).then(ok('지웠어요.'), bad); });
     else if (d.helpResolve) { t.disabled = true; MK.store.resolveHelp(d.helpResolve).then(ok('처리했어요.'), bad); }
     else if (t.hasAttribute('data-add')) MK.store.addEnrollment($('#add-name').value, $('#add-ch').value).then(ok('추가했어요.'), bad);
     else if (d.up) MK.store.moveSubmission(d.up, -1).catch(bad);
@@ -189,6 +214,7 @@ window.MK = window.MK || {};
     else if (d.move) MK.store.moveEnrollment(d.move, t.value).then(ok('옮겼어요.'), bad);
     else if (d.include) MK.store.updateSubmission(d.include, { include: t.checked }).catch(bad);
     else if (d.hide) MK.store.updateSubmission(d.hide, { hidden: t.checked }).catch(bad);
+    else if (d.cardHide) MK.store.hideCard(d.cardHide, t.checked).catch(bad);
     else if ('import' in d && t.files[0]) {
       var fr = new FileReader();
       fr.onload = function () { var data; try { data = JSON.parse(fr.result); } catch (err) { return MK.ui.toast('JSON 파일을 읽을 수 없습니다.', true); } MK.store.importAll(data).then(ok('불러왔어요.'), bad); };
@@ -203,9 +229,8 @@ window.MK = window.MK || {};
         { name: 'title', label: '작품 제목', value: s.title, maxlength: 40 },
         { name: 'desc', label: '간단한 설명', type: 'textarea', value: s.desc, maxlength: MK.config.descMax },
         { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: s.makecodeUrl },
-        { name: 'videoUrl', label: '작동 영상 주소', value: s.videoUrl },
-        { name: 'challengeId', label: '도전과제', type: 'select', value: s.challengeId, options: MK.challenges.map(function (c) { return { value: c.id, label: c.title }; }) }
-      ],
+        { name: 'videoUrl', label: '작동 영상 주소', value: s.videoUrl }
+      ].concat(s.challengeId && s.challengeId !== 'card' ? [{ name: 'challengeId', label: '도전과제', type: 'select', value: s.challengeId, options: MK.challenges.map(function (c) { return { value: c.id, label: c.title }; }) }] : []),
       onSubmit: function (v) { return MK.store.updateSubmission(id, v).then(ok('저장했어요.')); } });
   }
 
@@ -218,13 +243,14 @@ window.MK = window.MK || {};
   function toCsv(d) {
     var q = function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var subBy = {}; d.submissions.forEach(function (s) { subBy[s.name] = s; });
-    var rows = [['이름', '도전과제', '분류', '신청 시각', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
-    var names = {};
+    var rows = [['이름', '내 도전과제(카드)', 'AI 모델', '문장', '서보 1', '서보 2', '함께', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
+    var names = {}, cardBy = {};
+    (d.cards || []).forEach(function (c) { cardBy[c.name] = c; names[c.name] = names[c.name] || { name: c.name }; });
     d.enrollments.forEach(function (e) { names[e.name] = e; });
     d.submissions.forEach(function (s) { if (!names[s.name]) names[s.name] = { name: s.name, challengeId: s.challengeId }; });
     Object.keys(names).forEach(function (n) {
-      var e = names[n], s = subBy[n] || {}, c = MK.challengeById(s.challengeId || e.challengeId) || {};
-      rows.push([n, c.title, c.category, e.at ? new Date(e.at).toLocaleString('ko-KR') : '', s.title, s.desc, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
+      var e = names[n], s = subBy[n] || {}, cd = cardBy[n], c = cd ? { title: cd.title, category: cd.model } : (MK.challengeById(s.challengeId || e.challengeId) || {});
+      rows.push([n, c.title, c.category, cd && MK.cardSentence ? MK.cardSentence(cd) : '', cd ? cd.servo1 : '', cd ? cd.servo2 : '', cd ? cd.team : '', s.title, s.desc, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
     });
     return rows.map(function (r) { return r.map(q).join(','); }).join('\r\n');
   }

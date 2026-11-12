@@ -28,9 +28,24 @@ window.MK = window.MK || {};
   function blank() {
     var cap = {};
     MK.challenges.forEach(function (c) { cap[c.id] = cfg.defaultCapacity; });
-    return { version: 1, settings: { open: true, capacity: cap, closed: {}, timer: {} }, enrollments: [], submissions: [], help: [], hearts: [], ideas: [] };
+    return { version: 1, settings: { open: true, capacity: cap, closed: {}, timer: {} }, enrollments: [], submissions: [], help: [], hearts: [], ideas: [], cards: [] };
   }
-  var FEATURES = ['help', 'timer', 'hearts', 'ideas', 'shuffle'];
+  var FEATURES = ['help', 'timer', 'hearts', 'ideas', 'shuffle', 'review', 'cards'];
+  var CARD_LIMITS = { title: [30, '작품 이름'], situation: [40, '상황'], who: [20, '누가'], sense: [30, 'AI가 알아보는 것'], act: [30, '서보가 하는 일'], servo1: [40, '서보 1'], servo2: [40, '서보 2'], team: [40, '함께 만드는 사람'] };
+  /* 내 도전과제 카드 검사 (Code.gs의 cardSave와 같은 규칙) */
+  function cleanCard(c) {
+    c = c || {}; var v = {};
+    Object.keys(CARD_LIMITS).forEach(function (k) {
+      var t = clean(c[k]); if (t.length > CARD_LIMITS[k][0]) throw new Error(CARD_LIMITS[k][1] + '은(는) ' + CARD_LIMITS[k][0] + '자 이내로 적어 주세요.'); v[k] = t;
+    });
+    v.model = (MK.cardModels || []).indexOf(clean(c.model)) >= 0 ? clean(c.model) : '';
+    v.from = /^[a-z0-9-]{1,40}$/.test(String(c.from || '')) ? String(c.from) : '';
+    if (!v.title) throw new Error('작품 이름을 적어 주세요.');
+    if (!v.model) throw new Error('쓸 AI 모델을 골라 주세요.');
+    if (!v.sense || !v.act) throw new Error('문장 틀의 ‘AI가 알아보는 것’과 ‘서보가 하는 일’을 채워 주세요.');
+    return v;
+  }
+  MK.cleanCard = cleanCard;
   var IDEA_MAX = 80;
 
   /* 화면에 내보내는 모양: 대기 중인 도움 요청만, 하트는 작품별 이름 목록 */
@@ -82,6 +97,7 @@ window.MK = window.MK || {};
       if (!Array.isArray(d.help)) d.help = [];
       if (!Array.isArray(d.hearts)) d.hearts = [];
       if (!Array.isArray(d.ideas)) d.ideas = [];
+      if (!Array.isArray(d.cards)) d.cards = [];
       return d;
     },
     _write: function (d) {
@@ -96,7 +112,7 @@ window.MK = window.MK || {};
     getState: function () {
       var pub = publicView(this._read());
       // 비밀번호 해시는 화면에 내보내지 않음
-      [pub.enrollments, pub.submissions, pub.help, pub.ideas].forEach(function (list) { list.forEach(function (r) { delete r.pin; }); });
+      [pub.enrollments, pub.submissions, pub.help, pub.ideas, pub.cards || []].forEach(function (list) { list.forEach(function (r) { delete r.pin; }); });
       return Promise.resolve(pub);
     },
     getStateSync: function () { return publicView(this._read()); },
@@ -125,7 +141,7 @@ window.MK = window.MK || {};
       if (name.length > 20) throw new Error('이름은 20자 이내로 적어 주세요.');
       if (!/^\d{4}$/.test(pin)) throw new Error('비밀번호는 숫자 4자리입니다.');
       var h = hashPin(pin);
-      var known = d.enrollments.concat(d.submissions, d.help, d.ideas).filter(function (r) { return r.name === name && r.pin; });
+      var known = d.enrollments.concat(d.submissions, d.help, d.ideas, d.cards || []).filter(function (r) { return r.name === name && r.pin; });
       if (known.length && known[0].pin !== h) throw new Error('같은 이름이 이미 있는데 비밀번호가 다릅니다. 내 이름이 맞다면 비밀번호를 확인하고, 다른 사람이라면 이름 뒤에 학교 이름을 붙여 주세요.');
       return { name: name, pin: h };
     },
@@ -174,8 +190,10 @@ window.MK = window.MK || {};
     submit: function (o) {
       var d = this._read(), p;
       try { p = this._checkPerson(d, o.name, o.pin); } catch (e) { return fail(e.message); }
+      var card = d.cards.filter(function (c) { return c.name === p.name; })[0];
       var en = d.enrollments.filter(function (e) { return e.name === p.name; })[0];
-      if (!en) return fail('먼저 도전과제를 신청해 주세요.');
+      if (!card && !en) return fail('먼저 내 도전과제(아이디어 카드)를 등록해 주세요.');
+      var chId = card ? 'card' : en.challengeId;
       var title = clean(o.title), desc = String(o.desc || '').trim(), mc = clean(o.makecodeUrl), video = clean(o.videoUrl);
       if (!title) return fail('작품 제목을 적어 주세요.');
       if (title.length > 40) return fail('작품 제목은 40자 이내로 적어 주세요.');
@@ -186,10 +204,10 @@ window.MK = window.MK || {};
       var now = Date.now();
       var s = d.submissions.filter(function (x) { return x.name === p.name; })[0];
       if (s) {
-        s.title = title; s.desc = desc; s.makecodeUrl = mc; s.videoUrl = video; s.challengeId = en.challengeId; s.updatedAt = now;
+        s.title = title; s.desc = desc; s.makecodeUrl = mc; s.videoUrl = video; s.challengeId = chId; s.updatedAt = now;
       } else {
         var maxOrder = d.submissions.reduce(function (m, x) { return Math.max(m, x.order || 0); }, 0);
-        d.submissions.push({ id: uid('s'), name: p.name, pin: p.pin, challengeId: en.challengeId, title: title, desc: desc, makecodeUrl: mc, videoUrl: video, at: now, updatedAt: now, include: true, hidden: false, order: maxOrder + 1 });
+        d.submissions.push({ id: uid('s'), name: p.name, pin: p.pin, challengeId: chId, title: title, desc: desc, makecodeUrl: mc, videoUrl: video, at: now, updatedAt: now, include: true, hidden: false, order: maxOrder + 1 });
       }
       try { this._write(d); } catch (e) { return fail(e.message); }
       this.setMe({ name: p.name, pin: o.pin });
@@ -260,6 +278,33 @@ window.MK = window.MK || {};
       d.ideas = d.ideas.filter(function (i) { return i !== x; });
       try { this._write(d); } catch (e) { return fail(e.message); }
       return Promise.resolve({});
+    },
+
+    /* ---------- 내 도전과제 (아이디어 카드) ---------- */
+    saveCard: function (o) {
+      var d = this._read(), p, v;
+      try { p = this._checkPerson(d, o.name, o.pin); v = cleanCard(o.card); } catch (e) { return fail(e.message); }
+      var now = Date.now(), mine = d.cards.filter(function (c) { return c.name === p.name; })[0];
+      if (mine) { Object.keys(v).forEach(function (k) { mine[k] = v[k]; }); mine.updatedAt = now; }
+      else d.cards.push(Object.assign({ id: uid('c'), name: p.name, pin: p.pin, at: now, updatedAt: now, hidden: false, sample: false }, v));
+      try { this._write(d); } catch (e) { return fail(e.message); }
+      this.setMe({ name: p.name, pin: clean(o.pin) });
+      return Promise.resolve({ updated: !!mine });
+    },
+    deleteCard: function (id, person) {
+      var d = this._read(), x = d.cards.filter(function (c) { return c.id === id; })[0];
+      if (!x) return Promise.resolve({});
+      if (!this.isAdmin()) {
+        var p;
+        try { p = this._checkPerson(d, person && person.name, person && person.pin); } catch (e) { return fail(e.message); }
+        if (x.name !== p.name) return fail('내 도전과제만 지울 수 있어요.');
+      }
+      d.cards = d.cards.filter(function (c) { return c !== x; });
+      try { this._write(d); } catch (e) { return fail(e.message); }
+      return Promise.resolve({});
+    },
+    hideCard: function (id, hidden) {
+      return this._admin(function (d) { d.cards.forEach(function (c) { if (c.id === id) c.hidden = !!hidden; }); });
     },
 
     /* =========================================================
@@ -355,8 +400,13 @@ window.MK = window.MK || {};
         var maxOrder = d.submissions.reduce(function (m, x) { return Math.max(m, x.order || 0); }, 0);
         MK.sampleResults.forEach(function (r, i) {
           if (d.submissions.some(function (s) { return s.sample && s.title === r.title; })) return;
-          d.submissions.push({ id: uid('s'), name: r.name, pin: hashPin('0000'), challengeId: r.challengeId, title: r.title, desc: r.desc, makecodeUrl: '', videoUrl: '', at: Date.now(), updatedAt: Date.now(), include: true, hidden: false, order: maxOrder + i + 1, sample: true });
-          if (!d.enrollments.some(function (e) { return e.name === r.name; })) d.enrollments.push({ id: uid('e'), name: r.name, pin: hashPin('0000'), challengeId: r.challengeId, at: Date.now(), sample: true });
+          var cardLike = !!r.model;
+          if (cardLike && !d.cards.some(function (c) { return c.name === r.name; })) {
+            d.cards.push({ id: uid('c'), name: r.name, pin: hashPin('0000'), title: r.title, situation: r.situation || '', who: r.who || '', sense: r.sense || '', act: r.act || '', model: r.model,
+              servo1: r.servo1 || '', servo2: r.servo2 || '', team: '', from: '', at: Date.now(), updatedAt: Date.now(), hidden: false, sample: true });
+          }
+          d.submissions.push({ id: uid('s'), name: r.name, pin: hashPin('0000'), challengeId: cardLike ? 'card' : r.challengeId, title: r.title, desc: r.desc, makecodeUrl: '', videoUrl: '', at: Date.now(), updatedAt: Date.now(), include: true, hidden: false, order: maxOrder + i + 1, sample: true });
+          if (!cardLike && !d.enrollments.some(function (e) { return e.name === r.name; })) d.enrollments.push({ id: uid('e'), name: r.name, pin: hashPin('0000'), challengeId: r.challengeId, at: Date.now(), sample: true });
         });
       });
     },
@@ -364,6 +414,7 @@ window.MK = window.MK || {};
       return this._admin(function (d) {
         d.submissions = d.submissions.filter(function (s) { return !s.sample; });
         d.enrollments = d.enrollments.filter(function (e) { return !e.sample; });
+        d.cards = d.cards.filter(function (c) { return !c.sample; });
         var ids = {}; d.submissions.forEach(function (s) { ids[s.id] = 1; });
         d.hearts = d.hearts.filter(function (h) { return ids[h.submissionId]; });
       });
@@ -379,10 +430,11 @@ window.MK = window.MK || {};
         if (!d.settings.timer) d.settings.timer = {};
         d.help = Array.isArray(data.help) ? data.help : []; d.ideas = Array.isArray(data.ideas) ? data.ideas : [];
         d.hearts = Array.isArray(data.hearts) ? data.hearts : [];
+        d.cards = Array.isArray(data.cards) ? data.cards : [];
       });
     },
     reset: function () {
-      return this._admin(function (d) { var b = blank(); d.settings = b.settings; d.enrollments = []; d.submissions = []; d.help = []; d.hearts = []; d.ideas = []; });
+      return this._admin(function (d) { var b = blank(); d.settings = b.settings; d.enrollments = []; d.submissions = []; d.help = []; d.hearts = []; d.ideas = []; d.cards = []; });
     }
   };
 
@@ -407,6 +459,7 @@ window.MK = window.MK || {};
     d.help = st.help || [];
     d.hearts = st.hearts || {};
     d.ideas = st.ideas || [];
+    d.cards = st.cards || [];
     d.enrollments = st.enrollments || [];
     d.submissions = st.submissions || [];
     return d;
@@ -418,7 +471,7 @@ window.MK = window.MK || {};
     var sl = document.querySelector('.slide.is-active');
     if (!sl) return true;
     if (/^(s-show|show-)/.test(sl.id)) return true;
-    return !!sl.querySelector('[data-widget="apply-panel"], [data-widget="seat-board"], [data-widget="submit-board"], [data-widget="challenge-overview"], [data-widget="my-submission"], [data-widget="timer"], [data-widget="help-request"], [data-widget="idea-wall"]');
+    return !!sl.querySelector('[data-widget="apply-panel"], [data-widget="seat-board"], [data-widget="submit-board"], [data-widget="challenge-overview"], [data-widget="my-submission"], [data-widget="timer"], [data-widget="help-request"], [data-widget="idea-wall"], [data-widget="card-board"], [data-widget="my-card"]');
   }
 
   function RemoteStore(url) {
@@ -547,6 +600,17 @@ window.MK = window.MK || {};
       return this._call('ideaPost', { name: o.name, pin: o.pin, grade: o.grade, text: o.text })
         .then(function (r) { self.setMe({ name: clean(o.name), pin: clean(o.pin) }); return r; });
     },
+    saveCard: function (o) {
+      var self = this, v;
+      try { v = cleanCard(o.card); } catch (e) { return fail(e.message); }
+      return this._call('cardSave', { name: o.name, pin: o.pin, card: v })
+        .then(function (r) { self.setMe({ name: clean(o.name), pin: clean(o.pin) }); return r; });
+    },
+    deleteCard: function (id, person) {
+      if (this.isAdmin()) return this._call('cardDelete', { id: id }, true);
+      return this._call('cardDelete', { id: id, name: person && person.name, pin: person && person.pin });
+    },
+    hideCard: function (id, hidden) { return this._call('cardHide', { id: id, hidden: !!hidden }, true); },
     deleteIdea: function (id, person) {
       if (this.isAdmin()) return this._call('ideaDelete', { id: id }, true);
       return this._call('ideaDelete', { id: id, name: person && person.name, pin: person && person.pin });

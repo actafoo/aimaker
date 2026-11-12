@@ -78,7 +78,12 @@ window.MK = window.MK || {};
      2. 내 과제 맞춤 — data-model="핸드포즈 이미지분류" 처럼 표시한 곳을
         내 모델이면 강조(is-mine), 아니면 흐리게(is-other)
      ========================================================= */
-  function myChallenge(s) { var e = MK.state.myEnrollment(s); return e ? MK.challengeById(e.challengeId) : null; }
+  // 내 도전과제: 아이디어 카드가 있으면 카드의 모델, 없으면 예전 신청의 도전과제
+  function myChallenge(s) {
+    var card = MK.state.myCard ? MK.state.myCard(s) : null;
+    if (card) return { title: card.title, category: card.model, card: true };
+    var e = MK.state.myEnrollment(s); return e ? MK.challengeById(e.challengeId) : null;
+  }
   function applyPersonal(s) {
     var c = myChallenge(s), cat = c && c.category !== '자유발명' ? c.category : null;
     $$('[data-model]').forEach(function (el) {
@@ -90,9 +95,9 @@ window.MK = window.MK || {};
   MK.widgets['my-model'] = function (el, s) {
     var m = me(), c = myChallenge(s);
     if (!m) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-act="identify">' + ic('user') + ' 이름을 등록하면 내 모델이 강조돼요</button>'; return; }
-    if (!c) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-goto="s-overview">' + ic('hand') + ' 도전과제를 신청하면 내 모델이 강조돼요</button>'; return; }
-    var cat = MK.catOf(c);
-    el.innerHTML = '<div class="my-model c-' + cat.color + '"><span class="my-model__k">내 과제</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span>' +
+    if (!c) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-goto="s-mycard">' + ic('hand') + ' 내 도전과제를 등록하면 내 모델이 강조돼요</button>'; return; }
+    var cat = MK.categories[c.category] || MK.catOf(c);
+    el.innerHTML = '<div class="my-model c-' + cat.color + '"><span class="my-model__k">내 도전과제</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span>' +
       '<span class="my-model__t">' + esc(c.title) + '</span></div>' +
       (c.category === '자유발명' ? '<div class="my-model__hint">자유발명은 고른 모델의 코드를 여세요</div>' : '');
   };
@@ -102,7 +107,7 @@ window.MK = window.MK || {};
      ========================================================= */
   var CHECK_KEY = MK.config.storageKey + '-check5';
   var STEPS = [
-    { v: '1', t: '1 · AI 연결용 코드' }, { v: '2', t: '2 · 내 장치 이름 연결' }, { v: '3', t: '3 · 클래스 이름 (얼굴인식은 숫자 자리)' },
+    { v: '1', t: '1 · AI 연결용 코드' }, { v: '2', t: '2 · 내 장치 이름 연결' }, { v: '3', t: '3 · ID 글자 (모션인식은 핀 확인)' },
     { v: '4', t: '4 · 웹앱에서 ‘시작’' }, { v: '5', t: '5 · 링비트 전원' }, { v: '9', t: '재료·조립 등 다른 것' }, { v: '0', t: '잘 모르겠어요' }
   ];
   function stepText(v) { var x = STEPS.filter(function (s) { return s.v === String(v); })[0]; return x ? x.t.replace(/ \(.*\)$/, '') : '잘 모르겠어요'; }

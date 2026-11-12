@@ -27,12 +27,24 @@ window.MK = window.MK || {};
     return null;
   };
 
+  /* 작품의 도전과제 정보: 아이디어 카드가 있으면 카드(모델·문장), 없으면 예전 도전과제 */
+  function infoOf(s, st) {
+    var card = MK.state && MK.state.cardOf ? MK.state.cardOf(st || MK.store.getStateSync(), s.name) : null;
+    if (card) {
+      var cat = MK.categories[card.model] || MK.catOf(null);
+      return { cat: cat, label: card.model, sub: card.team ? s.name + ' · ' + card.team : s.name, sentence: MK.cardSentence ? MK.cardSentence(card) : '', img: card.from ? MK.challengeImage(card.from) : '' };
+    }
+    var ch = MK.challengeById(s.challengeId) || MK.challenges[0];
+    return { cat: MK.catOf(ch), label: ch.category, sub: s.name + ' · ' + ch.title, sentence: '', img: MK.challengeImage(ch.id) };
+  }
+  MK.showcase.infoOf = infoOf;
+
   function media(s) {
     var v = MK.showcase.video(s.videoUrl);
-    var img = MK.challengeImage(s.challengeId);
+    var img = infoOf(s).img;
     if (v && v.kind === 'iframe') return '<iframe data-src="' + esc(v.src) + '" title="' + esc(s.title) + ' 작동 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
     if (v && v.kind === 'video') return '<video data-src="' + esc(v.src) + '" controls playsinline></video>';
-    return '<div class="sv-media__fallback" style="background-image:url(' + img + ')">' +
+    return '<div class="sv-media__fallback"' + (img ? ' style="background-image:url(' + img + ')"' : '') + '>' +
       (v ? '<a class="btn" href="' + esc(v.src) + '" target="_blank" rel="noopener">' + ic('play') + ' 영상 열기</a><div class="sv-media__note">새 창에서 재생됩니다</div>'
          : '<div class="sv-media__note">' + (s.sample ? '샘플 결과물 · 영상이 없습니다' : '영상 주소가 없습니다') + '</div>') + '</div>';
   }
@@ -48,7 +60,7 @@ window.MK = window.MK || {};
     if (N) {
       h += '<div class="show-grid">';
       items.slice(0, 25).forEach(function (s, i) {
-        var cat = MK.catOf(MK.challengeById(s.challengeId));
+        var cat = infoOf(s, st).cat;
         h += '<button class="show-tile c-' + cat.color + '" data-goto="show-' + s.id + '"><span class="show-tile__n">' + (i + 1) + ' · ' + esc(s.name) + '</span><span class="show-tile__t">' + esc(s.title) + '</span>' +
           '<span class="show-tile__heart" data-widget="heart-count" data-sub="' + esc(s.id) + '"></span></button>';
       });
@@ -60,12 +72,12 @@ window.MK = window.MK || {};
     h += '</section>';
 
     items.forEach(function (s, i) {
-      var ch = MK.challengeById(s.challengeId) || MK.challenges[0], cat = MK.catOf(ch);
+      var inf = infoOf(s, st), cat = inf.cat;
       var mcId = MK.parseMakecode(s.makecodeUrl);
       var long = (s.desc || '').length > 170;
       h += '<section class="slide slide--body c-' + cat.color + '" id="show-' + s.id + '" data-section="' + sec + '" data-title="' + (i + 1) + '. ' + esc(s.title) + '">' +
-        '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(ch.category) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
-        '<h2 class="sv-head__title">' + esc(s.title) + '</h2><p class="sv-head__who">' + esc(s.name) + ' · ' + esc(ch.title) + '</p></div>' +
+        '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(inf.label) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
+        '<h2 class="sv-head__title">' + esc(s.title) + '</h2><p class="sv-head__who">' + esc(inf.sub) + '</p>' + (inf.sentence ? '<p class="sv-head__card">' + esc(inf.sentence) + '</p>' : '') + '</div>' +
         '<div class="sv-heart" data-widget="hearts" data-sub="' + esc(s.id) + '"></div>' +
         '<div class="sv-grid">' +
           '<div class="window sv-media"><div class="window__bar">작동 영상' + (MK.isHttpUrl(s.videoUrl) ? '<a class="sv-open" href="' + esc(s.videoUrl) + '" target="_blank" rel="noopener">새 창에서 열기 ' + ic('external') + '</a>' : '') + '</div><div class="window__body window__body--flush" style="aspect-ratio:16/9">' + media(s) + '</div></div>' +
@@ -81,7 +93,7 @@ window.MK = window.MK || {};
     return h;
   }
   generate.signature = function (st) {
-    return JSON.stringify(MK.showcase.items(st).map(function (s) { return [s.id, s.title, s.name, s.desc, s.makecodeUrl, s.videoUrl, s.challengeId, s.sample]; }));
+    return JSON.stringify(MK.showcase.items(st).map(function (s) { var i = infoOf(s, st); return [s.id, s.title, s.name, s.desc, s.makecodeUrl, s.videoUrl, s.challengeId, s.sample, i.label, i.sub, i.sentence]; }));
   };
   MK.generators.showcase = generate;
 
