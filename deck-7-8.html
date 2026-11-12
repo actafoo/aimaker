@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7~8차시 · 피지컬 AI 작품 설계</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css?v=1e10c6890c">
+<link rel="stylesheet" href="assets/css/components.css?v=1e10c6890c">
+<link rel="stylesheet" href="assets/css/deck.css?v=1e10c6890c">
+<link rel="stylesheet" href="assets/css/ui.css?v=1e10c6890c">
+</head>
+<body class="deck-page">
+
+<div class="deck-viewport" id="viewport">
+<main class="deck-stage" id="stage">
+
+<!-- =====================================================
+     7~8차시 교안 — 원본: 프로젝트 폴더의 「피지컬 AI 메이킹 7~8차시.pdf」
+     슬라이드 추가 방법은 deck-9-10.html 맨 위 설명과 같습니다.
+     ===================================================== -->
+
+<!-- ============ 시작 ============ -->
+
+<section class="slide slide--cover" id="s-cover" data-section="시작" data-title="표지" data-no-footer="">
+  <div class="cover">
+    <div class="cover__session">
+      <span class="tag tag--solid c-blue" style="height:52px;font-size:26px;padding:0 26px">7~8차시</span>
+      <span class="cover__course" data-widget="cfg" data-key="course"></span>
+    </div>
+    <h1 class="cover__title">링비트와 바운더리 AI를 활용한<br><em>문제해결 작품 설계</em></h1>
+    <p class="cover__tagline">AI가 보고, 마이크로비트가 판단하고, 서보가 움직인다</p>
+    <p class="cover__meta">2026. 11. 21.(토) 14:00~15:50 · 중부과학교육센터 · <b>파견교사 김성준</b></p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-demo" data-section="시작" data-title="여는 시연">
+  <div class="slide__head">
+    <div class="slide__kicker">여는 시연</div>
+    <h2 class="slide__title">도움이 필요할 때, 손을 대신 들어 줍니다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="demo">
+      <figure class="photo"><div class="photo__img"><img src="assets/img/78/demo.jpg" alt="① 손동작 인식 → ② 블루투스로 노트북·스마트폰과 마이크로비트 연결 → ③ MG90S 서보모터 구동"></div></figure>
+      <div>
+        <div class="demo__q">이 안에 무엇이<br>들어 있을까요?</div>
+        <div class="demo__list">
+          <div class="demo__item c-blue"><img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">손을 알아보는 AI</div>
+          <div class="demo__item c-green"><img class="icon-badge" src="assets/img/icons/microbit.png" alt="">판단하는 마이크로비트</div>
+          <div class="demo__item c-purple"><img class="icon-badge" src="assets/img/icons/robot-arm.png" alt="">움직이는 서보모터</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1. 이 연수의 메이커 교육 ============ -->
+
+<section class="slide slide--pixel" id="s-part1" data-section="1. 메이커 교육" data-title="PART 1 · 이 연수의 메이커 교육">
+  <div class="divider">
+    <span class="divider__part">PART 1</span>
+    <h2 class="divider__title">이 연수의 메이커 교육</h2>
+    <p class="divider__text">정해진 것을 따라 만들지 않고,<br>제한된 상황에서 스스로 해결합니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 7차시 · 14:00 ~ 14:50</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-maker" data-section="1. 메이커 교육" data-title="정해진 것을 만들지 않습니다">
+  <div class="slide__head">
+    <div class="slide__kicker">이 연수의 메이커 교육 ①</div>
+    <h2 class="slide__title">정해진 것을 만들지 않습니다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="cmp">
+      <div class="cmp__box">
+        <div class="cmp__k">흔한 만들기 활동</div>
+        <div class="cmp__h">정해진 것을 따라 만든다</div>
+        <ul class="cmp__list"><li>완성품이 먼저 정해져 있다</li><li>설명서를 순서대로 따라 한다</li><li>모두 같은 작품이 나온다</li></ul>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div class="cmp__box cmp__box--new is-hot">
+        <div class="cmp__k">이 연수의 메이커 교육</div>
+        <div class="cmp__h">제한된 상황에서 스스로 해결한다</div>
+        <ul class="cmp__list"><li>생활 속 문제에서 출발한다</li><li>정해진 도구와 시간 안에서 궁리한다</li><li>모두 다른 해결이 나온다</li></ul>
+      </div>
+    </div>
+    <div class="callout c-row mt-l"><span class="circle c-yellow"><svg class="i"><use href="#i-target"></use></svg></span><div><span class="t-muted">오늘의 기준 —</span> 이 작품은 <b class="t-blue">누구의, 어떤 불편</b>을 줄이는가?</div></div>
+    <p class="src mt-m">로봇으로 치면 ‘완성된 로봇을 코딩해 보는 활용 교육’에서 ‘무엇을 만들지부터 정하는 개발 교육’으로 · 참고: 김홍순 선생님 자료(런모어)</p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-quick" data-section="1. 메이커 교육" data-title="퀵 프로토타입">
+  <div class="slide__head">
+    <div class="slide__kicker">이 연수의 메이커 교육 ②</div>
+    <h2 class="slide__title">완벽하게 말고, 빠르게: 퀵 프로토타입</h2>
+  </div>
+  <div class="slide__body">
+    <div class="steps">
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">떠올리기</div><div class="step__text">어떤 불편을 줄일지 정한다</div></div>
+      <div class="step c-green"><span class="step__num">2</span><div class="step__title">만들기</div><div class="step__text">골판지와 테이프로 거칠게 만든다</div></div>
+      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">움직이기</div><div class="step__text">AI와 서보를 연결해 돌려 본다</div></div>
+      <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">고치기</div><div class="step__text">안 되는 곳을 찾아 바로 고친다</div></div>
+    </div>
+    <div class="loopback" style="margin-left:37.8%;margin-right:13.3%"><span class="loopback__label">만들기 → 움직이기 → 고치기를 짧게, 여러 번</span></div>
+    <div class="callout callout--sky c-row" style="margin-top:70px">
+      <img class="icon-badge icon-badge--sm" src="assets/img/icons/sprout.png" alt="">
+      <div class="t-md" style="font-size:30px;font-weight:600">완성품보다 <b class="t-blue">움직이는 첫 모형</b>이 먼저입니다.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-pai" data-section="1. 메이커 교육" data-title="생각하는 AI에서 행동하는 AI로">
+  <div class="slide__head">
+    <div class="slide__kicker">이 연수의 메이커 교육 ③ · 피지컬 AI란?</div>
+    <h2 class="slide__title">생각하는 AI에서 행동하는 AI로</h2>
+  </div>
+  <div class="slide__body">
+    <div class="pai pai--lg">
+      <div class="pai__corner pai__h">구분</div>
+      <div class="pai__h pai__h--screen"><img class="icon-badge icon-badge--sm" src="assets/img/icons/laptop.png" alt="">화면 속 AI</div>
+      <div class="pai__h pai__h--body"><img class="icon-badge icon-badge--sm" src="assets/img/icons/robot-arm.png" alt="">피지컬 AI</div>
+
+      <div class="pai__k">들어오는 것</div>
+      <div class="pai__c">글·그림·소리·데이터</div>
+      <div class="pai__c pai__c--body">카메라·마이크·거리·움직임</div>
+
+      <div class="pai__k">하는 일</div>
+      <div class="pai__c">만들기·분류·예측</div>
+      <div class="pai__c pai__c--body">알아보기·판단·제어</div>
+
+      <div class="pai__k">나오는 것</div>
+      <div class="pai__c">화면 속 정보</div>
+      <div class="pai__c pai__c--body">움직임·회전·빛·소리</div>
+
+      <div class="pai__k pai__k--hot">틀리면</div>
+      <div class="pai__c pai__c--hot">엉뚱한 답이 나온다</div>
+      <div class="pai__c pai__c--body pai__c--hot"><b>기계가 엉뚱하게 움직인다</b></div>
+    </div>
+    <div class="callout c-row mt-m">
+      <span class="circle c-yellow"><svg class="i"><use href="#i-bulb"></use></svg></span>
+      <div class="t-md" style="font-weight:600">틀리면 실제 장치가 잘못 움직여요. 그래서 피지컬 AI는 <b class="t-blue">만들고, 움직이고, 고치기</b>를 되풀이합니다.</div>
+    </div>
+    <p class="src mt-s">참고: 김홍순 선생님, 「Physical AI와 로봇 개발 교육」(런모어)</p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-loop" data-section="1. 메이커 교육" data-title="보고, 판단하고, 움직이고, 확인한다">
+  <div class="slide__head">
+    <div class="slide__kicker">이 연수의 메이커 교육 ③</div>
+    <h2 class="slide__title">피지컬 AI: 보고, 판단하고, 움직이고, 확인한다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="chain chain--sm">
+      <div class="card chain__node c-blue">
+        <img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">
+        <div class="chain__step">① 인식</div>
+        <div class="chain__name">바운더리엑스 웹앱</div>
+        <div class="chain__desc">카메라로 보고, 결과를 ID1 같은 글자로 보낸다</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>블루투스<b>ID1</b></div>
+      <div class="card chain__node is-hot">
+        <img class="icon-badge" src="assets/img/icons/microbit.png" alt="">
+        <div class="chain__step">② 판단</div>
+        <div class="chain__name">마이크로비트</div>
+        <div class="chain__desc">‘데이터가 ID1이면 move 1’을 정한다</div>
+        <span class="tag tag--solid c-yellow">오늘 코딩하는 곳</span>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>각도<b>명령</b></div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/robot-arm.png" alt="">
+        <div class="chain__step">③ 움직임</div>
+        <div class="chain__name">180° 서보 2개</div>
+        <div class="chain__desc">move 1은 P0, move 2는 P1 서보를 움직인다</div>
+      </div>
+    </div>
+    <div class="loopback" style="margin-left:13.9%;margin-right:13.9%"><span class="loopback__label">④ 확인(피드백): 움직인 결과를 보고 다시 판단하고 고친다</span></div>
+    <div class="role-note" style="margin-top:48px"><span class="role-note__k">왜 이렇게 나눌까요?</span>마이크로비트는 AI 계산을 하기 어렵고, AI를 직접 돌리는 보드는 비싸요. 그래서 <b>AI는 손에 있는 기기(폰·태블릿·노트북)</b>가 맡고, <b>마이크로비트는 판단과 움직임만</b> 맡습니다.</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-limits" data-section="1. 메이커 교육" data-title="조건은 정하고, 해결은 열어 둔다">
+  <div class="slide__head">
+    <div class="slide__kicker">이 연수의 메이커 교육 · 제한 조건</div>
+    <h2 class="slide__title">조건은 정하고, 해결은 열어 둔다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="tools4">
+      <div class="tool c-blue"><span class="circle"><svg class="i"><use href="#i-cpu"></use></svg></span><div class="tool__name">마이크로비트와 링비트</div><div class="tool__desc">판단하고, 서보에 전원을 준다</div></div>
+      <div class="tool c-green"><span class="circle"><svg class="i"><use href="#i-gear"></use></svg></span><div class="tool__name">180° 서보모터 2개</div><div class="tool__desc">움직임은 이 두 개로만</div></div>
+      <div class="tool c-purple"><span class="circle"><svg class="i"><use href="#i-binoculars"></use></svg></span><div class="tool__name">바운더리엑스 AI</div><div class="tool__desc">핸드포즈·이미지·모션 중 하나</div></div>
+      <div class="tool c-yellow"><span class="circle"><svg class="i"><use href="#i-scissors"></use></svg></span><div class="tool__name">골판지와 마스킹테이프</div><div class="tool__desc">빨리 만들고 쉽게 고친다</div></div>
+    </div>
+    <div class="fixopen">
+      <div class="fixopen__fixed"><div class="fixopen__k">정해 둔 것</div><div class="fixopen__v">도구 네 가지</div></div>
+      <div class="fixopen__open"><div class="fixopen__k">열어 둔 것</div><div class="fixopen__v">어떤 문제를, 어떤 구조로 풀지</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-map" data-section="1. 메이커 교육" data-title="오늘 오후 4시간 지도">
+  <div class="slide__head">
+    <div class="slide__kicker">이 연수의 메이커 교육</div>
+    <h2 class="slide__title">오늘 오후 4시간 지도</h2>
+  </div>
+  <div class="slide__body">
+    <div class="steps map5">
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">문제 상황</div><div class="step__text">누구의, 어떤 불편?</div></div>
+      <div class="step c-blue"><span class="step__num">2</span><div class="step__title">도구 조건</div><div class="step__text">네 가지로만</div></div>
+      <div class="step c-yellow is-here"><span class="step__num">3</span><span class="now-tag">지금 여기</span><div class="step__title">도구 익히기</div><div class="step__text">서보 2개와 AI 3종</div></div>
+      <div class="step c-green"><span class="step__num">4</span><div class="step__title">주제 잡기</div><div class="step__text">아이디어 카드</div></div>
+      <div class="step c-green"><span class="step__num">5</span><div class="step__title">만들기와 공유</div><div class="step__text">첫 모형, 고치기, 나누기</div></div>
+    </div>
+    <div class="map-span">
+      <div><b>7~8차시 · 14:00~15:50 · AI 모델 훈련과 활용</b><span>①~③ 도구 익히기, 끝에 ④의 씨앗 한 장</span></div>
+      <div><b>9~10차시 · 16:00~17:50 · 문제 해결</b><span>④~⑤ 첫 모형을 만들고 나누기</span></div>
+    </div>
+    <div class="callout callout--sky c-row mt-l">
+      <img class="icon-badge icon-badge--sm" src="assets/img/icons/sprout.png" alt="">
+      <div class="t-md" style="font-size:30px;font-weight:600">지금 익히는 것은 전부 <b class="t-blue">잠시 뒤 내 작품에 들어갈 부품</b>입니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. 링비트와 180° 서보 2개 ============ -->
+
+<section class="slide slide--pixel" id="s-part2" data-section="2. 링비트와 서보" data-title="PART 2 · 링비트와 180° 서보 2개">
+  <div class="divider">
+    <span class="divider__part">PART 2</span>
+    <h2 class="divider__title">링비트와 180° 서보 2개</h2>
+    <p class="divider__text">판단하고 움직이는 쪽부터 손에 익힙니다.<br>지금 익히는 것은 전부 잠시 뒤 내 작품에 들어갈 부품입니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 7차시 · 14:00 ~ 14:50</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-ringbit" data-section="2. 링비트와 서보" data-title="링비트: 서보를 꽂고 전원을 주는 확장보드">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개</div>
+    <h2 class="slide__title">링비트: 서보를 꽂고 전원을 주는 확장보드</h2>
+  </div>
+  <div class="slide__body">
+    <div class="ringbit">
+      <div class="ringbit__pics">
+        <figure class="photo"><div class="photo__img"><img src="assets/img/78/ringbit-front.jpg" alt="링비트 앞면"></div><figcaption>앞면</figcaption></figure>
+        <figure class="photo"><div class="photo__img"><img src="assets/img/78/ringbit-back.jpg" alt="링비트 뒷면의 AAA 건전지 칸"></div><figcaption>뒷면: AAA 건전지 3개</figcaption></figure>
+      </div>
+      <div class="col" style="gap:16px">
+        <div class="nlist">
+          <div class="nlist__item c-blue"><span class="nlist__n">1</span><div class="nlist__h">마이크로비트를 꽂는다</div><div class="nlist__t">방향을 확인하고 홈에 끝까지 끼운다</div></div>
+          <div class="nlist__item c-green"><span class="nlist__n">2</span><div class="nlist__h">서보를 꽂는다</div><div class="nlist__t">P0·P1·P2 단자마다 세 핀: G(접지) · V(전원) · 숫자(신호)</div></div>
+          <div class="nlist__item c-purple"><span class="nlist__n">3</span><div class="nlist__h">전원을 준다</div><div class="nlist__t">뒤쪽 AAA 건전지 3개(약 4.5V). 마이크로비트의 3.3V만으로는 서보가 불안정할 수 있어요.</div></div>
+        </div>
+        <div class="motto">
+          <div class="motto__sw"><span class="sw"><i class="sw__body"></i>보낼 때</span><span class="sw sw--on"><i class="sw__body"></i>움직일 때</span></div>
+          <div><div class="motto__h">왼쪽 스위치로 켜고 끈다</div><div class="motto__t">연결하고 코드를 보낼 땐 끄고, 움직일 땐 켠다. 켠 채로 연결하면 전류가 지나치게 흐를 수 있어요.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-pick" data-section="2. 링비트와 서보" data-title="서보모터 고르기: MG90S와 SG90">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개</div>
+    <h2 class="slide__title">서보모터 고르기: MG90S와 SG90</h2>
+  </div>
+  <div class="slide__body">
+    <div class="pick">
+      <div class="pick__card pick__card--best is-hot">
+        <div class="pick__img"><img src="assets/img/78/mg90s.jpg" alt="MG90S 서보모터 사진"></div>
+        <div>
+          <div class="pick__name">MG90S <span class="tag tag--solid c-yellow">추천</span></div>
+          <div class="pick__dl"><div>기어: <b>금속</b></div><div>정품 약 8,000원</div><div>저가품 약 200원</div><div class="pick__good">튼튼해서 오래 쓴다</div></div>
+        </div>
+      </div>
+      <div class="pick__card">
+        <div class="pick__img"><svg viewBox="0 0 320 240" role="img" aria-label="SG90 서보모터 그림"><path d="M226 142 C 268 142 258 200 296 214" fill="none" stroke="#6B4423" stroke-width="7" stroke-linecap="round"/><path d="M226 154 C 262 154 252 210 288 226" fill="none" stroke="#D8452B" stroke-width="7" stroke-linecap="round"/><path d="M226 166 C 254 166 244 218 276 236" fill="none" stroke="#F09A2E" stroke-width="7" stroke-linecap="round"/><rect x="58" y="112" width="204" height="24" rx="6" fill="#74ACF8" stroke="#0B1A4E" stroke-width="3"/><circle cx="72" cy="124" r="6" fill="#fff" stroke="#0B1A4E" stroke-width="2"/><circle cx="248" cy="124" r="6" fill="#fff" stroke="#0B1A4E" stroke-width="2"/><rect x="88" y="80" width="144" height="122" rx="10" fill="#74ACF8" stroke="#0B1A4E" stroke-width="3"/><rect x="96" y="54" width="72" height="32" rx="8" fill="#A4D4F8" stroke="#0B1A4E" stroke-width="3"/><circle cx="126" cy="54" r="13" fill="#fff" stroke="#0B1A4E" stroke-width="3"/><rect x="108" y="142" width="104" height="36" rx="4" fill="#0B1A4E"/><rect x="120" y="152" width="80" height="6" rx="3" fill="#fff"/><rect x="130" y="164" width="60" height="6" rx="3" fill="#fff"/></svg></div>
+        <div>
+          <div class="pick__name">SG90</div>
+          <div class="pick__dl"><div>기어: <b>플라스틱</b></div><div>약 1,000원</div><div>내구성은 MG90S보다 약하다</div><div class="t-muted">(왼쪽은 그림)</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2 mt-l" style="align-items:stretch">
+      <div class="card card--soft c-blue">
+        <div class="kk">180° 서보 알아보기</div>
+        <div class="t-lg" style="margin-top:6px">노란색이 있는 것이 180° 서보</div>
+        <p class="t-sm" style="margin:8px 0 0">속에 DC 모터·기어·가변저항·제어 기판이 있고, 가변저항이 축의 각도를 읽어 그 각도에 멈춰요.</p>
+      </div>
+      <div class="warn">
+        <span class="circle"><svg class="i"><use href="#i-alert"></use></svg></span>
+        <div><div class="warn__h">억지로 돌리지 않기</div><div class="warn__t">서보 축은 손으로 돌리지 않아요. 각도는 손이 아니라 코드로 바꿉니다.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-wire" data-section="2. 링비트와 서보" data-title="연결하기: 선 세 가닥과 전원">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개</div>
+    <h2 class="slide__title">연결하기: 선 세 가닥과 전원</h2>
+  </div>
+  <div class="slide__body">
+    <div class="grid-2" style="align-items:stretch">
+      <div class="card">
+        <div class="box-h">서보 선 세 가닥</div>
+        <ul class="wires">
+          <li><i class="wire" style="background:#6B4423"></i><span>갈색 — 접지 G (−)</span></li>
+          <li><i class="wire" style="background:#D8452B"></i><span>빨강 — 전원 V (+)</span></li>
+          <li><i class="wire" style="background:#F09A2E"></i><span>주황 — 신호 S</span></li>
+        </ul>
+        <p class="t-sm t-muted" style="margin:16px 0 0">MG90S 기준이에요. 제품에 따라 검정·빨강·노랑일 수 있어요.</p>
+      </div>
+      <div class="card">
+        <div class="box-h">어디에 꽂나요</div>
+        <div class="pins">
+          <div><span class="pin">P0</span><span>첫 번째 서보</span></div>
+          <div><span class="pin">P1</span><span>두 번째 서보</span></div>
+        </div>
+        <p class="t-sm" style="margin:16px 0 0">링비트 단자의 G·V·숫자에 갈색·빨강·주황을 맞춰 꽂아요. 서보 전원은 링비트가 줍니다.</p>
+      </div>
+    </div>
+    <div class="motto mt-l">
+      <div class="motto__sw"><span class="sw"><i class="sw__body"></i>보낼 때</span><span class="sw sw--on"><i class="sw__body"></i>움직일 때</span></div>
+      <div><div class="motto__h">보낼 땐 <em>끄고</em>, 움직일 땐 <em>켠다</em></div><div class="motto__t">링비트 왼쪽 스위치를 끈 채로 USB 전송 → 전송이 끝나면 켜서 움직인다</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-lab1" data-section="2. 링비트와 서보" data-title="실습 1: A는 0°, B는 180°">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개 · 실습 1</div>
+    <h2 class="slide__title">실습 1: A는 0°, B는 180°</h2>
+  </div>
+  <div class="slide__body">
+    <div class="window" style="width:fit-content;margin:0 auto">
+      <div class="window__bar">MakeCode</div>
+      <div class="window__body shot" style="padding:24px 40px"><img src="assets/img/78/code-ab.png" width="889" height="223" alt="A 버튼을 누르면 P0 서보를 0도로, B 버튼을 누르면 P0 서보를 180도로"></div>
+    </div>
+    <div class="flowline mt-l">
+      <span class="flowline__s"><span class="circle c-blue">1</span>블록 두 개 만들기</span>
+      <span class="flowline__arr"><svg viewBox="0 0 40 24"><path d="M2 12h32M26 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="flowline__s"><span class="circle c-green">2</span>링비트 끄고 전송</span>
+      <span class="flowline__arr"><svg viewBox="0 0 40 24"><path d="M2 12h32M26 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="flowline__s"><span class="circle c-purple">3</span>켜고 A·B 누르기</span>
+    </div>
+    <div class="row mt-l" style="align-items:center;justify-content:center;gap:28px">
+      <div class="okbar"><span class="circle circle--sm"><svg class="i"><use href="#i-check"></use></svg></span><span>끝에서 끝까지 반 바퀴 움직이면 성공</span></div>
+      <span class="t-sm t-muted">서보 블록 위치: 고급(Advanced) → 핀(Pins)</span>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-horn" data-section="2. 링비트와 서보" data-title="0°를 먼저 찾고 혼을 끼운다">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개</div>
+    <h2 class="slide__title">0°를 먼저 찾고 혼을 끼운다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="grid-4" style="gap:22px">
+      <div class="numcard c-blue"><span class="numcard__n">1</span><div class="numcard__h">A 버튼으로 0° 보내기</div><div class="numcard__t">모터를 기준 위치에 둔다</div></div>
+      <div class="numcard c-green"><span class="numcard__n">2</span><div class="numcard__h">혼을 기준 방향에 끼우기</div><div class="numcard__t">예: 수평이 되도록</div></div>
+      <div class="numcard c-purple"><span class="numcard__n">3</span><div class="numcard__h">B 버튼으로 180° 확인</div><div class="numcard__t">반대쪽 끝도 본다</div></div>
+      <div class="numcard c-yellow"><span class="numcard__n">4</span><div class="numcard__h">나사로 고정</div><div class="numcard__t">구조가 정해진 뒤에 조여도 된다</div></div>
+    </div>
+    <div class="grid-2 mt-l" style="align-items:stretch">
+      <div class="card horn">
+        <img src="assets/img/78/horn.jpg" alt="MG90S 서보와 여러 모양의 혼, 나사">
+        <div>
+          <div class="kk">혼(암)</div>
+          <div class="t-md" style="font-weight:700;color:var(--navy);margin-top:4px">서보 축에 끼우는 날개. 오늘은 한쪽만 있는 하프 혼을 씁니다.</div>
+          <p class="src" style="margin-top:6px">사진: 김홍순 선생님 자료(런모어)</p>
+        </div>
+      </div>
+      <div class="warn warn--list">
+        <div class="warn__row"><span class="circle circle--sm"><svg class="i"><use href="#i-alert"></use></svg></span><span>서보 축은 손으로 돌리지 않습니다.</span></div>
+        <div class="warn__row"><span class="circle circle--sm"><svg class="i"><use href="#i-alert"></use></svg></span><span>혼과 나사는 작아서 잘 잃어버려요. 받자마자 봉투에.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-pause" data-section="2. 링비트와 서보" data-title="여러 각도와 500ms">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개</div>
+    <h2 class="slide__title">여러 각도와 500ms</h2>
+  </div>
+  <div class="slide__body">
+    <div class="codecols" style="grid-template-columns:auto 1fr">
+      <div class="window">
+        <div class="window__bar">MakeCode</div>
+        <div class="window__body shot"><img src="assets/img/78/code-pause.png" width="447" height="517" alt="B 버튼: P0 서보 0도, 500ms 쉬고 45도, 500ms 쉬고 90도, 500ms 쉼"></div>
+      </div>
+      <div class="col" style="gap:22px;padding-top:20px">
+        <div class="card">
+          <div class="kk">pause가 없으면</div>
+          <div class="t-md" style="font-weight:600;color:var(--navy);margin-top:6px">모터가 도착하기도 전에 다음 명령이 와서, 마지막 각도만 보이거나 덜 움직여요.</div>
+        </div>
+        <div class="card card--soft c-blue">
+          <div class="kk">그래서</div>
+          <div class="t-xl" style="font-size:48px;margin-top:4px">500ms 이상 넉넉히</div>
+          <div class="t-sm" style="margin-top:6px">모터도 실제로 도는 데 시간이 필요합니다.</div>
+        </div>
+        <div class="c-row"><span class="circle circle--sm c-green"><svg class="i"><use href="#i-play"></use></svg></span><div class="t-md" style="font-weight:600">해 보기: pause를 지우고 한 번 비교해 보세요.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-func" data-section="2. 링비트와 서보" data-title="함수로 묶고, 두 번째 서보도">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개</div>
+    <h2 class="slide__title">함수로 묶고, 두 번째 서보도</h2>
+  </div>
+  <div class="slide__body">
+    <div class="codecols" style="grid-template-columns:800px 1fr">
+      <div class="window">
+        <div class="window__bar">MakeCode</div>
+        <div class="window__body shot"><img src="assets/img/78/code-func.png" width="1035" height="592" alt="A 버튼은 P0 서보 0도, B 버튼은 call move 1. 함수 move 1은 P0 서보를 0도, 45도, 90도로 500ms씩 쉬며 움직임"></div>
+      </div>
+      <div class="col" style="gap:16px">
+        <div class="fnrow"><span class="fn">move 1</span><span>P0 서보의 각도 묶음</span></div>
+        <div class="fnrow"><span class="fn">move 2</span><span>같은 모양, 핀만 P1</span></div>
+        <div class="card card--soft c-purple" style="padding:16px 24px">
+          <div class="kk">서보 2개 = 자유도 2</div>
+          <div class="t-sm" style="margin-top:4px">따로 움직이는 관절이 둘. 붙이는 곳에 따라 동작이 달라져요.</div>
+        </div>
+        <div class="callout callout--sky" style="padding:18px 24px">
+          <div class="kk">다음 단계에서는</div>
+          <div style="margin-top:4px">AI가 <b class="t-blue">ID1</b>이라고 하면 <b class="t-blue">move 1</b>, <b class="t-blue">ID2</b>라고 하면 <b class="t-blue">move 2</b>만 부르면 됩니다.</div>
+        </div>
+        <p class="src">확인: A 버튼을 call move 2로 바꿔 두 서보를 각각 움직여 보기</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-vibe" data-section="2. 링비트와 서보" data-title="말로 코드 만들기 (선택 시연)">
+  <div class="slide__head">
+    <div class="slide__kicker">링비트와 180° 서보 2개 · 선택 시연</div>
+    <h2 class="slide__title">말로 코드 만들기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="say">
+      <div class="card c-row" style="align-items:flex-start">
+        <span class="circle c-yellow"><svg class="i"><use href="#i-chat"></use></svg></span>
+        <div><div class="kk">생성형 AI에게 이렇게 말하면</div><div class="say__q">“P0 서보를 0도, 90도, 180도로 0.5초마다 움직여 줘”</div></div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div class="card card--soft c-blue">
+        <div class="kk">MakeCode에서</div>
+        <div class="t-xl" style="margin-top:6px">블록 코드로 바뀐다</div>
+        <p class="t-sm" style="margin:10px 0 0">바운더리엑스 바이브코딩 스튜디오를 쓰거나, 생성형 AI가 만든 JavaScript를 MakeCode에 붙여 넣는다</p>
+      </div>
+    </div>
+    <div class="warn mt-l">
+      <span class="circle"><svg class="i"><use href="#i-alert"></use></svg></span>
+      <div><div class="warn__h">만든 코드는 꼭 실제 모터로 돌려 확인합니다.</div><div class="warn__t">오늘은 보여 드리기만 합니다. 시간이 모자라면 건너뜁니다.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. KNN 핸드포즈분류 ============ -->
+
+<section class="slide slide--pixel" id="s-part3" data-section="3. 핸드포즈" data-title="PART 3 · KNN 핸드포즈분류">
+  <div class="divider">
+    <span class="divider__part">PART 3</span>
+    <h2 class="divider__title">KNN 핸드포즈분류</h2>
+    <p class="divider__text">AI가 ID1이라고 하면 move 1,<br>ID2라고 하면 move 2를 부릅니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 7차시 · 14:00 ~ 14:50</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-knn" data-section="3. 핸드포즈" data-title="KNN: 가장 가까운 이웃의 다수결">
+  <div class="slide__head">
+    <div class="slide__kicker">KNN 핸드포즈분류</div>
+    <h2 class="slide__title">KNN: 가장 가까운 이웃의 다수결</h2>
+  </div>
+  <div class="slide__body">
+    <div class="grid-2" style="align-items:stretch;height:450px">
+      <div class="card card--soft c-blue knn__card">
+        <div class="kk">① 핸드포즈 모델</div>
+        <div class="t-md" style="font-weight:700;color:var(--navy)">카메라 속 손가락 관절을 점으로 잡는다</div>
+        <div class="knn__fig"><svg viewBox="40 80 290 340" role="img" aria-label="손가락 관절을 점과 선으로 잡은 그림"><g stroke="#0B57D8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M200 400 L140 360 L105 320 L80 285 L60 255"/><path d="M200 400 L150 250 L140 190 L134 150 L130 112"/><path d="M150 250 L195 240 L195 175 L195 130 L195 90"/><path d="M195 240 L240 250 L248 190 L253 150 L257 115"/><path d="M240 250 L280 270 L295 220 L304 188 L312 160"/><path d="M200 400 L280 270"/></g><g fill="#0B1A4E" stroke="#fff" stroke-width="3"><circle cx="200" cy="400" r="9"/><circle cx="140" cy="360" r="9"/><circle cx="105" cy="320" r="9"/><circle cx="80" cy="285" r="9"/><circle cx="60" cy="255" r="9"/><circle cx="150" cy="250" r="9"/><circle cx="140" cy="190" r="9"/><circle cx="134" cy="150" r="9"/><circle cx="130" cy="112" r="9"/><circle cx="195" cy="240" r="9"/><circle cx="195" cy="175" r="9"/><circle cx="195" cy="130" r="9"/><circle cx="195" cy="90" r="9"/><circle cx="240" cy="250" r="9"/><circle cx="248" cy="190" r="9"/><circle cx="253" cy="150" r="9"/><circle cx="257" cy="115" r="9"/><circle cx="280" cy="270" r="9"/><circle cx="295" cy="220" r="9"/><circle cx="304" cy="188" r="9"/><circle cx="312" cy="160" r="9"/></g></svg></div>
+      </div>
+      <div class="card card--soft c-green knn__card">
+        <div class="kk">② KNN</div>
+        <div class="t-md" style="font-weight:700;color:var(--navy)">모아 둔 예시 중 가장 가까운 몇 개의 다수결</div>
+        <div class="knn__fig"><svg viewBox="66 76 300 270" role="img" aria-label="새 손 모양 주변의 가까운 예시 셋 중 둘이 ID1"><circle cx="200" cy="200" r="72" fill="none" stroke="#55628A" stroke-width="2" stroke-dasharray="8 8"/><g stroke="#55628A" stroke-width="3" stroke-dasharray="6 6"><line x1="200" y1="200" x2="150" y2="190"/><line x1="200" y1="200" x2="160" y2="150"/><line x1="200" y1="200" x2="250" y2="215"/></g><g fill="#0B57D8"><circle cx="100" cy="120" r="12"/><circle cx="140" cy="100" r="12"/><circle cx="160" cy="150" r="12"/><circle cx="120" cy="170" r="12"/><circle cx="90" cy="160" r="12"/><circle cx="150" cy="190" r="12"/></g><g fill="#0B1A4E"><rect x="238" y="203" width="24" height="24" rx="3"/><rect x="318" y="238" width="24" height="24" rx="3"/><rect x="288" y="288" width="24" height="24" rx="3"/><rect x="328" y="278" width="24" height="24" rx="3"/><rect x="258" y="268" width="24" height="24" rx="3"/><rect x="308" y="308" width="24" height="24" rx="3"/></g><polygon points="200,180 205.3,192.7 219,193.8 208.6,202.8 211.8,216.2 200,209 188.2,216.2 191.4,202.8 181,193.8 194.7,192.7" fill="#F8C000" stroke="#0B1A4E" stroke-width="2"/></svg></div>
+        <div class="knn__legend"><span><i class="lg-dot"></i>ID1(주먹)</span><span><i class="lg-sq"></i>ID2(보)</span><span><i class="lg-star"></i>새 손 모양</span></div>
+        <div class="knn__k">K=3: 가까운 셋 중 둘이 ID1 → ‘ID1’로 판단</div>
+      </div>
+    </div>
+    <div class="callout c-row mt-m">
+      <span class="circle c-yellow"><svg class="i"><use href="#i-bulb"></use></svg></span>
+      <div class="t-md" style="font-weight:600">우리가 할 일은 손 모양마다 <b class="t-blue">이름표 붙은 예시</b>를 모아 주는 것뿐. 이것이 <b class="t-blue">지도학습</b>입니다.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-bt" data-section="3. 핸드포즈" data-title="블루투스 준비: 설정과 장치 이름">
+  <div class="slide__head">
+    <div class="slide__kicker">KNN 핸드포즈분류</div>
+    <h2 class="slide__title">블루투스 준비: 설정과 장치 이름</h2>
+  </div>
+  <div class="slide__body">
+    <div class="seq">
+      <div class="numcard c-blue"><span class="numcard__n">1</span><div class="numcard__h">프로젝트 설정 바꾸기</div><div class="numcard__t">MakeCode 오른쪽 위 톱니바퀴 → 프로젝트 설정 → 블루투스 ‘페어링이 필요하지 않습니다’ → 저장</div></div>
+      <div class="seq__arr"><svg viewBox="0 0 34 24"><path d="M2 12h26M20 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="numcard c-green"><span class="numcard__n">2</span><div class="numcard__h">장치 이름 확인 코드 보내기</div><div class="numcard__t">LED에 다섯 글자 이름이 흘러간다</div></div>
+      <div class="seq__arr"><svg viewBox="0 0 34 24"><path d="M2 12h26M20 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="numcard c-purple"><span class="numcard__n">3</span><div class="numcard__h">이름표에 적어 붙이기</div><div class="numcard__t">예: tobiz. 옆 사람 기기와 헷갈리지 않게</div></div>
+    </div>
+    <div class="warn mt-m">
+      <span class="circle"><svg class="i"><use href="#i-alert"></use></svg></span>
+      <div><div class="warn__h">장치 이름 확인 코드와 AI 연결용 코드는 서로 다른 코드예요</div><div class="warn__t">컨설팅에서 가장 자주 나온 혼동입니다. 이름을 확인한 뒤 연결용 코드를 다시 보냅니다.</div></div>
+    </div>
+    <a class="code-link c-yellow mt-m" href="https://makecode.microbit.org/S49771-77509-50114-72682" target="_blank" rel="noopener">
+      <span class="circle circle--sm"><svg class="i"><use href="#i-cpu"></use></svg></span>
+      <span class="code-link__text"><span class="code-link__name">장치 이름 확인 코드</span><span class="code-link__url">makecode.microbit.org/S49771-77509-50114-72682</span></span>
+      <span class="code-link__go">코드 열기 <svg class="i"><use href="#i-external"></use></svg></span>
+    </a>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-base" data-section="3. 핸드포즈" data-title="AI 연결용 기본 코드">
+  <div class="slide__head">
+    <div class="slide__kicker">KNN 핸드포즈분류</div>
+    <h2 class="slide__title">AI 연결용 기본 코드</h2>
+  </div>
+  <div class="slide__body">
+    <div class="codecols" style="grid-template-columns:788px 1fr;gap:36px">
+      <div class="window">
+        <div class="window__bar">MakeCode · AI 연결용 기본 코드</div>
+        <div class="window__body window__body--flush shot-mark">
+          <img src="assets/img/78/code-base.png" width="784" height="531" alt="시작하면 블루투스 UART 서비스. 연결되면 웃는 얼굴과 소리, 끊기면 슬픈 얼굴. 데이터를 받으면 데이터 변수에 저장. 무한반복: 데이터가 ID1이면 move 1 호출, ID2이면 아이콘 표시. 함수 move 1: P0 서보 0도, 45도, 90도">
+          <span class="mk-badge" style="left:14.4%;top:1.2%">1</span>
+          <span class="mk-badge" style="left:47.6%;top:1.2%">2</span>
+          <span class="mk-badge" style="left:78.6%;top:1.2%">2</span>
+          <span class="mk-badge" style="left:50.4%;top:26.5%">3</span>
+          <span class="mk-badge" style="left:17.8%;top:37.5%">4</span>
+          <span class="mk-fix" style="left:6.2%;top:63.8%;width:15.4%;height:9.6%"></span>
+          <span class="mk-fix" style="left:72.6%;top:58%;width:5.4%;height:31.6%"></span>
+        </div>
+      </div>
+      <div class="col" style="gap:12px">
+        <dl class="parts">
+          <div><dt><span class="mk-badge">1</span>시작하면</dt><dd>블루투스 통신을 켠다</dd></div>
+          <div><dt><span class="mk-badge">2</span>연결되면 / 끊기면</dt><dd>웃는 얼굴과 소리 / 슬픈 얼굴</dd></div>
+          <div><dt><span class="mk-badge">3</span>글자를 받으면</dt><dd>AI가 보낸 글자를 ‘데이터’에 담는다</dd></div>
+          <div><dt><span class="mk-badge">4</span>무한 반복</dt><dd>ID1이면 move 1, ID2면 move 2</dd></div>
+        </dl>
+        <div class="callout fixbox">
+          <div class="kk"><i class="fixbox__sw"></i>고칠 곳은 두 군데</div>
+          <div style="margin-top:4px;font-size:25px">ID2에 move 2 넣기, 함수 속 각도 바꾸기</div>
+        </div>
+        <p class="src">ID1·ID2는 웹앱의 글자와 대소문자까지 같아야 해요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-teach-hand" data-section="3. 핸드포즈" data-title="웹앱에서 손 모양 가르치기">
+  <div class="slide__head">
+    <div class="slide__kicker">KNN 핸드포즈분류</div>
+    <h2 class="slide__title">웹앱에서 손 모양 가르치기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="grid-5">
+      <div class="numcard c-blue"><span class="numcard__n">1</span><div class="numcard__h">코드 먼저</div><div class="numcard__t">링비트를 끄고 기본 코드 전송</div></div>
+      <div class="numcard c-blue"><span class="numcard__n">2</span><div class="numcard__h">웹앱 열기</div><div class="numcard__t">카메라 사용을 허용</div></div>
+      <div class="numcard c-blue"><span class="numcard__n">3</span><div class="numcard__h">손 모양 모으기</div><div class="numcard__t">“+ 학습 ID 추가”로 ID1·ID2를 만들고 “학습하기”로 주먹·보 수집</div></div>
+      <div class="numcard c-blue"><span class="numcard__n">4</span><div class="numcard__h">블루투스 연결</div><div class="numcard__t">이름표에 적은 내 장치 이름 선택</div></div>
+      <div class="numcard c-blue"><span class="numcard__n">5</span><div class="numcard__h">켜고 시작</div><div class="numcard__t">링비트를 켜고 “시작”</div></div>
+    </div>
+    <div class="okbar mt-m"><span class="circle circle--sm"><svg class="i"><use href="#i-check"></use></svg></span><span>주먹을 내면 첫 번째 서보, 보를 내면 두 번째 서보가 움직이면 성공</span></div>
+    <div class="grid-3 mt-m" style="gap:20px">
+      <div class="card" style="padding:16px 24px"><div class="kk">잘 모으려면</div><div class="t-sm">손을 조금씩 기울이고 거리를 바꿔 가며</div></div>
+      <div class="card" style="padding:16px 24px"><div class="kk">카메라</div><div class="t-sm">노트북보다 스마트폰·태블릿</div></div>
+      <div class="card" style="padding:16px 24px"><div class="kk">아이폰</div><div class="t-sm">Bluefy 브라우저로 접속</div></div>
+    </div>
+    <p class="src mt-s">웹앱: <a class="link" href="https://boundary-x.github.io/ai_handpose_recognition/" target="_blank" rel="noopener">boundary-x.github.io/ai_handpose_recognition ↗</a></p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-check5" data-section="3. 핸드포즈" data-title="안 될 때 다섯 가지 확인">
+  <div class="slide__head">
+    <div class="slide__kicker">KNN 핸드포즈분류 · 눌러서 하나씩 체크</div>
+    <h2 class="slide__title">안 될 때 다섯 가지 확인</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:1.6fr 1fr;gap:40px">
+    <ul class="checklist fill-rows checklist--tap">
+      <li><span class="box"></span><span class="bar"><span><b>1 · AI 연결용 코드가 들어갔나?</b> <span class="t-muted" style="font-size:22px">장치 이름 확인 코드와 헷갈리기 쉬워요</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>2 · 내 장치 이름에 연결했나?</b> <span class="t-muted" style="font-size:22px">이름표의 다섯 글자와 같은지 봅니다</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>3 · ID 글자가 같은가?</b> <span class="t-muted" style="font-size:22px">코드의 ID1·ID2와 웹앱의 ID, 대소문자까지</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>4 · ‘시작’을 눌렀나?</b> <span class="t-muted" style="font-size:22px">인식을 시작해야 글자가 갑니다</span></span></span></li>
+      <li><span class="box"></span><span class="bar"><span><b>5 · 링비트 전원을 켰나?</b> <span class="t-muted" style="font-size:22px">보낼 땐 끄고, 움직일 땐 켠다</span></span></span></li>
+    </ul>
+    <div class="stretch-col">
+      <div class="callout help help--plain grow"><span class="circle c-blue"><svg class="i"><use href="#i-hand"></use></svg></span><span>그래도 안 되면<br>손을 들어 주세요.<br><span class="t-blue">분임강사가 갑니다.</span></span></div>
+      <div class="card card--soft c-green"><div class="t-sm"><b class="t-strong">먼저 된 분은</b> 움직이는 각도를 바꿔 보세요.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--pastel" id="s-break" data-section="3. 핸드포즈" data-title="7차시 마무리 · 쉬는 시간">
+  <div class="show-cover brk">
+    <span class="divider__part">7차시 마무리</span>
+    <h2 class="show-cover__title">쉬는 시간 10분</h2>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 14:50 ~ 15:00</div>
+    <p class="show-cover__text">8차시는 지금 이 코드를 그대로 씁니다. 장비는 그대로 두세요.</p>
+    <div class="brk__cards">
+      <div class="card"><div class="kk">연결이 안 된 분은 손을 들어주세요</div><div class="t-md" style="margin-top:4px">분임강사 선생님들과 함께 마무리합니다</div></div>
+      <div class="card"><div class="kk">다섯 가지 확인</div><div class="t-md" style="margin-top:4px;font-size:24px">① 연결용 코드 ② 장치 이름 ③ ID 글자 ④ 시작 ⑤ 링비트 전원</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. 8차시 · 이미지분류와 모션인식 ============ -->
+
+<section class="slide slide--pixel" id="s-part4" data-section="4. 이미지·모션" data-title="PART 4 · 이미지분류와 모션인식">
+  <div class="divider">
+    <span class="divider__part">PART 4</span>
+    <h2 class="divider__title">이미지분류와 모션인식</h2>
+    <p class="divider__text">코드는 그대로 두고, 보는 눈만 바꿔 끼웁니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 8차시 · 15:00 ~ 15:50</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-swap" data-section="4. 이미지·모션" data-title="코드는 그대로, AI만 바꿔 끼운다">
+  <div class="slide__head">
+    <div class="slide__kicker">8차시 · KNN 이미지분류</div>
+    <h2 class="slide__title">코드는 그대로, AI만 바꿔 끼운다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="chain chain--sm">
+      <div class="card card--soft chain__node c-yellow is-hot">
+        <img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">
+        <div class="chain__step">① 인식 · 바꿔 끼우기</div>
+        <div class="chain__name">이미지분류 웹앱</div>
+        <div class="chain__desc">손 모양 대신 물체를 보고 ID1·ID2를 보낸다</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>블루투스<b>ID1</b></div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/microbit.png" alt="">
+        <div class="chain__step">② 판단 · 그대로</div>
+        <div class="chain__name">마이크로비트</div>
+        <div class="chain__desc">7차시 기본 코드, 다시 보내지 않는다</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>각도<b>명령</b></div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/robot-arm.png" alt="">
+        <div class="chain__step">③ 움직임 · 그대로</div>
+        <div class="chain__name">180° 서보 2개</div>
+        <div class="chain__desc">move 1은 P0, move 2는 P1</div>
+      </div>
+    </div>
+    <div class="callout callout--sky c-row mt-l">
+      <img class="icon-badge icon-badge--sm" src="assets/img/icons/sprout.png" alt="">
+      <div><div class="t-md" style="font-size:29px;font-weight:600">판단하고 움직이는 부분을 한 번 만들어 두면, <b class="t-blue">보는 눈은 바꿔 끼울 수 있습니다.</b></div>
+      <div class="t-sm t-muted" style="margin-top:2px">웹앱이 바뀌면 블루투스만 다시 연결합니다.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-teach-img" data-section="4. 이미지·모션" data-title="물체 두 가지 가르치기">
+  <div class="slide__head">
+    <div class="slide__kicker">KNN 이미지분류</div>
+    <h2 class="slide__title">물체 두 가지 가르치기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="grid-5">
+      <div class="numcard c-green"><span class="numcard__n">1</span><div class="numcard__h">웹앱 열기</div><div class="numcard__t">이미지분류 웹앱 접속, 카메라 허용</div></div>
+      <div class="numcard c-green"><span class="numcard__n">2</span><div class="numcard__h">블루투스 연결</div><div class="numcard__t">이름표의 내 장치 이름 선택</div></div>
+      <div class="numcard c-green"><span class="numcard__n">3</span><div class="numcard__h">ID 만들기</div><div class="numcard__t">“+ 학습 ID 추가”로 ID1·ID2</div></div>
+      <div class="numcard c-green"><span class="numcard__n">4</span><div class="numcard__h">물체 모으기</div><div class="numcard__t">물체를 비추고 “학습하기”(짧게 1장, 길게 연속)</div></div>
+      <div class="numcard c-green"><span class="numcard__n">5</span><div class="numcard__h">시작</div><div class="numcard__t">물체를 번갈아 보여 주기</div></div>
+    </div>
+    <div class="callout c-row mt-m" style="padding:14px 28px">
+      <span class="circle circle--sm c-yellow"><svg class="i"><use href="#i-bulb"></use></svg></span>
+      <div style="font-size:26px">예: <b class="t-blue">ID1 흑돌, ID2 백돌.</b> 색이 확실히 다른 두 물건을 고르세요.</div>
+    </div>
+    <div class="grid-3 mt-m" style="gap:20px">
+      <div class="card" style="padding:16px 24px"><div class="kk">잘 모으려면</div><div class="t-sm">배경은 단순하게, 조명·거리는 학습 때와 비슷하게</div></div>
+      <div class="card" style="padding:16px 24px"><div class="kk">안 움직이면</div><div class="t-sm">신뢰도가 50%를 넘어야 ID를 보낸다</div></div>
+      <div class="card card--soft c-yellow" style="padding:16px 24px"><div class="kk">저장해 두기</div><div class="t-sm">“모델 다운로드” → 9~10차시에 “모델 가져오기”</div></div>
+    </div>
+    <p class="src mt-s">웹앱: <a class="link" href="https://boundary-x.github.io/ai_teachable_machine_KNN/" target="_blank" rel="noopener">boundary-x.github.io/ai_teachable_machine_KNN ↗</a></p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-sorter" data-section="4. 이미지·모션" data-title="분류기로 상상해 보기">
+  <div class="slide__head">
+    <div class="slide__kicker">KNN 이미지분류</div>
+    <h2 class="slide__title">분류기로 상상해 보기</h2>
+  </div>
+  <div class="slide__body">
+    <p class="t-md" style="margin:0;font-size:32px;font-weight:600;color:var(--navy)">이미지분류는 <b class="t-blue">‘무엇인지 보고 나누는’</b> 문제에 어울립니다.</p>
+    <div class="grid-3 mt-l" style="gap:24px">
+      <div class="card card--soft c-blue"><div class="kk">예시 1</div><div class="t-lg" style="margin-top:6px">흑돌·백돌 분류기</div><p class="t-sm" style="margin:8px 0 0">흑돌이면 첫 번째 서보가 왼쪽 문을, 백돌이면 두 번째 서보가 오른쪽 문을 연다</p></div>
+      <div class="card card--soft c-green"><div class="kk">예시 2</div><div class="t-lg" style="margin-top:6px">쓰레기 분류 로봇</div><p class="t-sm" style="margin:8px 0 0">분리배출할 쓰레기를 보고 알맞은 통으로 보낸다</p></div>
+      <div class="card card--soft c-purple"><div class="kk">예시 3</div><div class="t-lg" style="margin-top:6px">과일 분류기</div><p class="t-sm" style="margin:8px 0 0">과일의 종류를 보고 나눈다</p></div>
+    </div>
+    <div class="motto mt-l">
+      <span class="circle"><svg class="i"><use href="#i-gear"></use></svg></span>
+      <div class="motto__h">서보 두 개가 <em>문 두 개</em>가 됩니다.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-motion" data-section="4. 이미지·모션" data-title="고르기 대신 따라 하기">
+  <div class="slide__head">
+    <div class="slide__kicker">8차시 · 모션인식</div>
+    <h2 class="slide__title">고르기 대신 따라 하기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="motion">
+      <div class="col" style="gap:18px">
+        <div class="card card--soft c-blue"><div class="kk">분류 · 핸드포즈와 이미지</div><div class="t-xl" style="margin-top:4px">스위치</div><div class="t-sm" style="margin-top:4px">무엇인지 골라 ID를 보낸다</div></div>
+        <div class="card card--soft c-purple is-hot"><div class="kk">모션인식</div><div class="t-xl" style="margin-top:4px">조이스틱</div><div class="t-sm" style="margin-top:4px">양손의 높이를 계속 보낸다</div></div>
+        <div class="t-md" style="font-weight:600;color:var(--navy)"><b>왼손</b> → 첫 번째 서보(P0), <b>오른손</b> → 두 번째 서보(P1)</div>
+        <p class="src">보내는 값 예: <span class="mono">LF255RB150</span> (왼쪽 앞으로 255, 오른쪽 뒤로 150)</p>
+      </div>
+      <div class="zones">
+        <div class="zones__up"><div class="zones__k">위 40% · 전진</div><div class="zones__v">손을 높이 들수록 180° 쪽</div></div>
+        <div class="zones__mid"><div class="zones__k">가운데 20% · 정지</div><div class="zones__v">90°에 멈춘다</div></div>
+        <div class="zones__down"><div class="zones__k">아래 40% · 후진</div><div class="zones__v">손을 내릴수록 0° 쪽</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-motion-go" data-section="4. 이미지·모션" data-title="예제 코드 불러오고 연결하기">
+  <div class="slide__head">
+    <div class="slide__kicker">모션인식</div>
+    <h2 class="slide__title">예제 코드 불러오고 연결하기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="grid-3" style="gap:16px 20px">
+      <div class="nlist__item c-purple"><span class="nlist__n">1</span><div class="nlist__h">링비트 끄기</div><div class="nlist__t">보낼 땐 끄고</div></div>
+      <div class="nlist__item c-purple"><span class="nlist__n">2</span><div class="nlist__h">예제 코드 보내기</div><div class="nlist__t">180° 서보용 예제(강사 수정본 QR)</div></div>
+      <div class="nlist__item c-purple"><span class="nlist__n">3</span><div class="nlist__h">링비트 켜기</div><div class="nlist__t">움직일 땐 켠다</div></div>
+      <div class="nlist__item c-purple"><span class="nlist__n">4</span><div class="nlist__h">웹앱 열기</div><div class="nlist__t">노트북·태블릿으로 접속, 카메라 허용</div></div>
+      <div class="nlist__item c-purple"><span class="nlist__n">5</span><div class="nlist__h">블루투스 연결</div><div class="nlist__t">7차시와 같은 내 장치 이름</div></div>
+      <div class="nlist__item c-purple"><span class="nlist__n">6</span><div class="nlist__h">양손 들기</div><div class="nlist__t">화면에 두 손이 보이게</div></div>
+    </div>
+    <div class="grid-3 mt-m" style="gap:20px">
+      <div class="card card--soft c-yellow is-hot" style="padding:16px 24px"><div class="kk">핀 확인</div><div class="t-sm">원본 예제는 왼손 P1·오른손 P2, 강사 수정본은 P0·P1</div></div>
+      <div class="card" style="padding:16px 24px"><div class="kk">기기</div><div class="t-sm">스마트폰은 화면이 작아 권장하지 않아요</div></div>
+      <div class="card" style="padding:16px 24px"><div class="kk">연결이 끊기면</div><div class="t-sm">두 서보가 90°로 돌아가요</div></div>
+    </div>
+    <div class="grid-2 mt-m" style="gap:20px">
+      <a class="code-link c-purple" href="https://boundary-x.github.io/ai_handpose_rc_controller/" target="_blank" rel="noopener">
+        <span class="circle circle--sm"><svg class="i"><use href="#i-hand"></use></svg></span>
+        <span class="code-link__text"><span class="code-link__name">모션인식 웹앱</span><span class="code-link__url">boundary-x.github.io/ai_handpose_rc_controller</span></span>
+        <span class="code-link__go">열기 <svg class="i"><use href="#i-external"></use></svg></span>
+      </a>
+      <a class="code-link c-yellow" href="https://makecode.microbit.org/_bRcUi2WUb1pA" target="_blank" rel="noopener">
+        <span class="circle circle--sm"><svg class="i"><use href="#i-code"></use></svg></span>
+        <span class="code-link__text"><span class="code-link__name">원본 예제 코드</span><span class="code-link__url">makecode.microbit.org/_bRcUi2WUb1pA</span></span>
+        <span class="code-link__go">열기 <svg class="i"><use href="#i-external"></use></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-motion-try" data-section="4. 이미지·모션" data-title="두 손으로 조종해 보기">
+  <div class="slide__head">
+    <div class="slide__kicker">모션인식</div>
+    <h2 class="slide__title">두 손으로 조종해 보기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="c-row"><span class="circle circle--sm c-blue"><svg class="i"><use href="#i-users"></use></svg></span><div class="t-md" style="font-weight:600;color:var(--navy)">짝과 함께: 한 사람은 조종하고, 한 사람은 서보를 봅니다.</div></div>
+    <div class="grid-3 mt-m" style="gap:24px">
+      <div class="card"><div class="kk">미션 1</div><div class="t-lg" style="font-size:29px">같이 올렸다 내리기</div><div class="t-sm t-muted">두 손을 함께 위아래로</div>
+        <div class="mini"><i style="left:33%;top:22%">L</i><i style="left:67%;top:22%">R</i><b style="left:46%">↕</b></div></div>
+      <div class="card"><div class="kk">미션 2</div><div class="t-lg" style="font-size:29px">하나는 올리고 하나는 내리기</div><div class="t-sm t-muted">한 손은 위, 한 손은 아래</div>
+        <div class="mini"><i style="left:33%;top:20%">L</i><i style="left:67%;top:80%">R</i></div></div>
+      <div class="card"><div class="kk">미션 3</div><div class="t-lg" style="font-size:29px">가운데에서 멈추기</div><div class="t-sm t-muted">두 손을 화면 가운데 높이에</div>
+        <div class="mini"><i style="left:33%;top:50%">L</i><i style="left:67%;top:50%">R</i></div></div>
+    </div>
+    <div class="motto mt-m">
+      <span class="circle"><svg class="i"><use href="#i-hand"></use></svg></span>
+      <div><div class="motto__h">‘무엇을’이 아니라 <em>‘얼마나’</em>를 손으로 정한다</div><div class="motto__t">어울리는 작품: 손을 대지 않는 로봇팔, 손짓에 반응하는 조형물 (바운더리엑스 예시)</div></div>
+    </div>
+    <div class="c-row mt-s"><span class="circle circle--sm c-yellow"><svg class="i"><use href="#i-alert"></use></svg></span><div class="t-sm" style="font-weight:700;color:var(--navy)">9~10차시에 핸드포즈·이미지분류로 만들려면 7차시 기본 코드를 다시 보내세요.</div></div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-compare" data-section="4. 이미지·모션" data-title="세 모델 한눈에 비교">
+  <div class="slide__head">
+    <div class="slide__kicker">8차시 · 세 모델 비교</div>
+    <h2 class="slide__title">세 모델 한눈에 비교</h2>
+  </div>
+  <div class="slide__body">
+    <table class="table cmp3">
+      <thead><tr><th>구분</th><th>KNN 핸드포즈분류</th><th>KNN 이미지분류</th><th>모션인식</th></tr></thead>
+      <tbody>
+        <tr><td>보는 것</td><td>손 모양</td><td>물체</td><td>양손의 높이</td></tr>
+        <tr><td>보내는 값</td><td>ID1, ID2 …</td><td>ID1, ID2 …</td><td><span class="mono">LF255RB150</span> (10글자)</td></tr>
+        <tr><td>서보 움직임</td><td>정해 둔 동작(스위치)</td><td>정해 둔 동작(스위치)</td><td>손을 따라 계속(조이스틱)</td></tr>
+        <tr><td>어울리는 문제</td><td>몸짓으로 신호 보내기</td><td>보고 나누기</td><td>손 대지 않고 조종하기</td></tr>
+        <tr><td>마이크로비트 코드</td><td>7차시 기본 코드</td><td>7차시 기본 코드(그대로)</td><td>180° 서보용 예제 코드</td></tr>
+        <tr><td>권장 기기</td><td>스마트폰·태블릿</td><td>스마트폰·태블릿·노트북</td><td>노트북·태블릿</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout--sky c-row mt-m" style="padding:14px 28px">
+      <span class="circle circle--sm c-yellow"><svg class="i"><use href="#i-target"></use></svg></span>
+      <div style="font-size:25px">고르는 기준: 몸짓으로 신호 → <b class="t-blue">핸드포즈</b> · 보고 나누기 → <b class="t-blue">이미지분류</b> · 얼마나 움직일지 → <b class="t-blue">모션인식</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. 아이디어 씨앗 ============ -->
+
+<section class="slide slide--pixel" id="s-part5" data-section="5. 아이디어 씨앗" data-title="PART 5 · 아이디어 씨앗">
+  <div class="divider">
+    <span class="divider__part">PART 5</span>
+    <h2 class="divider__title">아이디어 씨앗</h2>
+    <p class="divider__text">9~10차시에 만들 작품의 씨앗을<br>문장 한 줄과 카드 한 장으로 남깁니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 8차시 · 15:00 ~ 15:50</div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-sentence" data-section="5. 아이디어 씨앗" data-title="아이디어를 한 문장으로">
+  <div class="slide__head">
+    <div class="slide__kicker">8차시 · 아이디어 씨앗</div>
+    <h2 class="slide__title">아이디어를 한 문장으로</h2>
+  </div>
+  <div class="slide__body">
+    <div class="frame is-hot"><span class="blank c-purple">○○한 상황</span>에서 <span class="blank c-yellow">○○이</span>가 겪는 불편을 줄이기 위해, AI가 <span class="blank c-blue">○</span>을 인식하면 서보모터가 <span class="blank c-green">○○</span>하도록 만든다.</div>
+    <div class="note mt-l" style="padding:22px 30px">
+      <div class="kk" style="color:#9A7400">예시</div>
+      <div class="t-md" style="margin-top:6px;font-weight:600;color:var(--navy)">메이커 교육을 하는 상황에서, 도움을 요청하는 학생이 계속 손을 들고 있어야 하는 문제를 해결하기 위해, AI가 학생의 손동작을 인식하면 서보모터가 손을 대신 들고 있어 주는 도구를 만든다.</div>
+    </div>
+    <p class="src mt-m" style="font-size:21px">빈칸이 안 채워지는 곳이 아직 덜 생각한 곳입니다 · 다른 예: 바둑알 분류기, 자명종</p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-where" data-section="5. 아이디어 씨앗" data-title="주제는 어디서 찾을까">
+  <div class="slide__head">
+    <div class="slide__kicker">아이디어 씨앗</div>
+    <h2 class="slide__title">주제는 어디서 찾을까</h2>
+  </div>
+  <div class="slide__body">
+    <div class="where">
+      <div class="where__c c-blue"><span class="circle"><svg class="i"><use href="#i-home"></use></svg></span><div><div class="kk">1 · 실생활</div><div class="where__h">교실·급식실·복도의 불편한 순간</div><div class="where__t">학생과는 교실을 3분 동안 관찰하며 찾기</div></div></div>
+      <div class="where__c c-green"><span class="circle"><svg class="i"><use href="#i-book"></use></svg></span><div><div class="kk">2 · 교과 연계</div><div class="where__h">배운 내용을 쓰는 도구</div><div class="where__t">학년·교과에 맞는 예시를 하나 보여 주기</div></div></div>
+      <div class="where__c c-yellow"><span class="circle"><svg class="i"><use href="#i-bulb"></use></svg></span><div><div class="kk">3 · 발명 기법</div><div class="where__h">이미 있는 도구에 서보를 더하기</div><div class="where__t">기존 도구를 발전시키기 · 막히면 카드 뽑기(다음 장)</div></div></div>
+      <div class="where__c c-purple"><span class="circle"><svg class="i"><use href="#i-chat"></use></svg></span><div><div class="kk">4 · 생성형 AI</div><div class="where__h">조건을 주고 아이디어 묻기</div><div class="where__t">예: ‘교실의 불편함 중 서보 2개와 손동작 인식으로 풀 수 있는 것 5가지’</div></div></div>
+    </div>
+    <div class="motto mt-m">
+      <span class="circle"><svg class="i"><use href="#i-users"></use></svg></span>
+      <div><div class="motto__h">AI가 준 아이디어도 <em>‘정말 우리 반의 문제인가?’</em>를 다시 묻습니다.</div><div class="motto__t">디자인 싱킹: 불편을 겪는 사람의 자리에서 출발</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-force" data-section="5. 아이디어 씨앗" data-title="막히면 카드를 뽑아 억지로 엮어 보기">
+  <div class="slide__head">
+    <div class="slide__kicker">아이디어 씨앗 · 강제 연결법</div>
+    <h2 class="slide__title">막히면 카드를 뽑아 억지로 엮어 보기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="kcards">
+      <div class="kcard c-blue"><span class="dcard__kind"><svg class="i"><use href="#i-binoculars"></use></svg> 지능 카드 · 입력</span><div class="kcard__h">AI가 무엇을 알아보나</div><div class="kcard__t">예: 손 모양 · 물체 · 손 높이</div></div>
+      <div class="kcard c-green"><span class="dcard__kind"><svg class="i"><use href="#i-move"></use></svg> 기능 카드 · 출력</span><div class="kcard__h">로봇이 어떻게 움직이나</div><div class="kcard__t">예: 들어 올리기 · 열고 닫기 · 가리키기</div></div>
+      <div class="kcard c-purple"><span class="dcard__kind"><svg class="i"><use href="#i-home"></use></svg> 상황 카드 · 환경</span><div class="kcard__h">어디에서 쓰이나</div><div class="kcard__t">예: 교실 · 급식실 · 복도</div></div>
+    </div>
+    <div class="flowline mt-m" style="justify-content:flex-start">
+      <span class="flowline__s"><span class="circle c-blue">1</span>사이트 접속</span>
+      <span class="flowline__arr"><svg viewBox="0 0 40 24"><path d="M2 12h32M26 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="flowline__s"><span class="circle c-green">2</span>세 장 뽑기, 마음에 들 때까지 다시</span>
+      <span class="flowline__arr"><svg viewBox="0 0 40 24"><path d="M2 12h32M26 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="flowline__s"><span class="circle c-purple">3</span>문장 틀에 넣기</span>
+    </div>
+    <div class="grid-2 mt-m" style="grid-template-columns:1.25fr 1fr;gap:24px;align-items:stretch">
+      <div class="callout c-row"><span class="circle c-yellow"><svg class="i"><use href="#i-spark"></use></svg></span><div style="font-size:26px">관계없어 보이는 것을 일부러 엮는 발명 기법, <b class="t-blue">강제 연결법</b>입니다.</div></div>
+      <a class="code-link c-purple" href="https://boundary-x.github.io/random_draw_ponybot/" target="_blank" rel="noopener">
+        <span class="circle circle--sm"><svg class="i"><use href="#i-spark"></use></svg></span>
+        <span class="code-link__text"><span class="code-link__name">카드 뽑기</span><span class="code-link__url">boundary-x.github.io/random_draw_ponybot</span></span>
+        <span class="code-link__go">열기 <svg class="i"><use href="#i-external"></use></svg></span>
+      </a>
+    </div>
+    <p class="src mt-s">참고: 김홍순 선생님, 「랜덤 카드 로봇 리믹스 챌린지」</p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-card" data-section="5. 아이디어 씨앗" data-title="아이디어 카드 쓰기">
+  <div class="slide__head">
+    <div class="slide__kicker">아이디어 씨앗</div>
+    <h2 class="slide__title">아이디어 카드 쓰기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="icard-wrap">
+      <div class="icard">
+        <div class="icard__k">① 문장 틀</div>
+        <div class="icard__line"></div>
+        <div class="icard__k">② 쓸 AI 모델</div>
+        <div class="icard__opts"><span>핸드포즈</span><span>이미지분류</span><span>모션인식</span></div>
+        <div class="icard__k">③ 서보가 하는 일</div>
+        <div class="icard__sv"><span>서보 1</span><i class="icard__line"></i></div>
+        <div class="icard__sv"><span>서보 2</span><i class="icard__line"></i></div>
+        <div class="icard__k">④ 간단한 그림</div>
+        <div class="icard__draw"></div>
+      </div>
+      <div class="col" style="gap:22px;justify-content:center">
+        <div class="mins">
+          <div><b>3분</b><span>혼자 쓰기</span></div>
+          <div><b>3분</b><span>모둠에서 돌려 읽기</span></div>
+        </div>
+        <div class="motto" style="flex-direction:column;align-items:flex-start;gap:6px">
+          <div class="motto__t" style="margin:0;color:var(--yellow);font-weight:800">돌려 읽을 때 한 가지만 묻기</div>
+          <div class="motto__h">“서보 두 개로 정말 되나요?”</div>
+        </div>
+        <p class="src" style="font-size:21px">카드는 걷지 않고 각자 보관했다가 9~10차시에 가져갑니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-wrap" data-section="5. 아이디어 씨앗" data-title="오늘 연결한 것">
+  <div class="slide__head">
+    <div class="slide__kicker">8차시 · 정리</div>
+    <h2 class="slide__title">오늘 연결한 것</h2>
+  </div>
+  <div class="slide__body">
+    <div class="chain">
+      <div class="card chain__node c-blue">
+        <img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">
+        <div class="chain__step">① 보는 눈</div>
+        <div class="chain__name">AI 웹앱 3종</div>
+        <div class="chain__desc">핸드포즈 · 이미지분류 · 모션인식</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>블루투스</div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/microbit.png" alt="">
+        <div class="chain__step">② 판단</div>
+        <div class="chain__name">마이크로비트</div>
+        <div class="chain__desc">기본 코드 · 모션 예제 코드</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>각도</div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/robot-arm.png" alt="">
+        <div class="chain__step">③ 움직임</div>
+        <div class="chain__name">180° 서보 2개</div>
+        <div class="chain__desc">P0와 P1</div>
+      </div>
+    </div>
+    <div class="motto mt-l">
+      <div class="motto__sw"><span class="sw"><i class="sw__body"></i>보낼 때</span><span class="sw sw--on"><i class="sw__body"></i>움직일 때</span></div>
+      <div><div class="motto__h">보낼 땐 <em>끄고</em>, 움직일 땐 <em>켠다</em></div><div class="motto__t">9~10차시에도 그대로입니다.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--pastel" id="s-end" data-section="5. 아이디어 씨앗" data-title="9~10차시로 가져갈 것">
+  <div class="show-cover brk">
+    <span class="divider__part">8차시 마무리</span>
+    <h2 class="show-cover__title">9~10차시로 가져갈 것</h2>
+    <div class="bring">
+      <div class="card"><img class="icon-badge" src="assets/img/icons/microbit.png" alt=""><div><div class="bring__h">장비</div><div class="bring__t">장치 이름표가 붙은 마이크로비트·링비트·서보 2개</div></div></div>
+      <div class="card"><img class="icon-badge" src="assets/img/icons/sprout.png" alt=""><div><div class="bring__h">아이디어 카드</div><div class="bring__t">문장 틀로 쓴 아이디어 한 장</div></div></div>
+    </div>
+    <div class="next">
+      <b>9~10차시 「링비트와 AI모델을 활용한 문제해결 작품 제작 및 수업 적용」 16:00~17:50</b>
+      <span>오늘 만든 코드는 MakeCode에 저장해 두세요 · 10분 쉬고 뵙겠습니다</span>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
+
+<script src="assets/js/config.js?v=1e10c6890c"></script>
+<script>
+  /* 이 교안만의 값: 꼬리말, 마지막으로 본 쪽 기억, 신청 기능 없음 (나머지는 config.js 그대로) */
+  MK.page = { session: '7~8차시', title: '링비트와 바운더리 AI를 활용한 문제해결 작품 설계', key: 'mk78', enroll: false };
+</script>
+<script src="assets/js/icons.js?v=1e10c6890c"></script>
+<script src="assets/js/challenges.js?v=1e10c6890c"></script>
+<script src="assets/js/store.js?v=1e10c6890c"></script>
+<script src="assets/js/deck.js?v=1e10c6890c"></script>
+<script src="assets/js/widgets.js?v=1e10c6890c"></script>
+<script src="assets/js/showcase.js?v=1e10c6890c"></script>
+<script src="assets/js/interact.js?v=1e10c6890c"></script>
+<script src="assets/js/admin.js?v=1e10c6890c"></script>
+<script src="assets/js/editor.js?v=1e10c6890c"></script>
+<script src="assets/js/review.js?v=1e10c6890c"></script>
+<script src="assets/js/app.js?v=1e10c6890c"></script>
+</body>
+</html>

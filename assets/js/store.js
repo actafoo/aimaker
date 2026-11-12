@@ -103,6 +103,17 @@ window.MK = window.MK || {};
     supports: function () { return true; },
     now: function () { return Date.now(); },
 
+    /* ---------- 교안 편집·메모 (데모: 이 브라우저에만) ---------- */
+    review: function (action, r) {
+      if (!this.isAdmin()) return fail('관리자만 할 수 있습니다.');
+      var RK = KEY + '-review', db;
+      try { db = JSON.parse(localStorage.getItem(RK)) || {}; } catch (e) { db = {}; }
+      db.edits = db.edits || []; db.memos = db.memos || [];
+      try { var res = MK.reviewLogic(db, action, r || {}, Date.now()); } catch (err) { return fail(err.message); }
+      try { localStorage.setItem(RK, JSON.stringify(db)); } catch (e) {}
+      return Promise.resolve(res);
+    },
+
     /* ---------- 나 (이 기기의 연수생) ---------- */
     getMe: function () { try { return JSON.parse(localStorage.getItem(ME_KEY)) || null; } catch (e) { return null; } },
     setMe: function (me) { try { if (me) localStorage.setItem(ME_KEY, JSON.stringify(me)); else localStorage.removeItem(ME_KEY); } catch (e) {} this._emit(); },
@@ -482,7 +493,7 @@ window.MK = window.MK || {};
         body.pw = pw;
       }
       // 사람이 몰려 실패하면 자동으로 다시 보냄 (두 번 보내도 결과가 같은 요청만)
-      var canRetry = action !== 'moveSubmission' && action !== 'shuffleOrder' && !(action === 'setTimer' && body.cmd === 'add');
+      var canRetry = action !== 'moveSubmission' && action !== 'shuffleOrder' && action !== 'memoAdd' && !(action === 'setTimer' && body.cmd === 'add');
       var waits = [1500, 3500], attempt = 0, sentOnce = false;
       function once() {
         return self._fetch(body).then(function (j) {
@@ -570,7 +581,9 @@ window.MK = window.MK || {};
     clearSamples: function () { return this._call('clearSamples', {}, true); },
     exportAll: function () { return this._call('exportAll', {}, true).then(function (r) { return r.data; }); },
     importAll: function (data) { return this._call('importAll', { data: data }, true); },
-    reset: function () { return this._call('reset', {}, true); }
+    reset: function () { return this._call('reset', {}, true); },
+    /* 교안 편집·메모: 연수 데이터와 따로 저장 (관리자만) */
+    review: function (action, args) { return this._call(action, args, true); }
   };
 
   /* 같은 타이머 계산 (Code.gs의 setTimer와 같은 규칙) — 데모 모드에서 씀 */
@@ -591,6 +604,46 @@ window.MK = window.MK || {};
       left = Math.max(0, left + ms); total = Math.max(total, left);
     } else throw new Error('알 수 없는 타이머 명령입니다.');
     return { total: total, left: left, endAt: running ? now + left : 0, running: running, label: clean(o.label || t.label || '').slice(0, 20), at: now };
+  };
+
+  /* 교안 편집·메모 규칙 — Code.gs의 review_와 같은 규칙 (데모 모드에서 씀) */
+  MK.reviewLogic = function (db, action, r, now) {
+    var deck = String(r.deck || ''), by = clean(r.by).slice(0, 20) || '관리자', res = {};
+    if (!/^[A-Za-z0-9._-]{1,60}$/.test(deck)) throw new Error('교안 파일 이름을 알 수 없습니다.');
+    var uid = function (p) { return p + now.toString(36) + Math.random().toString(36).slice(2, 6); };
+    var memoText = function (t) { t = String(t == null ? '' : t).replace(/\r/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim(); if (t.length > 500) throw new Error('메모는 500자 이내로 적어 주세요.'); return t; };
+    if (action === 'reviewSend') {
+      res.added = 0; res.updated = 0; res.removed = 0;
+      (r.items || []).forEach(function (x) {
+        var key = /^\d{1,6}$/.test(String(x.key || '')) ? String(x.key) : '', field = String(x.field || '');
+        if (!key && !field) return;
+        var before = String(x.before || ''), after = String(x.after || '');
+        var old = db.edits.filter(function (e) { return e.deck === deck && e.status === '대기' && e.key === key && e.field === field; })[0];
+        if (old) {
+          if (after === old.before) { db.edits = db.edits.filter(function (e) { return e !== old; }); res.removed++; }
+          else if (after !== old.after) { old.after = after; old.by = by; old.at = now; res.updated++; }
+        } else if (after !== before) {
+          db.edits.push({ id: uid('r'), deck: deck, slide: clean(x.slide), slideTitle: clean(x.slideTitle), key: key, field: field, before: before, after: after, by: by, at: now, status: '대기', doneAt: 0, doneBy: '' });
+          res.added++;
+        }
+      });
+    } else if (action === 'reviewMark') {
+      var st = { '반영': 1, '버림': 1, '대기': 1 }[r.status] ? r.status : '반영';
+      db.edits.forEach(function (e) { if (e.deck === deck && (r.ids || []).indexOf(e.id) >= 0) { e.status = st; e.doneAt = st === '대기' ? 0 : now; e.doneBy = st === '대기' ? '' : by; } });
+    } else if (action === 'memoAdd') {
+      var text = memoText(r.text); if (!text) throw new Error('메모를 적어 주세요.');
+      db.memos.push({ id: uid('m'), deck: deck, slide: clean(r.slide), slideTitle: clean(r.slideTitle), text: text, by: by, at: now, done: false, doneAt: 0, doneBy: '' });
+    } else if (action === 'memoUpdate') {
+      var m = db.memos.filter(function (x) { return x.id === r.id && x.deck === deck; })[0];
+      if (!m) throw new Error('메모를 찾지 못했어요.');
+      if ('text' in r) { var t = memoText(r.text); if (!t) throw new Error('메모를 적어 주세요.'); m.text = t; }
+      if ('done' in r) { m.done = !!r.done; m.doneAt = m.done ? now : 0; m.doneBy = m.done ? by : ''; }
+    } else if (action === 'memoDelete') {
+      db.memos = db.memos.filter(function (x) { return !(x.id === r.id && x.deck === deck); });
+    } else if (action !== 'reviewGet') throw new Error('알 수 없는 요청입니다: ' + action);
+    res.edits = db.edits.filter(function (e) { return e.deck === deck && e.status === '대기'; });
+    res.memos = db.memos.filter(function (m) { return m.deck === deck; });
+    return res;
   };
 
   MK.LocalStore = LocalStore;

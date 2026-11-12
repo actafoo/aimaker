@@ -462,6 +462,83 @@ window.MK = window.MK || {};
   });
 
   /* =========================================================
+     9. 카드 세 장 뽑기 (수업으로 · 학교 프로젝트 제안)
+        지능(AI가 알아보는 것) + 기능(서보가 하는 일) + 상황(어디서)
+        뽑은 카드는 이 창에만 기억하고, 다음 쪽 '설계 원칙 한 문장'에 채웁니다.
+     ========================================================= */
+  var DRAW = {
+    intel: { name: '지능', sub: 'AI가 무엇을 알아보나', icon: 'binoculars', color: 'blue',
+      list: [['손 모양', '핸드포즈'], ['물체 종류', '이미지분류'], ['표정', '얼굴인식'], ['다가오는 사람', '얼굴인식'], ['양손 높이', '모션인식']] },
+    func: { name: '기능', sub: '서보가 무엇을 하나', icon: 'move', color: 'green',
+      list: [['문 열고 닫기'], ['팔 들어 올리기'], ['깃발 흔들기'], ['길 바꾸기'], ['뚜껑 열기'], ['바늘로 가리키기'], ['두드리기'], ['밀어내기']] },
+    place: { name: '상황', sub: '어디서', icon: 'home', color: 'purple',
+      list: [['교실'], ['급식실'], ['복도'], ['과학실'], ['도서관'], ['보건실'], ['운동장'], ['신발장 앞']] }
+  };
+  var DRAW_ORDER = ['intel', 'func', 'place'];
+  var DRAW_KEY = MK.config.storageKey + '-draw';
+  var drawn = (function () { try { return JSON.parse(sessionStorage.getItem(DRAW_KEY)) || null; } catch (e) { return null; } })();
+  function saveDraw() { try { sessionStorage.setItem(DRAW_KEY, JSON.stringify(drawn)); } catch (e) {} }
+  function pickOne(k, avoid) { var n = DRAW[k].list.length, i; do { i = Math.floor(Math.random() * n); } while (n > 1 && i === avoid); return i; }
+  function drawnVal(k) { return drawn && drawn[k] != null && DRAW[k].list[drawn[k]] ? DRAW[k].list[drawn[k]] : null; }
+
+  function drawCard(k) {
+    var c = DRAW[k], v = drawnVal(k);
+    return '<button type="button" class="dcard c-' + c.color + (v ? ' is-open' : '') + '" data-draw="' + k + '" title="이 카드만 다시 뽑기">' +
+      '<span class="dcard__kind">' + ic(c.icon) + ' ' + c.name + '</span><span class="dcard__sub">' + c.sub + '</span>' +
+      (v ? '<span class="dcard__v">' + esc(v[0]) + '</span>' + (v[1] ? '<span class="dcard__m">' + esc(v[1]) + '</span>' : '') : '<span class="dcard__q">?</span>') + '</button>';
+  }
+  MK.widgets['card-draw'] = function (el) {
+    el.innerHTML = '<div class="draw"><div class="draw__cards">' + DRAW_ORDER.map(drawCard).join('<span class="draw__op">+</span>') + '</div>' +
+      '<div class="draw__bar"><button type="button" class="btn" data-draw="all">' + ic('spark') + (drawn ? ' 다시 뽑기' : ' 카드 뽑기') + '</button>' +
+      '<span class="draw__hint">마음에 들 때까지 다시 뽑아도 됩니다.<br>카드 한 장만 눌러 바꿀 수도 있어요.</span></div></div>';
+  };
+  MK.widgets['card-draw'].once = true;
+
+  /* 받침에 따라 을/를 */
+  function eulReul(w) { var c = String(w).charCodeAt(String(w).length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? '을' : '를'; }
+  var RULE_EX = { intel: '손 모양', func: '뚜껑 열기', place: '급식실', pain: '잔반통 뚜껑을 손으로 열어야 하는' };
+  MK.widgets['design-rule'] = function (el) {
+    var mine = !!drawnVal('intel'), v = mine ? { intel: drawnVal('intel')[0], func: drawnVal('func')[0], place: drawnVal('place')[0], pain: '' } : RULE_EX;
+    var b = function (cls, t, blank) { return '<b class="rule__b c-' + cls + (blank ? ' is-blank' : '') + '">' + esc(t) + '</b>'; };
+    el.innerHTML = '<div class="rule"><div class="rule__k">' + (mine ? '앞 쪽에서 뽑은 카드로' : '예시') + '</div>' +
+      '<p class="rule__s">우리 팀은 AI가 ' + b('blue', v.intel) + eulReul(v.intel) + ' 알아보면 서보가 ' + b('green', v.func) + eulReul(v.func) + ' 하도록 만들어, ' +
+      b('purple', v.place) + '에서 생기는 ' + (v.pain ? b('yellow', v.pain) : b('yellow', '불편 한 문장', true)) + ' 문제를 해결한다.</p></div>';
+  };
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-draw]'); if (!t) return;
+    var k = t.getAttribute('data-draw'), keys = k === 'all' ? DRAW_ORDER : [k];
+    drawn = drawn || {};
+    keys.forEach(function (x) { drawn[x] = pickOne(x, drawn[x]); });
+    saveDraw();
+    $$('[data-widget="card-draw"]').forEach(function (w) {
+      MK.widgets['card-draw'](w);
+      keys.forEach(function (x, i) { var c = $('.dcard[data-draw="' + x + '"]', w); if (c) { c.style.animationDelay = (i * 120) + 'ms'; c.classList.add('is-flip'); } });
+    });
+    $$('[data-widget="design-rule"]').forEach(function (w) { MK.widgets['design-rule'](w); });
+  });
+
+  /* =========================================================
+     10. 참고 영상 — <button data-yt="유튜브 id" data-yt-title="제목"> 을 누르면 큰 창에서 재생
+         창을 닫으면 영상도 멈춤 (iframe을 지움)
+     ========================================================= */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-yt]'); if (!b || editing()) return;
+    var id = String(b.getAttribute('data-yt') || ''); if (!/^[A-Za-z0-9_-]{6,20}$/.test(id)) return;
+    var title = b.getAttribute('data-yt-title') || '참고 영상';
+    var d = document.createElement('dialog'); d.className = 'modal ui';
+    d.innerHTML = '<div class="modal__box yt-modal"><button type="button" class="icon-btn modal__close" aria-label="닫기">' + ic('x') + '</button>' +
+      '<div class="modal__kicker">참고 영상</div><h3 class="modal__title">' + esc(title) + '</h3>' +
+      '<div class="yt-modal__frame"><iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1" title="' + esc(title) + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>' +
+      '<a class="link" href="https://www.youtube.com/shorts/' + id + '" target="_blank" rel="noopener">YouTube에서 열기 ↗</a></div>';
+    document.body.appendChild(d);
+    d.querySelector('.modal__close').onclick = function () { d.close(); };
+    d.addEventListener('click', function (ev) { if (ev.target === d) d.close(); });
+    d.addEventListener('close', function () { d.remove(); });
+    d.showModal();
+  });
+
+  /* =========================================================
      위젯을 그릴 때마다: 내 과제 강조 + 타이머 칩
      ========================================================= */
   var baseRender = MK.renderWidgets;

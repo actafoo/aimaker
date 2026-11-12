@@ -6,6 +6,8 @@
        도전과제·공통 조건 → assets/js/challenges.js
        표지의 연수 정보   → assets/js/config.js
    - 저장 전 원래 파일은 site/_backup/날짜-시각/ 에 남깁니다
+   - 보내기: 웹 주소에서 고친 사람은 고친 곳(원래 글자 → 고친 글자)을 서버로 보내고,
+     교안 담당자가 자기 컴퓨터의 교안에서 받아 적용(applyRemote)한 뒤 저장·배포합니다 (review.js)
    ========================================================= */
 window.MK = window.MK || {};
 
@@ -19,6 +21,9 @@ window.MK = window.MK || {};
   var savedStageHtml = '';          // 마지막으로 저장(또는 처음 연) 슬라이드 원본
   var editing = false, backedUp = false, bar = null;
   var dirty = { deck: 0, challenges: 0, config: 0 };
+  // 보내기·받은 편집용: 고친 자리와 처음(교안을 열었을 때) 글자
+  var touched = {}, orig = {}, touchedF = {}, origF = {}, applied = [], rc = 0;
+  var LOCAL = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var DECK_FILE = decodeURIComponent(location.pathname.split('/').pop() || '') || 'deck-9-10.html';
   var FS = typeof window.showDirectoryPicker === 'function';
 
@@ -114,13 +119,41 @@ window.MK = window.MK || {};
     else host.blur(); // 한 줄짜리 칸은 Enter로 끝내기
   }
 
+  /* 비교·보내기용 글자: 편집 표시용 속성을 뺀 HTML */
+  function norm(html) {
+    var box = document.createElement('div'); box.innerHTML = html;
+    $$('*', box).forEach(function (el) { ['data-ek', 'contenteditable', 'data-edit-host', 'spellcheck'].forEach(function (a) { el.removeAttribute(a); }); });
+    return box.innerHTML.trim();
+  }
+  function getField(fk) {
+    var f = String(fk || '').split(':'), c;
+    if (f[0] === 'ch') { c = MK.challengeById(f[1]); return c && c[f[2]] != null ? String(c[f[2]]) : null; }
+    if (f[0] === 'notice') return MK.commonNotice[+f[1]] != null ? String(MK.commonNotice[+f[1]]) : null;
+    if (f[0] === 'freedom') return String(MK.designFreedom || '');
+    if (f[0] === 'cfg') return MK.config[f[1]] != null ? String(MK.config[f[1]]) : null;
+    return null;
+  }
+  function setField(fk, v) {
+    var f = String(fk).split(':');
+    if (f[0] === 'ch') { var c = MK.challengeById(f[1]); if (c) { c[f[2]] = v; dirty.challenges++; } }
+    else if (f[0] === 'notice') { MK.commonNotice[+f[1]] = v; dirty.challenges++; }
+    else if (f[0] === 'freedom') { MK.designFreedom = v; dirty.challenges++; }
+    else if (f[0] === 'cfg') { MK.config[f[1]] = v; dirty.config++; }
+  }
+
   function apply(host) {
     var kind = host.getAttribute('data-edit-host');
     if (kind === 'ek') {
-      var p = pmap[host.getAttribute('data-ek')];
-      if (p) { p.innerHTML = cleanHtml(host.innerHTML); dirty.deck++; }
+      var k = host.getAttribute('data-ek'), p = pmap[k];
+      if (p) {
+        if (!(k in orig)) orig[k] = norm(p.innerHTML);
+        p.innerHTML = cleanHtml(host.innerHTML); dirty.deck++; touched[k] = 1;
+      }
     } else {
-      var f = (host.getAttribute('data-field') || '').split(':');
+      var fk = host.getAttribute('data-field') || '';
+      if (!(fk in origF)) { var o = getField(fk); if (o != null) origF[fk] = o; }
+      touchedF[fk] = 1;
+      var f = fk.split(':');
       if (f[0] === 'ch') {
         var ch = MK.challengeById(f[1]);
         if (ch) { ch[f[2]] = f[2] === 'start' ? cleanInline(host.innerHTML) : (multiLine(host) ? plainLines(host) : plain(host)); dirty.challenges++; }
@@ -165,7 +198,7 @@ window.MK = window.MK || {};
       return;
     }
     if (e.shiftKey && (e.ctrlKey || e.metaKey) && (e.key === 'E' || e.key === 'e')) { e.preventDefault(); MK.editor.toggle(); }
-    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S') && editing) { e.preventDefault(); MK.editor.save(); }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S') && editing) { e.preventDefault(); if (canSend() && !LOCAL) MK.editor.send(); else MK.editor.save(); }
   });
   // 편집 중에는 슬라이드 안 버튼·링크가 동작하지 않게 (글자만 고치도록)
   document.addEventListener('click', function (e) {
@@ -180,11 +213,16 @@ window.MK = window.MK || {};
   function total() { return dirty.deck + dirty.challenges + dirty.config; }
 
   /* ---------- 위쪽 편집 막대 ---------- */
+  function canSend() { return MK.store.isAdmin() && MK.store.supports('review') && !!MK.store.review; }
   function paintBar() {
     if (!bar) return;
-    var n = total();
-    bar.querySelector('.editbar__count').textContent = n ? '저장 안 한 변경 있음' : '변경 없음';
-    bar.querySelector('[data-ed=save]').disabled = !n;
+    var n = total(), send = canSend();
+    bar.querySelector('.editbar__count').textContent = n ? (send && !LOCAL ? '보내지 않은 변경 있음' : '저장 안 한 변경 있음') : '변경 없음';
+    var sv = bar.querySelector('[data-ed=save]'), sd = bar.querySelector('[data-ed=send]'), mm = bar.querySelector('[data-ed=memo]');
+    sv.disabled = !n; sd.disabled = !n;
+    sd.hidden = !send; mm.hidden = !send;
+    // 웹 주소에서는 「보내기」가 기본, 내 컴퓨터(파일·localhost)에서는 「저장」이 기본
+    sd.classList.toggle('ubtn--ghost', LOCAL); sv.classList.toggle('ubtn--ghost', send && !LOCAL);
     if (MK.admin && $('#admin.is-open')) MK.admin.render();
   }
   function showBar(on) {
@@ -192,10 +230,17 @@ window.MK = window.MK || {};
       bar = document.createElement('div');
       bar.className = 'editbar ui';
       bar.innerHTML = '<span class="editbar__title">' + ic('edit') + ' 편집 모드</span><span class="editbar__hint">글자를 눌러 고치세요 · Enter 줄바꿈(제목·질문은 한 줄) · Esc 끝</span>' +
-        '<span class="editbar__count"></span><button class="ubtn ubtn--sm" data-ed="save">' + ic('download') + ' 저장</button><button class="ubtn ubtn--sm ubtn--ghost" data-ed="off">끝내기</button>';
+        '<span class="editbar__count"></span>' +
+        '<button class="ubtn ubtn--sm ubtn--ghost" data-ed="memo" title="이 쪽에 고칠 것을 메모로 남깁니다">' + ic('doc') + ' 메모</button>' +
+        '<button class="ubtn ubtn--sm" data-ed="send" title="고친 곳을 서버로 보냅니다. 교안 담당자가 받아서 반영합니다.">' + ic('send') + ' 보내기</button>' +
+        '<button class="ubtn ubtn--sm" data-ed="save" title="내 컴퓨터의 site 폴더에 바로 저장합니다">' + ic('download') + ' 내 컴퓨터에 저장</button>' +
+        '<button class="ubtn ubtn--sm ubtn--ghost" data-ed="off">끝내기</button>';
       bar.addEventListener('click', function (e) {
         var b = e.target.closest('[data-ed]'); if (!b) return;
-        if (b.dataset.ed === 'save') MK.editor.save(); else MK.editor.off();
+        var a = b.dataset.ed;
+        if (a === 'save') MK.editor.save(); else if (a === 'send') MK.editor.send();
+        else if (a === 'memo') { if (MK.review) MK.review.openMemo(); }
+        else MK.editor.off();
       });
       document.body.appendChild(bar);
     }
@@ -326,9 +371,16 @@ window.MK = window.MK || {};
     }).then(function () {
       if (newStage != null) savedStageHtml = newStage;
       dirty = { deck: 0, challenges: 0, config: 0 };
+      afterSaved();
       paintBar();
       return plan.map(function (p) { return p.path.split('/').pop(); });
     });
+  }
+  // 받은 편집을 적용해 저장했으면 서버에 '반영'으로 표시
+  function afterSaved() {
+    if (!applied.length || !MK.review) return;
+    var ids = applied.slice(); applied = [];
+    MK.review.mark(ids, '반영');
   }
 
   /* 폴더 쓰기를 못 하는 브라우저: 고친 파일을 내려받기 */
@@ -350,10 +402,97 @@ window.MK = window.MK || {};
     if (dirty.challenges) jobs.push(viaFetch('assets/js/challenges.js', patchChallenges, 'challenges.js'));
     if (dirty.config) jobs.push(viaFetch('assets/js/config.js', patchConfig, 'config.js'));
     return Promise.all(jobs).then(function () {
-      dirty = { deck: 0, challenges: 0, config: 0 }; paintBar();
+      dirty = { deck: 0, challenges: 0, config: 0 }; afterSaved(); paintBar();
       MK.ui.confirm({ title: '파일을 내려받았어요', desc: '이 브라우저는 폴더에 바로 쓸 수 없어 고친 파일을 내려받았습니다.<br><b>' + names.map(esc).join(', ') + '</b>을(를) site 폴더의 같은 이름 파일과 바꿔 넣어 주세요. (크롬·엣지에서는 바로 저장됩니다)', okText: '알겠어요' });
       return names;
     });
+  }
+
+  /* =========================================================
+     보내기 · 받은 편집 적용
+     ========================================================= */
+  function slideLabel(sl) {
+    if (!sl) return '';
+    var i = MK.deck.slides().indexOf(sl);
+    return (i >= 0 ? (i + 1) + '쪽 · ' : '') + MK.deck.titleOf(sl);
+  }
+  function changeList() {
+    var items = [];
+    Object.keys(touched).forEach(function (k) {
+      var p = pmap[k], live = $('#stage [data-ek="' + k + '"]'); if (!p || !live || !(k in orig)) return;
+      var sl = live.closest('.slide');
+      items.push({ key: k, field: '', slide: sl ? sl.id : '', slideTitle: slideLabel(sl), before: orig[k], after: norm(p.innerHTML) });
+    });
+    Object.keys(touchedF).forEach(function (fk) {
+      var now = getField(fk); if (now == null || !(fk in origF)) return;
+      var el = $('[data-field="' + fk + '"]'), sl = el && el.closest('.slide');
+      items.push({ key: '', field: fk, slide: sl ? sl.id : '', slideTitle: slideLabel(sl), before: origF[fk], after: now });
+    });
+    return items;
+  }
+  function send() {
+    if (document.activeElement && document.activeElement.isContentEditable) document.activeElement.blur();
+    if (!canSend()) { MK.ui.toast('서버 코드가 예전 버전이라 보낼 수 없어요. 저장을 써 주세요.', true); return Promise.resolve(); }
+    var items = changeList();
+    if (!items.some(function (x) { return x.before !== x.after; }) && !total()) { MK.ui.toast('보낼 고친 내용이 없어요.'); return Promise.resolve(); }
+    return MK.review.withName().then(function (by) {
+      if (!by) return;
+      return MK.review.call('reviewSend', { by: by, items: items }).then(function (r) {
+        if (!applied.length) dirty = { deck: 0, challenges: 0, config: 0 }; // 받은 편집을 적용 중이면 저장 전까지 남겨 둠
+        paintBar();
+        var n = (r.added || 0) + (r.updated || 0);
+        MK.ui.toast(n || r.removed ? '보냈어요. 교안 담당자가 받아서 반영합니다.' + (r.removed ? ' (원래대로 되돌린 ' + r.removed + '곳은 뺐어요)' : '') : '이미 보낸 내용과 같아요.');
+      });
+    }).catch(function (err) { MK.ui.toast((err && err.message) || '보내지 못했어요.', true); });
+  }
+
+  // 받은 편집 한 곳을 이 화면(과 저장할 원본)에 넣기. 결과: ok | already | conflict | missing
+  function scopeOf(item) { var sl = item.slide && document.getElementById(item.slide); return sl && $('#stage').contains(sl) ? sl : $('#stage'); }
+  function findHost(item) {
+    var scope = scopeOf(item), k = String(item.key || ''), live = k && $('#stage [data-ek="' + k + '"]');
+    var inScope = live && scope.contains(live) && pmap[k];
+    if (inScope && norm(pmap[k].innerHTML) === item.before) return { key: k };
+    var cands = $$('[data-ek]', scope).filter(function (el) { var q = pmap[el.getAttribute('data-ek')]; return q && norm(q.innerHTML) === item.before; });
+    if (cands.length) return { key: cands[0].getAttribute('data-ek') };
+    if (inScope && norm(pmap[k].innerHTML) === item.after) return { already: true, key: k };
+    var done = $$('[data-ek]', scope).filter(function (el) { var q = pmap[el.getAttribute('data-ek')]; return q && norm(q.innerHTML) === item.after; });
+    if (done.length) return { already: true, key: done[0].getAttribute('data-ek') };
+    if (inScope) return { conflict: true, key: k, now: norm(pmap[k].innerHTML) };
+    return { missing: true };
+  }
+  function applyRemote(item, force) {
+    if (!pristineStage) return { status: 'missing' };
+    if (item.field) {
+      var cur = getField(item.field);
+      if (cur == null) return { status: 'missing' };
+      if (cur === item.after) return { status: 'already' };
+      if (cur !== item.before && !force) return { status: 'conflict', now: cur };
+      if (!(item.field in origF)) origF[item.field] = cur;
+      setField(item.field, item.after); touchedF[item.field] = 1;
+      if (item.id && applied.indexOf(item.id) < 0) applied.push(item.id);
+      MK.deck.refresh(true); MK.renderWidgets(); if (editing) mark(); paintBar();
+      return { status: 'ok' };
+    }
+    var f = findHost(item);
+    if (f.already) return { status: 'already', key: f.key };
+    if (f.missing) return { status: 'missing' };
+    if (f.conflict && !force) return { status: 'conflict', key: f.key, now: f.now };
+    var k = f.key, p = pmap[k], live = $('#stage [data-ek="' + k + '"]');
+    if (!(k in orig)) orig[k] = norm(p.innerHTML);
+    p.innerHTML = item.after; live.innerHTML = item.after;
+    // 새로 들어간 요소에도 짝 번호를 붙여, 나중에 다시 고쳐도 서식이 남게 함
+    var pe = $$('*', p), le = $$('*', live);
+    pe.forEach(function (el, i) { var id = 'r' + (++rc); el.setAttribute('data-ek', id); if (le[i]) le[i].setAttribute('data-ek', id); pmap[id] = el; });
+    touched[k] = 1; dirty.deck++;
+    if (item.id && applied.indexOf(item.id) < 0) applied.push(item.id);
+    if (editing) mark();
+    paintBar();
+    return { status: 'ok', key: k };
+  }
+  function flashKey(k) {
+    var el = k && $('#stage [data-ek="' + k + '"]'); if (!el) return;
+    el.classList.remove('rv-flash'); void el.offsetWidth; el.classList.add('rv-flash');
+    setTimeout(function () { el.classList.remove('rv-flash'); }, 2600);
   }
 
   /* =========================================================
@@ -363,6 +502,12 @@ window.MK = window.MK || {};
     snapshot: snapshot,
     canWriteFolder: FS,
     deckFile: DECK_FILE,
+    isLocal: LOCAL,
+    canSend: canSend,
+    send: send,
+    applyRemote: applyRemote,
+    hasApplied: function () { return applied.length; },
+    flashKey: flashKey,
     isOn: function () { return editing; },
     changes: function () { return total(); },
     detail: function () { return { deck: dirty.deck, challenges: dirty.challenges, config: dirty.config }; },

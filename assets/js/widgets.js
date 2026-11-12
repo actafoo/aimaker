@@ -381,12 +381,15 @@ window.MK = window.MK || {};
     if (!box) { box = document.createElement('div'); box.id = 'me'; box.className = 'me ui'; document.body.appendChild(box); }
     var m = me(), mine = myEnrollment(st), admin = MK.store.isAdmin();
     var h = '';
-    if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mine ? ' · ' + esc(MK.challengeById(mine.challengeId).title) : ' · 신청 전') + '</span>' +
+    var noEnroll = MK.page && MK.page.enroll === false; // 신청이 없는 교안(7~8차시): 관리자 버튼만
+    if (noEnroll) { /* 이름 칩 없음 */ }
+    else if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mine ? ' · ' + esc(MK.challengeById(mine.challengeId).title) : ' · 신청 전') + '</span>' +
       '<button class="ghost" data-act="switch">바꾸기</button>';
     else h += '<span class="me__text">신청하려면 이름을 등록하세요</span><button data-act="identify">이름 등록</button>';
     var helpN = admin && st.help ? st.help.length : 0; // 대기 중인 도움 요청
     if (admin) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff">' + ic('lock') + ' 관리자' + (helpN ? ' <span class="me__badge" title="대기 중인 도움 요청">도움 ' + helpN + '</span>' : '') + '</button>';
     box.innerHTML = h;
+    box.classList.toggle('is-hidden', !h);
   }
 
   document.addEventListener('click', function (e) {

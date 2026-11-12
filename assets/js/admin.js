@@ -19,7 +19,7 @@ window.MK = window.MK || {};
       '<aside class="admin ui" id="admin" aria-label="관리자">' +
         '<div class="admin__head">' + ic('lock') + '<b>관리자</b><button class="icon-btn" id="admin-out" title="관리자 나가기">' + ic('power') + '</button><button class="icon-btn" id="admin-close" aria-label="닫기">' + ic('x') + '</button></div>' +
         '<div class="admin__tabs" role="tablist">' +
-          '<button data-tab="edit">교안 편집</button><button data-tab="cap">정원·마감</button><button data-tab="roster">신청 명단</button><button data-tab="help">도움</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
+          '<button data-tab="edit">교안 편집</button><button data-tab="review">편집·메모</button><button data-tab="cap">정원·마감</button><button data-tab="roster">신청 명단</button><button data-tab="help">도움</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
         '</div><div class="admin__body" id="admin-body"></div></aside>');
     panel = $('#admin');
     $('#admin-close').onclick = function () { MK.admin.close(); };
@@ -39,6 +39,7 @@ window.MK = window.MK || {};
     Array.prototype.forEach.call(panel.querySelectorAll('[data-tab]'), function (b) {
       b.classList.toggle('is-on', b.dataset.tab === tab);
       if (b.dataset.tab === 'help') b.innerHTML = '도움' + (helpN ? ' <span class="tab-badge">' + helpN + '</span>' : '');
+      if (b.dataset.tab === 'review') { var rn = MK.review ? MK.review.badge() : 0; b.innerHTML = '편집·메모' + (rn ? ' <span class="tab-badge">' + rn + '</span>' : ''); }
     });
     if (!MK.store.isShared) h += '<div class="admin__notice"><b>데모 모드</b> · 모든 데이터가 <b>이 브라우저에만</b> 저장됩니다. 다른 연수생의 신청·제출은 여기 보이지 않습니다. 연수 전에 온라인 저장소를 연결해야 합니다.</div>';
     else if (MK.store.loaded && !MK.store.supports('help')) h += '<div class="admin__notice"><b>서버 코드가 예전 버전</b>입니다. 도움 요청·모두 같은 타이머·작품 하트·수업 아이디어가 꺼져 있어요. <b>backend/Code.gs</b>를 Apps Script에 새로 붙여 넣고 <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</div>';
@@ -57,19 +58,25 @@ window.MK = window.MK || {};
       });
     }
 
+    if (tab === 'review' && MK.review) h += MK.review.adminHtml();
+
     if (tab === 'edit' && MK.editor) {
       var E = MK.editor, dd = E.detail(), n = E.changes();
       h += '<div class="acard"><div class="acard__top"><div class="acard__title">편집 모드</div><button class="ubtn ubtn--sm' + (E.isOn() ? ' ubtn--ghost' : '') + '" data-ed-toggle>' + ic('edit') + (E.isOn() ? ' 끝내기' : ' 켜기') + '</button></div>' +
         '<div class="acard__meta">켜면 슬라이드의 글자를 눌러 바로 고칠 수 있습니다. 단축키 Ctrl+Shift+E · 저장 Ctrl+S</div></div>';
-      h += '<div class="acard"><div class="acard__top"><div class="acard__title">저장</div><button class="ubtn ubtn--sm ubtn--green" data-ed-save ' + (n ? '' : 'disabled') + '>' + ic('download') + ' 저장</button></div>' +
-        '<div class="acard__meta">' + (n ? '저장 안 한 변경: ' + [dd.deck ? '슬라이드 글자' : '', dd.challenges ? '도전과제·공통 조건' : '', dd.config ? '연수 정보' : ''].filter(Boolean).join(', ') : '저장 안 한 변경이 없습니다.') + '</div>' +
+      var canSend = E.canSend && E.canSend();
+      var what = n ? [dd.deck ? '슬라이드 글자' : '', dd.challenges ? '도전과제·공통 조건' : '', dd.config ? '연수 정보' : ''].filter(Boolean).join(', ') : '';
+      if (canSend) h += '<div class="acard' + (E.isLocal ? '' : ' acard--hot') + '"><div class="acard__top"><div class="acard__title">보내기 <small style="color:var(--muted);font-weight:600">· 웹 주소에서 고쳤을 때</small></div><button class="ubtn ubtn--sm" data-ed-send ' + (n ? '' : 'disabled') + '>' + ic('send') + ' 보내기</button></div>' +
+        '<div class="acard__meta">고친 곳(원래 글자 → 고친 글자)을 서버로 보냅니다. 교안 담당자가 <b>편집·메모</b> 탭에서 받아 적용하고 배포합니다. 같은 곳을 다시 고쳐 보내면 하나로 합쳐집니다. 단축키 Ctrl+S</div></div>';
+      h += '<div class="acard"><div class="acard__top"><div class="acard__title">내 컴퓨터에 저장 <small style="color:var(--muted);font-weight:600">· 교안 파일이 있을 때</small></div><button class="ubtn ubtn--sm ubtn--green" data-ed-save ' + (n ? '' : 'disabled') + '>' + ic('download') + ' 저장</button></div>' +
+        '<div class="acard__meta">' + (n ? '바뀐 것: ' + what : '저장 안 한 변경이 없습니다.') + '</div>' +
         (n ? '<div class="acard__row"><button class="ubtn ubtn--sm ubtn--ghost" data-ed-discard>변경 버리기</button></div>' : '') + '</div>';
       h += '<div class="acard"><div class="acard__title">어디에 저장되나요?</div><div class="acard__meta">' +
         (E.canWriteFolder ? '처음 저장할 때 <b>site 폴더</b>를 한 번 고르면, 그 안의 파일을 직접 고칩니다. 브라우저가 "파일 수정 허용"을 물으면 허용해 주세요.' : '이 브라우저는 폴더에 바로 쓸 수 없어 <b>고친 파일을 내려받습니다</b>. 크롬·엣지에서는 바로 저장됩니다.') +
         '<br>· 슬라이드 글자 → ' + esc(E.deckFile) + '<br>· 도전과제 설명·공통 조건 → assets/js/challenges.js<br>· 표지의 연수 정보 → assets/js/config.js' +
         '<br>저장 전 원래 파일은 <b>site/_backup</b> 폴더에 남깁니다.</div>' +
         (E.canWriteFolder ? '<div class="acard__row"><button class="ubtn ubtn--sm ubtn--ghost" data-ed-pick>다른 폴더로 저장</button></div>' : '') + '</div>';
-      h += '<div class="acard"><div class="acard__title">여기서 못 바꾸는 것</div><div class="acard__meta">그림, 배치, 색, 슬라이드 추가·삭제·순서는 파일에서 고칩니다(README, 컴포넌트 견본집 참고). 편집 중에는 다른 편집기로 같은 파일을 고치지 마세요.</div></div>';
+      h += '<div class="acard"><div class="acard__title">여기서 못 바꾸는 것</div><div class="acard__meta">그림, 배치, 색, 슬라이드 추가·삭제·순서는 파일에서 고칩니다(README 참고). 편집 중에는 다른 편집기로 같은 파일을 고치지 마세요.</div></div>';
     }
 
     if (tab === 'cap') {
@@ -152,6 +159,7 @@ window.MK = window.MK || {};
     else if (d.edit) editSub(d.edit);
     else if (t.hasAttribute('data-ed-toggle')) MK.editor.toggle();
     else if (t.hasAttribute('data-ed-save')) MK.editor.save();
+    else if (t.hasAttribute('data-ed-send')) MK.editor.send();
     else if (t.hasAttribute('data-ed-pick')) MK.editor.save(true);
     else if (t.hasAttribute('data-ed-discard')) MK.editor.discard();
     else if (t.hasAttribute('data-show-go')) { MK.deck.refresh(true); MK.deck.goto('s-show'); MK.admin.close(); }

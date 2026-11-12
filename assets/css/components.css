@@ -2,7 +2,6 @@
    컴포넌트 — new컴포넌트.png 를 CSS로 다시 만든 부품
    얇은 남색 선(2px) + 파스텔 채움 + 그림자 거의 없음
    크기는 1920×1080 슬라이드 기준(px)입니다.
-   견본과 사용법: components.html
    ========================================================= */
 
 .i { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor;

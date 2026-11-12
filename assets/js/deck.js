@@ -11,7 +11,10 @@ MK.generators = MK.generators || {};
 (function () {
   var stage, viewport, slides = [], cur = 0, idleTimer = null;
   var genSig = {};
-  var POS_KEY = MK.config.storageKey + '-pos';
+  // 교안마다 다른 값(꼬리말·마지막 쪽 기억)은 교안 파일의 MK.page가 정합니다. 없으면 config.js 값
+  var PAGE = MK.page || {};
+  var POS_KEY = (PAGE.key || MK.config.storageKey) + '-pos';
+  var FOOTER = (PAGE.session || MK.config.session) + ' · ' + (PAGE.title || MK.config.title);
 
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
@@ -50,7 +53,7 @@ MK.generators = MK.generators || {};
       if (!f && !sl.hasAttribute('data-no-footer')) {
         f = document.createElement('div'); f.className = 'slide__footer'; sl.appendChild(f);
       }
-      if (f) f.innerHTML = esc(MK.config.session + ' · ' + MK.config.title) + '<b>' + (i + 1) + '</b>';
+      if (f) f.innerHTML = esc(FOOTER) + '<b>' + (i + 1) + '</b>';
     });
     buildToc();
     buildBar();
