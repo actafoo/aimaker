@@ -185,6 +185,12 @@ window.MK = window.MK || {};
     document.execCommand('insertText', false, t);
   });
   document.addEventListener('keydown', function (e) {
+    // Ctrl+S(맥은 ⌘S): 글자를 고치는 중이어도 바로 보내기·저장
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 's' || e.key === 'S') && editing) {
+      e.preventDefault();
+      if (canSend() && !owner()) MK.editor.send(); else MK.editor.save();
+      return;
+    }
     var host = editing && e.target.closest && e.target.closest('[data-edit-host]');
     if (host) {
       if (e.key === 'Escape') { e.preventDefault(); host.blur(); }
@@ -198,7 +204,6 @@ window.MK = window.MK || {};
       return;
     }
     if (e.shiftKey && (e.ctrlKey || e.metaKey) && (e.key === 'E' || e.key === 'e')) { e.preventDefault(); MK.editor.toggle(); }
-    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S') && editing) { e.preventDefault(); if (canSend() && !LOCAL) MK.editor.send(); else MK.editor.save(); }
   });
   // 편집 중에는 슬라이드 안 버튼·링크가 동작하지 않게 (글자만 고치도록)
   document.addEventListener('click', function (e) {
@@ -213,16 +218,19 @@ window.MK = window.MK || {};
   function total() { return dirty.deck + dirty.challenges + dirty.config; }
 
   /* ---------- 위쪽 편집 막대 ---------- */
-  function canSend() { return MK.store.isAdmin() && MK.store.supports('review') && !!MK.store.review; }
+  function canEditNow() { return (MK.store.canEdit ? MK.store.canEdit() : MK.store.isAdmin()); } // 관리자 또는 편집자
+  function canSend() { return canEditNow() && MK.store.supports('review') && !!MK.store.review; }
+  // 반영하는 기기(교안 파일이 있는 컴퓨터)인가 — review.js가 정함. 없으면 내 컴퓨터에서 열었을 때
+  function owner() { return MK.review && MK.review.isOwner ? MK.review.isOwner() : LOCAL; }
   function paintBar() {
     if (!bar) return;
-    var n = total(), send = canSend();
-    bar.querySelector('.editbar__count').textContent = n ? (send && !LOCAL ? '보내지 않은 변경 있음' : '저장 안 한 변경 있음') : '변경 없음';
+    var n = total(), send = canSend(), own = owner();
+    bar.querySelector('.editbar__count').textContent = n ? (send && !own ? '보내지 않은 변경 있음' : '저장 안 한 변경 있음') : '변경 없음';
     var sv = bar.querySelector('[data-ed=save]'), sd = bar.querySelector('[data-ed=send]'), mm = bar.querySelector('[data-ed=memo]');
     sv.disabled = !n; sd.disabled = !n;
     sd.hidden = !send; mm.hidden = !send;
-    // 웹 주소에서는 「보내기」가 기본, 내 컴퓨터(파일·localhost)에서는 「저장」이 기본
-    sd.classList.toggle('ubtn--ghost', LOCAL); sv.classList.toggle('ubtn--ghost', send && !LOCAL);
+    sv.hidden = send && !own; // 보내는 기기에는 교안 파일이 없으니 「내 컴퓨터에 저장」을 숨김
+    sd.classList.toggle('ubtn--ghost', own);
     if (MK.admin && $('#admin.is-open')) MK.admin.render();
   }
   function showBar(on) {
@@ -441,7 +449,7 @@ window.MK = window.MK || {};
         if (!applied.length) dirty = { deck: 0, challenges: 0, config: 0 }; // 받은 편집을 적용 중이면 저장 전까지 남겨 둠
         paintBar();
         var n = (r.added || 0) + (r.updated || 0);
-        MK.ui.toast(n || r.removed ? '보냈어요. 교안 담당자가 받아서 반영합니다.' + (r.removed ? ' (원래대로 되돌린 ' + r.removed + '곳은 뺐어요)' : '') : '이미 보낸 내용과 같아요.');
+        MK.ui.toast(n || r.removed ? '보냈어요. 교안 담당자 컴퓨터에서 파일에 반영하고 배포하면 웹 교안에 보입니다.' + (r.removed ? ' (원래대로 되돌린 ' + r.removed + '곳은 뺐어요)' : '') : '이미 보낸 내용과 같아요.');
       });
     }).catch(function (err) { MK.ui.toast((err && err.message) || '보내지 못했어요.', true); });
   }
@@ -512,7 +520,7 @@ window.MK = window.MK || {};
     changes: function () { return total(); },
     detail: function () { return { deck: dirty.deck, challenges: dirty.challenges, config: dirty.config }; },
     on: function () {
-      if (!MK.store.isAdmin()) { MK.ui.toast('관리자로 들어가야 편집할 수 있어요.', true); if (MK.admin) MK.admin.open(); return; }
+      if (!canEditNow()) { MK.ui.toast('관리자(또는 편집자)로 들어가야 편집할 수 있어요.', true); if (MK.admin) MK.admin.open(); return; }
       if (!pristineStage) { MK.ui.toast('편집 준비가 안 됐어요. 새로고침해 주세요.', true); return; }
       editing = true; document.body.classList.add('is-editing'); mark(); showBar(true);
       if (MK.admin) MK.admin.close();

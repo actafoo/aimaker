@@ -105,7 +105,7 @@ window.MK = window.MK || {};
 
     /* ---------- 교안 편집·메모 (데모: 이 브라우저에만) ---------- */
     review: function (action, r) {
-      if (!this.isAdmin()) return fail('관리자만 할 수 있습니다.');
+      if (!this.canEdit()) return fail('관리자만 할 수 있습니다.');
       var RK = KEY + '-review', db;
       try { db = JSON.parse(localStorage.getItem(RK)) || {}; } catch (e) { db = {}; }
       db.edits = db.edits || []; db.memos = db.memos || [];
@@ -266,6 +266,8 @@ window.MK = window.MK || {};
        관리자
        ========================================================= */
     isAdmin: function () { try { return sessionStorage.getItem(ADMIN_KEY) === '1'; } catch (e) { return false; } },
+    isEditor: function () { return false; },          // 데모 모드에는 편집자 비밀번호가 없음
+    canEdit: function () { return this.isAdmin(); },
     adminLogin: function (pw) {
       if (!cfg.adminPassword) return fail('관리자 비밀번호가 설정되지 않았습니다. config.js를 확인해 주세요.');
       if (String(pw) !== String(cfg.adminPassword)) return fail('비밀번호가 맞지 않습니다.');
@@ -391,6 +393,7 @@ window.MK = window.MK || {};
      ========================================================= */
   var CACHE_KEY = cfg.storageKey + '-remote-cache';
   var PW_KEY = cfg.storageKey + '-adminpw';
+  var ROLE_KEY = cfg.storageKey + '-role'; // 'admin' | 'editor' (편집자: 교안 글자 보내기·메모만)
 
   function normalize(st) {
     var d = blank();
@@ -499,7 +502,7 @@ window.MK = window.MK || {};
         return self._fetch(body).then(function (j) {
           if (j.state) self._setState(j.state);
           if (!j.ok) {
-            if (j.code === 'not_admin') { try { sessionStorage.removeItem(PW_KEY); } catch (e) {} self._emit(); }
+            if (j.code === 'not_admin') { try { sessionStorage.removeItem(PW_KEY); sessionStorage.removeItem(ROLE_KEY); } catch (e) {} self._emit(); }
             if (canRetry && /잠시 밀렸어요/.test(j.error || '') && attempt < waits.length) return again();
             // 앞서 보낸 취소가 실제로는 처리됐던 경우
             if (action === 'cancel' && sentOnce && /신청한 도전과제가 없습니다/.test(j.error || '')) { self._busy = null; self.refresh(); return {}; }
@@ -556,16 +559,19 @@ window.MK = window.MK || {};
 
     /* ---------- 관리자 ---------- */
     _pw: function () { try { return sessionStorage.getItem(PW_KEY) || ''; } catch (e) { return ''; } },
-    isAdmin: function () { return !!this._pw(); },
+    _role: function () { try { return sessionStorage.getItem(ROLE_KEY) || 'admin'; } catch (e) { return 'admin'; } },
+    isAdmin: function () { return !!this._pw() && this._role() !== 'editor'; },   // 모든 관리 기능
+    isEditor: function () { return !!this._pw() && this._role() === 'editor'; }, // 교안 글자 보내기·메모만
+    canEdit: function () { return !!this._pw(); },
     adminLogin: function (pw) {
       var self = this;
       return this._fetch({ action: 'adminLogin', pw: String(pw) }).then(function (j) {
         if (!j.ok) throw new Error(j.error || '비밀번호가 맞지 않습니다.');
-        try { sessionStorage.setItem(PW_KEY, String(pw)); } catch (e) {}
+        try { sessionStorage.setItem(PW_KEY, String(pw)); sessionStorage.setItem(ROLE_KEY, j.role === 'editor' ? 'editor' : 'admin'); } catch (e) {}
         self._emit(); return {};
       });
     },
-    adminLogout: function () { try { sessionStorage.removeItem(PW_KEY); } catch (e) {} this._emit(); return Promise.resolve({}); },
+    adminLogout: function () { try { sessionStorage.removeItem(PW_KEY); sessionStorage.removeItem(ROLE_KEY); } catch (e) {} this._emit(); return Promise.resolve({}); },
     setCapacity: function (id, n) { return this._call('setCapacity', { challengeId: id, n: n }, true); },
     setOpen: function (id, open) { return this._call('setOpen', { challengeId: id, open: !!open }, true); },
     removeEnrollment: function (id) { return this._call('removeEnrollment', { id: id }, true); },
@@ -643,6 +649,8 @@ window.MK = window.MK || {};
     } else if (action !== 'reviewGet') throw new Error('알 수 없는 요청입니다: ' + action);
     res.edits = db.edits.filter(function (e) { return e.deck === deck && e.status === '대기'; });
     res.memos = db.memos.filter(function (m) { return m.deck === deck; });
+    res.done = db.edits.filter(function (e) { return e.deck === deck && e.status !== '대기'; })
+      .sort(function (x, y) { return (y.doneAt || 0) - (x.doneAt || 0); }).slice(0, 40);
     return res;
   };
 
