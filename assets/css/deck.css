@@ -1072,3 +1072,29 @@ a.code-link:hover { background: var(--c-mid); }
 
 /* 발표 슬라이드: 아이디어 카드 문장 */
 .sv-head__card { margin: 6px 0 0; font-size: 20px; font-weight: 600; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* 재료는 어디서 살까 */
+.buy { display: grid; grid-template-columns: 540px 1fr; grid-template-rows: 1fr auto; gap: 24px 32px; }
+.buy-kit { display: flex; flex-direction: column; gap: 10px; padding: 22px 28px; }
+.buy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.buy-list li { display: flex; flex-direction: column; padding: 8px 0 8px 18px; border-left: 4px solid var(--yellow-tab); }
+.buy-list b { font-size: 23px; font-weight: 800; color: var(--navy); line-height: 1.3; }
+.buy-list span { font-size: 18px; color: var(--muted); font-weight: 600; line-height: 1.4; }
+.buy-shops { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; min-height: 0; }
+.buy-shop { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); color: var(--navy); text-decoration: none; transition: transform .12s, box-shadow .12s; border-top: 8px solid var(--c-tab); }
+a.buy-shop:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11, 26, 78, .10); }
+.buy-shop__name { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.buy-shop__name small { margin-left: 6px; font-size: 16px; font-weight: 800; color: var(--muted); letter-spacing: .04em; }
+.buy-shop__t { font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.5; }
+.buy-shop__go { margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--paper); font-size: 17px; font-weight: 800; }
+.buy-shop--local { border-style: dashed; border-top-style: solid; }
+.buy-tip { grid-column: 1 / -1; padding: 14px 28px; }
+/* 재료 쪽: 한 화면에 들어가게 조금 촘촘히 */
+.buy-kit { padding: 18px 26px; gap: 6px; }
+.buy-list { gap: 4px; }
+.buy-list li { padding: 3px 0 3px 16px; }
+.buy-list b { font-size: 21px; }
+.buy-list span { font-size: 16px; }
+.buy-shop { padding: 16px 22px; gap: 6px; }
+.buy-shop__name { font-size: 26px; }
+.buy-shop__t { font-size: 19px; }

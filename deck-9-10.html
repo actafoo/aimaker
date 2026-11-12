@@ -6,10 +6,10 @@
 <title>9~10차시 · AI 메이커 작품 제작</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=1e285e0e56">
-<link rel="stylesheet" href="assets/css/components.css?v=1e285e0e56">
-<link rel="stylesheet" href="assets/css/deck.css?v=1e285e0e56">
-<link rel="stylesheet" href="assets/css/ui.css?v=1e285e0e56">
+<link rel="stylesheet" href="assets/css/tokens.css?v=7b651b2c61">
+<link rel="stylesheet" href="assets/css/components.css?v=7b651b2c61">
+<link rel="stylesheet" href="assets/css/deck.css?v=7b651b2c61">
+<link rel="stylesheet" href="assets/css/ui.css?v=7b651b2c61">
 </head>
 <body class="deck-page">
 
@@ -205,7 +205,7 @@
     <h2 class="slide__title">아이디어 카드 다듬기</h2>
   </div>
   <div class="slide__body" style="display:grid;grid-template-columns:1.55fr 1fr;gap:40px">
-    <ul class="checklist fill-rows cc-list" data-widget="card-check">
+    <ul class="checklist fill-rows cc-list" data-widget="tick-list" data-tick="cardcheck">
       <li><span class="box"></span><span class="bar"><span><b>1 · 문장 틀의 빈칸을 다 채웠나요?</b> <span class="t-muted" style="font-size:22px">빈칸이 안 채워지는 곳이 아직 덜 생각한 곳입니다</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>2 · AI가 알아보는 것이 2가지 이상인가요?</b> <span class="t-muted" style="font-size:22px">예: 주먹과 보, 흑돌과 백돌</span></span></span></li>
       <li><span class="box"></span><span class="bar"><span><b>3 · 서보 두 개로 정말 되나요?</b> <span class="t-muted" style="font-size:22px">P0와 P1, 각각 무엇을 하는지</span></span></span></li>
@@ -435,11 +435,11 @@
 
 <section class="slide slide--body" id="s-video" data-section="3. 찍고 제출하기" data-title="30초 시연 영상 찍기">
   <div class="slide__head">
-    <div class="slide__kicker">작동 영상</div>
+    <div class="slide__kicker">작동 영상 · 눌러서 하나씩 체크</div>
     <h2 class="slide__title">30초 시연 영상 찍기</h2>
   </div>
   <div class="slide__body" style="display:grid;grid-template-columns:1fr 1fr;gap:40px">
-    <ul class="checklist fill-rows">
+    <ul class="checklist fill-rows cc-list" data-widget="tick-list" data-tick="video">
       <li><span class="box"></span><span class="bar"><b>가로로</b>&nbsp;찍어주세요.</span></li>
       <li><span class="box"></span><span class="bar">모니터 화면과 작품이&nbsp;<b>함께</b>&nbsp;나오게</span></li>
       <li><span class="box"></span><span class="bar">인식 1 → 행동 1, 인식 2 → 행동 2</span></li>
@@ -502,8 +502,8 @@
   </div>
   <div class="slide__body" style="display:grid;grid-template-columns:520px 1fr;gap:40px">
     <div class="note" style="display:flex;flex-direction:column">
-      <div class="t-lg" style="font-size:28px">준비할 네 가지</div>
-      <ul class="checklist fill-rows mt-m" style="gap:14px;flex:1;height:auto">
+      <div class="t-lg" style="font-size:28px">준비할 네 가지 <span class="t-muted" style="font-size:20px">· 눌러서 체크</span></div>
+      <ul class="checklist fill-rows mt-m cc-list" data-widget="tick-list" data-tick="submit" style="gap:14px;flex:1;height:auto">
         <li><span class="box"></span><span class="bar">작품 제목 <span class="t-muted" style="font-size:20px">· 내 카드 이름이 채워져 있어요</span></span></li>
         <li><span class="box"></span><span class="bar">간단한 설명 2~3문장</span></li>
         <li><span class="box"></span><span class="bar">MakeCode 공유 주소</span></li>
@@ -623,53 +623,52 @@
   </div>
 </section>
 
-<section class="slide slide--body" id="s-remix" data-section="5. 수업으로" data-title="학교 프로젝트 제안: 카드 세 장">
-  <div class="slide__head">
-    <div class="slide__kicker">학교에서 해 보기 · 프로젝트 수업 제안</div>
-    <h2 class="slide__title">카드 세 장으로 프로젝트 시작하기</h2>
-  </div>
-  <div class="slide__body" style="display:grid;grid-template-columns:560px 1fr;gap:40px">
-    <div class="remix">
-      <p class="remix__lead">관련 없어 보이는 것을 <b>일부러 묶으면</b> 새 아이디어가 나옵니다. <span class="t-muted">(강제 연결법)</span></p>
-      <ol class="remix__steps">
-        <li><b>카드 뽑기</b><span>지능(무엇을 알아보나) + 기능(무엇이 움직이나) + 상황(어디서)</span></li>
-        <li><b>설계 원칙 한 문장</b><span>상황을 나눠 보고 가장 큰 불편을 한 문장으로 (다음 쪽)</span></li>
-        <li><b>만들고 고치기</b><span>오늘처럼 퀵 프로토타입으로</span></li>
-      </ol>
-      <a class="link remix__src" href="https://boundary-x.github.io/random_draw_ponybot/" target="_blank" rel="noopener">원래 도구: 바운더리엑스 랜덤 카드 로봇 리믹스 챌린지 ↗</a>
-    </div>
-    <div data-widget="card-draw"></div>
-  </div>
-</section>
 
-<section class="slide slide--body" id="s-rule" data-section="5. 수업으로" data-title="우리 팀 설계 원칙 한 문장">
+
+
+<section class="slide slide--body" id="s-buy" data-section="5. 수업으로" data-title="재료는 어디서 살까">
   <div class="slide__head">
-    <div class="slide__kicker">학교에서 해 보기 · 프로젝트 수업 제안</div>
-    <h2 class="slide__title">우리 팀 설계 원칙 한 문장</h2>
+    <div class="slide__kicker">학교에서 준비하기 · 누르면 사이트가 열립니다</div>
+    <h2 class="slide__title">재료는 어디서 살까</h2>
   </div>
-  <div class="slide__body">
-    <div class="rule-steps">
-      <div class="rule-step c-blue">
-        <div class="rule-step__h"><span class="rule-step__n">①</span>상황 나눠 보기 <small>예: 급식실</small></div>
-        <dl class="rule-step__dl"><dt>사람</dt><dd>배식 줄에 선 학생, 조리사</dd><dt>사물</dt><dd>식판, 수저통, 잔반통</dd><dt>환경</dt><dd>점심시간에 붐비고 바쁘다</dd></dl>
-      </div>
-      <div class="rule-step c-yellow">
-        <div class="rule-step__h"><span class="rule-step__n">②</span>가장 큰 불편 한 문장</div>
-        <p class="rule-step__p">잔반통 뚜껑을 손으로 열어야 해서 줄이 밀리고 손이 더러워진다.</p>
+  <div class="slide__body slide__body--tall buy">
+    <div class="note buy-kit">
+      <div class="kk" style="color:#9A7400">오늘 쓴 재료 한 세트</div>
+      <ul class="buy-list">
+        <li><b>마이크로비트 V2</b><span>판단하는 보드</span></li>
+        <li><b>링비트(ring:bit) 확장보드</b><span>서보를 꽂고 전원을 주는 보드</span></li>
+        <li><b>180° 서보모터 MG90S × 2</b><span>SG90도 되지만 금속 기어가 오래 갑니다</span></li>
+        <li><b>AAA 건전지 3개</b><span>링비트 뒷면에 넣습니다</span></li>
+        <li><b>마이크로 USB 케이블</b><span>코드를 보낼 때</span></li>
+        <li><b>골판지 · 마스킹테이프</b><span>택배 상자를 모아 두면 충분합니다</span></li>
+        <li><b>카메라 있는 기기</b><span>노트북·태블릿·스마트폰 (AI 웹앱)</span></li>
+      </ul>
+    </div>
+    <div class="buy-shops">
+      <a class="buy-shop c-yellow" href="https://www.icbanq.com/" target="_blank" rel="noopener">
+        <span class="buy-shop__name">아이씨뱅큐 <small>ICBANQ</small></span>
+        <span class="buy-shop__t">교육용 보드와 전자부품. 마이크로비트와 관련 부품을 찾기 좋아요.</span>
+        <span class="buy-shop__go">icbanq.com <svg class="i"><use href="#i-external"></use></svg></span>
+      </a>
+      <a class="buy-shop c-blue" href="https://www.devicemart.co.kr/" target="_blank" rel="noopener">
+        <span class="buy-shop__name">디바이스마트 <small>DEVICEMART</small></span>
+        <span class="buy-shop__t">전자·로봇·기계부품 쇼핑몰. 서보모터, 건전지 홀더, 연결선 같은 부품이 많아요.</span>
+        <span class="buy-shop__go">devicemart.co.kr <svg class="i"><use href="#i-external"></use></svg></span>
+      </a>
+      <a class="buy-shop c-sky" href="https://ko.aliexpress.com/" target="_blank" rel="noopener">
+        <span class="buy-shop__name">알리익스프레스 <small>AliExpress</small></span>
+        <span class="buy-shop__t">값이 가장 싸지만 배송이 1~3주 걸리고 품질이 고르지 않아요. 학교 예산으로 살 수 있는지 먼저 확인하세요.</span>
+        <span class="buy-shop__go">aliexpress.com <svg class="i"><use href="#i-external"></use></svg></span>
+      </a>
+      <div class="buy-shop buy-shop--local c-green">
+        <span class="buy-shop__name">문구점 · 생활용품점</span>
+        <span class="buy-shop__t">골판지, 마스킹테이프, 종이컵, 탁구공처럼 작품을 만드는 재료</span>
       </div>
     </div>
-    <div data-widget="design-rule" class="mt-m"></div>
-    <p class="t-sm t-muted mt-s" style="font-size:20px">7~8차시 아이디어 카드의 문장 틀과 같은 모양입니다. 다 쓴 문장은 다음 쪽 벽에 올려 함께 봅니다.</p>
-  </div>
-</section>
-
-<section class="slide slide--body" id="s-ideas" data-section="5. 수업으로" data-title="우리 반 아이디어 모으기">
-  <div class="slide__head">
-    <div class="slide__kicker">모두의 생각</div>
-    <h2 class="slide__title">우리 반에서 해 볼 아이디어</h2>
-  </div>
-  <div class="slide__body" style="top:250px;bottom:150px">
-    <div data-widget="idea-wall" class="idea-host"></div>
+    <div class="callout c-row buy-tip">
+      <span class="circle c-yellow"><svg class="i"><use href="#i-binoculars"></use></svg></span>
+      <div class="t-md" style="font-weight:600">쇼핑몰마다 상품 이름이 조금씩 달라요. 검색어: <b class="t-blue">마이크로비트 V2</b> · <b class="t-blue">링비트 ring:bit</b> · <b class="t-blue">MG90S 서보</b></div>
+    </div>
   </div>
 </section>
 
@@ -699,18 +698,18 @@
 
 <div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
 
-<script src="assets/js/config.js?v=1e285e0e56"></script>
-<script src="assets/js/icons.js?v=1e285e0e56"></script>
-<script src="assets/js/challenges.js?v=1e285e0e56"></script>
-<script src="assets/js/store.js?v=1e285e0e56"></script>
-<script src="assets/js/deck.js?v=1e285e0e56"></script>
-<script src="assets/js/widgets.js?v=1e285e0e56"></script>
-<script src="assets/js/showcase.js?v=1e285e0e56"></script>
-<script src="assets/js/interact.js?v=1e285e0e56"></script>
-<script src="assets/js/cards.js?v=1e285e0e56"></script>
-<script src="assets/js/admin.js?v=1e285e0e56"></script>
-<script src="assets/js/editor.js?v=1e285e0e56"></script>
-<script src="assets/js/review.js?v=1e285e0e56"></script>
-<script src="assets/js/app.js?v=1e285e0e56"></script>
+<script src="assets/js/config.js?v=7b651b2c61"></script>
+<script src="assets/js/icons.js?v=7b651b2c61"></script>
+<script src="assets/js/challenges.js?v=7b651b2c61"></script>
+<script src="assets/js/store.js?v=7b651b2c61"></script>
+<script src="assets/js/deck.js?v=7b651b2c61"></script>
+<script src="assets/js/widgets.js?v=7b651b2c61"></script>
+<script src="assets/js/showcase.js?v=7b651b2c61"></script>
+<script src="assets/js/interact.js?v=7b651b2c61"></script>
+<script src="assets/js/cards.js?v=7b651b2c61"></script>
+<script src="assets/js/admin.js?v=7b651b2c61"></script>
+<script src="assets/js/editor.js?v=7b651b2c61"></script>
+<script src="assets/js/review.js?v=7b651b2c61"></script>
+<script src="assets/js/app.js?v=7b651b2c61"></script>
 </body>
 </html>

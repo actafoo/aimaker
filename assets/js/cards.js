@@ -69,19 +69,22 @@ window.MK = window.MK || {};
   }
 
   /* =========================================================
-     1. 아이디어 카드 다듬기 — 눌러서 체크 (이 브라우저에만 기억)
+     1. 눌러서 체크하는 목록 — <ul data-widget="tick-list" data-tick="이름">
+        (아이디어 카드 다듬기, 영상 찍기, 제출 준비 등. 이 브라우저에만 기억)
      ========================================================= */
-  var CHK_KEY = MK.config.storageKey + '-cardcheck';
-  function checks() { try { return JSON.parse(sessionStorage.getItem(CHK_KEY)) || []; } catch (e) { return []; } }
-  MK.widgets['card-check'] = function (el) {
-    var done = checks();
+  function tickKey(el) { return MK.config.storageKey + '-tick-' + (el.getAttribute('data-tick') || 'list'); }
+  function tickRead(el) { try { return JSON.parse(sessionStorage.getItem(tickKey(el))) || []; } catch (e) { return []; } }
+  MK.widgets['tick-list'] = function (el) {
+    var done = tickRead(el);
     $$('li', el).forEach(function (li, i) { li.classList.toggle('is-done', done.indexOf(i) >= 0); });
   };
+  MK.widgets['card-check'] = MK.widgets['tick-list']; // 예전 이름
   document.addEventListener('click', function (e) {
-    var li = e.target.closest('[data-widget="card-check"] li'); if (!li || editing()) return;
+    var li = e.target.closest('[data-widget="tick-list"] li, [data-widget="card-check"] li'); if (!li || editing()) return;
     li.classList.toggle('is-done');
-    var list = []; $$('li', li.parentNode).forEach(function (x, i) { if (x.classList.contains('is-done')) list.push(i); });
-    try { sessionStorage.setItem(CHK_KEY, JSON.stringify(list)); } catch (err) {}
+    var ul = li.parentNode, list = [];
+    $$('li', ul).forEach(function (x, i) { if (x.classList.contains('is-done')) list.push(i); });
+    try { sessionStorage.setItem(tickKey(ul), JSON.stringify(list)); } catch (err) {}
   });
 
   /* =========================================================
