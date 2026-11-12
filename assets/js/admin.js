@@ -73,12 +73,13 @@ window.MK = window.MK || {};
       var canSend = E.canSend && E.canSend();
       var what = n ? [dd.deck ? '슬라이드 글자' : '', dd.challenges ? '도전과제·공통 조건' : '', dd.config ? '연수 정보' : ''].filter(Boolean).join(', ') : '';
       var own = MK.review && MK.review.isOwner ? MK.review.isOwner() : E.isLocal;
+      var noSave = MK.store.isEditor && MK.store.isEditor(); // 편집자: 파일 저장 없음
       if (canSend) h += '<div class="acard' + (own ? '' : ' acard--hot') + '"><div class="acard__top"><div class="acard__title">보내기 <small style="color:var(--muted);font-weight:600">· 웹 주소에서 고쳤을 때</small></div><button class="ubtn ubtn--sm" data-ed-send ' + (n ? '' : 'disabled') + '>' + ic('send') + ' 보내기</button></div>' +
         '<div class="acard__meta">고친 곳(원래 글자 → 고친 글자)을 서버로 보냅니다. 교안 담당자 컴퓨터의 <b>편집·메모</b> 탭에 모이고, 담당자가 파일에 반영해 배포하면 웹 교안에 보입니다. 같은 곳을 다시 고쳐 보내면 하나로 합쳐집니다.' + (own ? '' : ' 단축키 Ctrl+S') + '</div></div>';
-      if (!canSend || own) h += '<div class="acard"><div class="acard__top"><div class="acard__title">내 컴퓨터에 저장 <small style="color:var(--muted);font-weight:600">· 교안 파일이 있을 때</small></div><button class="ubtn ubtn--sm ubtn--green" data-ed-save ' + (n ? '' : 'disabled') + '>' + ic('download') + ' 저장</button></div>' +
+      if (!noSave && (!canSend || own)) h += '<div class="acard"><div class="acard__top"><div class="acard__title">내 컴퓨터에 저장 <small style="color:var(--muted);font-weight:600">· 교안 파일이 있을 때</small></div><button class="ubtn ubtn--sm ubtn--green" data-ed-save ' + (n ? '' : 'disabled') + '>' + ic('download') + ' 저장</button></div>' +
         '<div class="acard__meta">' + (n ? '바뀐 것: ' + what : '저장 안 한 변경이 없습니다.') + '</div>' +
         (n ? '<div class="acard__row"><button class="ubtn ubtn--sm ubtn--ghost" data-ed-discard>변경 버리기</button></div>' : '') + '</div>';
-      if (!canSend || own) h += '<div class="acard"><div class="acard__title">어디에 저장되나요?</div><div class="acard__meta">' +
+      if (!noSave && (!canSend || own)) h += '<div class="acard"><div class="acard__title">어디에 저장되나요?</div><div class="acard__meta">' +
         (E.canWriteFolder ? '처음 저장할 때 <b>site 폴더</b>를 한 번 고르면, 그 안의 파일을 직접 고칩니다. 브라우저가 "파일 수정 허용"을 물으면 허용해 주세요.' : '이 브라우저는 폴더에 바로 쓸 수 없어 <b>고친 파일을 내려받습니다</b>. 크롬·엣지에서는 바로 저장됩니다.') +
         '<br>· 슬라이드 글자 → ' + esc(E.deckFile) + '<br>· 도전과제 설명·공통 조건 → assets/js/challenges.js<br>· 표지의 연수 정보 → assets/js/config.js' +
         '<br>저장 전 원래 파일은 <b>site/_backup</b> 폴더에 남깁니다.</div>' +

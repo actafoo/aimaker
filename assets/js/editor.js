@@ -229,10 +229,13 @@ window.MK = window.MK || {};
     var sv = bar.querySelector('[data-ed=save]'), sd = bar.querySelector('[data-ed=send]'), mm = bar.querySelector('[data-ed=memo]');
     sv.disabled = !n; sd.disabled = !n;
     sd.hidden = !send; mm.hidden = !send;
-    sv.hidden = send && !own; // 보내는 기기에는 교안 파일이 없으니 「내 컴퓨터에 저장」을 숨김
+    var editorOnly = !!(MK.store.isEditor && MK.store.isEditor());
+    sv.hidden = editorOnly || (send && !own); // 편집자·보내는 기기에는 교안 파일이 없으니 「내 컴퓨터에 저장」을 숨김
     sd.classList.toggle('ubtn--ghost', own);
     if (MK.admin && $('#admin.is-open')) MK.admin.render();
   }
+  // 서버 정보(기능 목록·로그인)가 늦게 오면 버튼을 다시 맞춤
+  MK.store.subscribe(function () { if (bar && editing) paintBar(); });
   function showBar(on) {
     if (on && !bar) {
       bar = document.createElement('div');
@@ -535,6 +538,7 @@ window.MK = window.MK || {};
     toggle: function () { if (editing) MK.editor.off(); else MK.editor.on(); },
     remark: function () { if (editing) mark(); },
     save: function (pickNew) {
+      if (MK.store.isEditor && MK.store.isEditor()) { MK.ui.toast('편집자는 「보내기」를 써 주세요. 파일 저장은 교안 담당자가 합니다.', true); return Promise.resolve(); }
       if (!total()) { MK.ui.toast('고친 내용이 없어요.'); return Promise.resolve(); }
       if (document.activeElement && document.activeElement.isContentEditable) document.activeElement.blur();
       var p = FS ? saveToFolder(pickNew) : saveByDownload();
