@@ -267,13 +267,13 @@ window.MK = window.MK || {};
     var last = null;
     if (E.length) out.push('', '■ 고친 글자');
     E.forEach(function (e) {
-      if (e.slide !== last) { last = e.slide; out.push('', '[' + slideName(e.slide, e.slideTitle) + ']'); }
+      if (e.slide !== last) { last = e.slide; out.push('', '[' + slideName(e.slide, e.slideTitle) + ' · ' + e.slide + ']'); }
       out.push('- “' + toText(e.before, 2000) + '”', '  → “' + toText(e.after, 2000) + '”  (' + (e.by || '') + ' ' + when(e.at) + ')');
     });
     last = null;
     if (M.length) out.push('', '■ 메모');
     M.forEach(function (m) {
-      if (m.slide !== last) { last = m.slide; out.push('', '[' + slideName(m.slide, m.slideTitle) + ']'); }
+      if (m.slide !== last) { last = m.slide; out.push('', '[' + slideName(m.slide, m.slideTitle) + ' · ' + m.slide + ']'); }
       out.push('- ' + String(m.text).replace(/\n/g, '\n  ') + '  (' + (m.by || '') + ' ' + when(m.at) + ')');
     });
     return out.join('\n');
@@ -309,15 +309,24 @@ window.MK = window.MK || {};
   }
   function applyAndSave() {
     if (!MK.editor) return;
-    var n = { ok: 0, already: 0, conflict: 0, missing: 0 };
-    byRank(R.edits).forEach(function (x) { if ((R.res[x.id] || {}).status === 'ok') return; n[applyOne(x).status]++; });
+    var n = { ok: 0, already: 0, conflict: 0, missing: 0 }, already = [];
+    byRank(R.edits).forEach(function (x) {
+      if ((R.res[x.id] || {}).status === 'ok') return;
+      var st = applyOne(x).status; n[st]++;
+      if (st === 'already') already.push(x.id);
+    });
     paint();
+    // 파일에 이미 같은 글자가 들어가 있는 편집(예: 반영·배포 뒤 다시 보내진 것)은 바로 '반영'으로 정리
+    var tidy = already.length ? mark(already, '반영', '이미 파일에 들어가 있는 편집 ' + already.length + '곳을 목록에서 정리했어요.') : Promise.resolve();
     if (!MK.editor.hasApplied()) {
-      MK.ui.toast(n.conflict + n.missing ? '넣지 못한 곳만 남았어요. 각 편집의 안내를 봐 주세요.' : '새로 넣을 편집이 없어요.', !!(n.conflict + n.missing));
+      tidy.then(function () {
+        if (n.conflict + n.missing) MK.ui.toast('넣지 못한 곳만 남았어요. 각 편집의 안내를 봐 주세요.', true);
+        else if (!already.length) MK.ui.toast('새로 넣을 편집이 없어요.');
+      });
       return;
     }
     // 저장에 성공하면 editor가 넣은 편집들을 서버에 '반영'으로 표시합니다
-    MK.editor.save().then(function () { paint(); });
+    tidy.then(function () { return MK.editor.save(); }).then(function () { paint(); });
   }
 
   /* ---------- 클릭 ---------- */

@@ -629,6 +629,7 @@ window.MK = window.MK || {};
           if (after === old.before) { db.edits = db.edits.filter(function (e) { return e !== old; }); res.removed++; }
           else if (after !== old.after) { old.after = after; old.by = by; old.at = now; res.updated++; }
         } else if (after !== before) {
+          if (db.edits.some(function (e) { return e.deck === deck && e.status !== '대기' && e.key === key && e.field === field && e.before === before && e.after === after; })) { res.skipped = (res.skipped || 0) + 1; return; }
           db.edits.push({ id: uid('r'), deck: deck, slide: clean(x.slide), slideTitle: clean(x.slideTitle), key: key, field: field, before: before, after: after, by: by, at: now, status: '대기', doneAt: 0, doneBy: '' });
           res.added++;
         }

@@ -26,6 +26,7 @@ window.MK = window.MK || {};
     $('#admin-out').onclick = function () { MK.store.adminLogout(); MK.admin.close(); MK.ui.toast('관리자 모드를 껐어요.'); };
     panel.querySelector('.admin__tabs').addEventListener('click', function (e) {
       var b = e.target.closest('[data-tab]'); if (!b) return; tab = b.dataset.tab; render();
+      if (tab === 'review' && MK.review) MK.review.refresh(); // 편집·메모는 열 때마다 새로 받음 (이미 반영된 것이 남아 보이지 않게)
     });
     panel.addEventListener('click', onClick);
     panel.addEventListener('change', onChange);
@@ -239,6 +240,7 @@ window.MK = window.MK || {};
       if (!MK.store.isAdmin() && !(MK.store.isEditor && MK.store.isEditor())) return login();
       if (toTab) tab = toTab;
       build(); render(); panel.classList.add('is-open');
+      if (MK.review) MK.review.refresh();
     },
     close: function () { if (panel) panel.classList.remove('is-open'); },
     toggle: function () { if (panel && panel.classList.contains('is-open')) MK.admin.close(); else MK.admin.open(); },

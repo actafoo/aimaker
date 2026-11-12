@@ -449,6 +449,12 @@ window.MK = window.MK || {};
     return MK.review.withName().then(function (by) {
       if (!by) return;
       return MK.review.call('reviewSend', { by: by, items: items }).then(function (r) {
+        // 보낸 곳은 '보낸 글자'를 새 기준으로 삼음 → 다음에 보낼 때는 그 뒤에 고친 곳만 보냄
+        // (이미 보내 반영까지 끝난 편집을 다시 보내 목록에 되살리는 일을 막음)
+        items.forEach(function (x) {
+          if (x.key) { orig[x.key] = x.after; delete touched[x.key]; }
+          else if (x.field) { origF[x.field] = x.after; delete touchedF[x.field]; }
+        });
         if (!applied.length) dirty = { deck: 0, challenges: 0, config: 0 }; // 받은 편집을 적용 중이면 저장 전까지 남겨 둠
         paintBar();
         var n = (r.added || 0) + (r.updated || 0);
