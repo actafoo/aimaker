@@ -19,7 +19,7 @@ window.MK = window.MK || {};
       '<aside class="admin ui" id="admin" aria-label="관리자">' +
         '<div class="admin__head">' + ic('lock') + '<b>관리자</b><button class="icon-btn" id="admin-out" title="관리자 나가기">' + ic('power') + '</button><button class="icon-btn" id="admin-close" aria-label="닫기">' + ic('x') + '</button></div>' +
         '<div class="admin__tabs" role="tablist">' +
-          '<button data-tab="edit">교안 편집</button><button data-tab="review">편집·메모</button><button data-tab="cards">도전과제</button><button data-tab="help">도움</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
+          '<button data-tab="edit">교안 편집</button><button data-tab="review">편집·메모</button><button data-tab="cards">도전과제</button><button data-tab="subs">제출물</button><button data-tab="show">발표자료</button><button data-tab="data">데이터</button>' +
         '</div><div class="admin__body" id="admin-body"></div></aside>');
     panel = $('#admin');
     $('#admin-close').onclick = function () { MK.admin.close(); };

@@ -1117,3 +1117,15 @@ a.buy-shop:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11,
 [data-widget="help-request"] .help--plain { flex-direction: column; }
 /* 시작 전 코드 캡처 위 번호 */
 .sc-n { width: 30px; height: 30px; font-size: 17px; }
+
+/* 내 작품 하트: 누를 수 없음을 보여 줌 */
+.heart.is-own { border-style: dashed; color: var(--muted); }
+.heart.is-own:hover { background: var(--paper); }
+.heart.is-own small { padding: 3px 10px; border-radius: 999px; background: var(--sky); font-size: 16px; font-weight: 800; color: var(--muted); }
+
+/* 안 될 때 다섯 가지 확인: 다시 연결해 보기 + 손 들기 */
+.retry { display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 24px 28px; }
+.retry__steps { margin: 0; padding-left: 34px; display: grid; gap: 8px; font-size: 24px; font-weight: 600; color: var(--navy); line-height: 1.4; }
+.retry__steps li::marker { font-weight: 800; color: var(--blue); }
+.retry__warn { margin: 0; font-size: 18px; font-weight: 700; color: #9A7400; }
+.retry__hand { display: flex; align-items: center; gap: 16px; margin-top: 4px; padding-top: 16px; border-top: 1.5px dashed var(--line); font-size: 26px; font-weight: 700; color: var(--navy); line-height: 1.4; }

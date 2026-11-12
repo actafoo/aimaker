@@ -6,10 +6,10 @@
 <title>9~10차시 · AI 메이커 작품 제작</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=7e6af11625">
-<link rel="stylesheet" href="assets/css/components.css?v=7e6af11625">
-<link rel="stylesheet" href="assets/css/deck.css?v=7e6af11625">
-<link rel="stylesheet" href="assets/css/ui.css?v=7e6af11625">
+<link rel="stylesheet" href="assets/css/tokens.css?v=e52f2015f3">
+<link rel="stylesheet" href="assets/css/components.css?v=e52f2015f3">
+<link rel="stylesheet" href="assets/css/deck.css?v=e52f2015f3">
+<link rel="stylesheet" href="assets/css/ui.css?v=e52f2015f3">
 </head>
 <body class="deck-page">
 
@@ -213,10 +213,30 @@
         <p class="cc-frame__s"><span class="cc-b c-purple">○○한 상황</span>에서 <span class="cc-b c-yellow">○○이</span>가 겪는 불편을 줄이기 위해, AI가 <span class="cc-b c-blue">○</span>을 인식하면 서보모터가 <span class="cc-b c-green">○○</span>하도록 만든다.</p>
       </div>
       <div class="card card--soft c-blue cc-stuck">
-        <div class="t-sm"><b class="t-strong">카드가 없거나 막혔나요?</b><br>수업 아이디어 7가지 중 하나를 가져와 내 상황에 맞게 바꿔 써도 됩니다.</div>
-        <div class="row" style="gap:12px;margin-top:12px"><button class="btn btn--sm" data-mc-import=""><svg class="i"><use href="#i-bulb"></use></svg> 수업 아이디어에서 가져오기</button></div>
+        <div class="t-sm"><b class="t-strong">카드가 없거나 막혔나요?</b><br>카드를 뽑아 엮어 보거나, 수업 아이디어 7가지 중 하나를 가져와 내 상황에 맞게 바꿔 써도 됩니다.</div>
+        <div class="row" style="gap:12px;margin-top:12px;flex-wrap:wrap"><button class="btn btn--sm" data-goto="s-draw"><svg class="i"><use href="#i-spark"></use></svg> 카드 뽑기</button><button class="btn btn--sm btn--ghost" data-mc-import><svg class="i"><use href="#i-bulb"></use></svg> 수업 아이디어에서 가져오기</button></div>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-draw" data-section="1. 내 도전과제" data-title="막히면 카드 뽑기 (강제 연결법)">
+  <div class="slide__head">
+    <div class="slide__kicker">아이디어가 막히면 · 강제 연결법</div>
+    <h2 class="slide__title">막히면 카드를 뽑아 억지로 엮어 보기</h2>
+  </div>
+  <div class="slide__body" style="display:grid;grid-template-columns:560px 1fr;gap:40px">
+    <div class="remix">
+      <p class="remix__lead">관계없어 보이는 것을 <b>일부러 엮는</b> 발명 기법, <b class="t-blue">강제 연결법</b>입니다.</p>
+      <ol class="remix__steps">
+        <li><b>세 장 뽑기</b><span>지능(AI가 무엇을 알아보나) + 기능(서보가 무엇을 하나) + 상황(어디서)</span></li>
+        <li><b>마음에 들 때까지 다시</b><span>카드 한 장만 눌러 바꿀 수도 있어요</span></li>
+        <li><b>내 도전과제에 넣기</b><span>뽑은 카드가 문장 틀의 빈칸으로 들어갑니다</span></li>
+      </ol>
+      <button class="btn btn--green" data-draw-use><svg class="i"><use href="#i-edit"></use></svg> 이 카드로 내 도전과제 쓰기</button>
+      <a class="link remix__src" href="https://boundary-x.github.io/random_draw_ponybot/" target="_blank" rel="noopener">원래 도구: 바운더리엑스 랜덤 카드 뽑기 ↗</a>
+    </div>
+    <div data-widget="card-draw"></div>
   </div>
 </section>
 
@@ -412,7 +432,16 @@
       <li><span class="box"></span><span class="bar"><span><b>5 · 링비트 전원을 켰나?</b> <span class="t-muted" style="font-size:22px">보낼 땐 끄고, 움직일 땐 켠다</span></span></span></li>
     </ul>
     <div class="stretch-col">
-      <div class="grow help-host" data-widget="help-request"></div>
+      <div class="card grow retry">
+        <div class="kk">다섯 가지를 봤는데도 안 되면 · 다시 연결해 보기</div>
+        <ol class="retry__steps">
+          <li><b>링비트 전원</b>을 껐다가 다시 켜기</li>
+          <li>웹앱에서 <b>내 장치 이름</b>에 다시 연결</li>
+          <li>웹앱의 <b>‘시작’</b>을 다시 누르기</li>
+        </ol>
+        <p class="retry__warn">웹앱을 새로고침하면 학습한 예시가 사라질 수 있어요.</p>
+        <div class="retry__hand"><span class="circle c-blue"><svg class="i"><use href="#i-hand"></use></svg></span><span>그래도 안 되면 <b>손을 들어 주세요.</b><br><span class="t-blue">분임강사가 갑니다.</span></span></div>
+      </div>
       <div class="card c-purple card--soft" data-model="모션인식"><div class="t-sm"><b class="t-strong">모션인식은?</b> ID 대신 양손 높이가 옵니다. 3번 대신 예제 코드의 <b>핀(P0·P1)</b>을 확인합니다.</div></div>
     </div>
   </div>
@@ -693,18 +722,18 @@
 
 <div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
 
-<script src="assets/js/config.js?v=7e6af11625"></script>
-<script src="assets/js/icons.js?v=7e6af11625"></script>
-<script src="assets/js/challenges.js?v=7e6af11625"></script>
-<script src="assets/js/store.js?v=7e6af11625"></script>
-<script src="assets/js/deck.js?v=7e6af11625"></script>
-<script src="assets/js/widgets.js?v=7e6af11625"></script>
-<script src="assets/js/showcase.js?v=7e6af11625"></script>
-<script src="assets/js/interact.js?v=7e6af11625"></script>
-<script src="assets/js/cards.js?v=7e6af11625"></script>
-<script src="assets/js/admin.js?v=7e6af11625"></script>
-<script src="assets/js/editor.js?v=7e6af11625"></script>
-<script src="assets/js/review.js?v=7e6af11625"></script>
-<script src="assets/js/app.js?v=7e6af11625"></script>
+<script src="assets/js/config.js?v=e52f2015f3"></script>
+<script src="assets/js/icons.js?v=e52f2015f3"></script>
+<script src="assets/js/challenges.js?v=e52f2015f3"></script>
+<script src="assets/js/store.js?v=e52f2015f3"></script>
+<script src="assets/js/deck.js?v=e52f2015f3"></script>
+<script src="assets/js/widgets.js?v=e52f2015f3"></script>
+<script src="assets/js/showcase.js?v=e52f2015f3"></script>
+<script src="assets/js/interact.js?v=e52f2015f3"></script>
+<script src="assets/js/cards.js?v=e52f2015f3"></script>
+<script src="assets/js/admin.js?v=e52f2015f3"></script>
+<script src="assets/js/editor.js?v=e52f2015f3"></script>
+<script src="assets/js/review.js?v=e52f2015f3"></script>
+<script src="assets/js/app.js?v=e52f2015f3"></script>
 </body>
 </html>

@@ -143,7 +143,7 @@ window.MK = window.MK || {};
           '<button type="button" class="btn btn--green mc-save" data-mc-save>' + ic('check') + ' 내 도전과제 등록</button>' +
           '<div class="mc-preview"><div class="mc-k">완성된 문장</div><p data-mc-preview></p></div>' +
           '<div class="mc-from" data-mc-from></div>' +
-          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-mc-import>' + ic('bulb') + ' 수업 아이디어에서 가져오기</button>' +
+          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-goto="s-draw">' + ic('spark') + ' 카드 뽑기</button><button type="button" class="btn btn--ghost btn--sm" data-mc-import>' + ic('bulb') + ' 수업 아이디어에서 가져오기</button>' +
             '<button type="button" class="btn btn--ghost btn--sm" data-goto="s-cardboard">우리 반 도전과제 보기 ' + ic('right') + '</button></div>' +
         '</div>' +
       '</div>';
@@ -264,6 +264,23 @@ window.MK = window.MK || {};
     var d = values(); d.at = Date.now(); d.owner = me() ? me().name : ''; writeDraft(d);
     paintStatus();
   }
+  /* 카드 뽑기(강제 연결법)에서 가져오기: 지능 → AI가 알아보는 것·모델, 기능 → 서보가 하는 일, 상황 → 상황 */
+  function fromDraw() {
+    var d = MK.draw && MK.draw.current ? MK.draw.current() : null;
+    if (!d || !d.intel || !d.func || !d.place) { MK.ui.toast('먼저 카드 세 장을 뽑아 주세요.', true); return false; }
+    var cur = values();
+    var v = Object.assign({}, cur, { sense: d.intel[0], act: d.func[0], situation: d.place[0], from: '' });
+    if ((MK.cardModels || []).indexOf(d.intel[1]) >= 0) v.model = d.intel[1];
+    fill(v, true);
+    var w = values(); w.at = Date.now(); w.owner = me() ? me().name : ''; writeDraft(w);
+    paintStatus();
+    return true;
+  }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-draw-use]') || editing()) return;
+    if (fromDraw()) { MK.deck.goto('s-mycard'); MK.ui.toast('뽑은 카드를 넣었어요. 작품 이름과 ‘누가’를 채워 주세요.'); }
+  });
+
   function pickIdea() {
     var h = '<div class="modal__kicker">수업 아이디어에서 가져오기</div><h3 class="modal__title">어떤 아이디어로 시작할까요?</h3>' +
       '<p class="modal__desc">작품 이름과 AI 모델을 채워 드립니다. 문장 틀은 <b>내 상황에 맞게</b> 직접 채워 주세요.</p><div class="cd-pick">' +

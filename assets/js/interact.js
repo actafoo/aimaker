@@ -387,7 +387,7 @@ window.MK = window.MK || {};
     var own = !!m && sub.name === m.name, on = !!m && names.indexOf(m.name) >= 0;
     var who = names.length ? names.slice(0, 12).join(', ') + (names.length > 12 ? ' 외 ' + (names.length - 12) + '명' : '') : '';
     return '<button type="button" class="heart' + (on ? ' is-on' : '') + (own ? ' is-own' : '') + '" data-heart="' + esc(id) + '"' + (own ? ' disabled' : '') +
-      ' title="' + esc(own ? '내 작품' + (who ? ' · ' + who : '') : on ? '하트 취소' : '이 작품에 하트' + (who ? ' · ' + who : '')) + '">' + ic('heart') + '<span>' + names.length + '</span></button>';
+      ' title="' + esc(own ? '내 작품에는 하트를 누를 수 없어요' + (who ? ' · ' + who : '') : on ? '하트 취소' : '이 작품에 하트' + (who ? ' · ' + who : '')) + '">' + ic('heart') + '<span>' + names.length + '</span>' + (own ? '<small>내 작품</small>' : '') + '</button>';
   }
   MK.widgets.hearts = function (el, s) { el.innerHTML = has('hearts') ? heartBtn(el.getAttribute('data-sub'), s) : ''; };
   MK.widgets['heart-count'] = function (el, s) {
@@ -466,13 +466,13 @@ window.MK = window.MK || {};
   });
 
   /* =========================================================
-     9. 카드 세 장 뽑기 (수업으로 · 학교 프로젝트 제안)
+     9. 카드 세 장 뽑기 (PART 1 · 막히면 카드를 뽑아 억지로 엮어 보기 = 강제 연결법)
         지능(AI가 알아보는 것) + 기능(서보가 하는 일) + 상황(어디서)
-        뽑은 카드는 이 창에만 기억하고, 다음 쪽 '설계 원칙 한 문장'에 채웁니다.
+        뽑은 카드는 이 창에만 기억하고, 「이 카드로 내 도전과제 쓰기」를 누르면 카드 빈칸으로 들어갑니다 (cards.js)
      ========================================================= */
   var DRAW = {
     intel: { name: '지능', sub: 'AI가 무엇을 알아보나', icon: 'binoculars', color: 'blue',
-      list: [['손 모양', '핸드포즈'], ['물체 종류', '이미지분류'], ['표정', '얼굴인식'], ['다가오는 사람', '얼굴인식'], ['양손 높이', '모션인식']] },
+      list: [['손 모양', '핸드포즈'], ['손가락 개수', '핸드포즈'], ['물체 종류', '이미지분류'], ['물체의 색', '이미지분류'], ['양손 높이', '모션인식']] },
     func: { name: '기능', sub: '서보가 무엇을 하나', icon: 'move', color: 'green',
       list: [['문 열고 닫기'], ['팔 들어 올리기'], ['깃발 흔들기'], ['길 바꾸기'], ['뚜껑 열기'], ['바늘로 가리키기'], ['두드리기'], ['밀어내기']] },
     place: { name: '상황', sub: '어디서', icon: 'home', color: 'purple',
@@ -484,6 +484,7 @@ window.MK = window.MK || {};
   function saveDraw() { try { sessionStorage.setItem(DRAW_KEY, JSON.stringify(drawn)); } catch (e) {} }
   function pickOne(k, avoid) { var n = DRAW[k].list.length, i; do { i = Math.floor(Math.random() * n); } while (n > 1 && i === avoid); return i; }
   function drawnVal(k) { return drawn && drawn[k] != null && DRAW[k].list[drawn[k]] ? DRAW[k].list[drawn[k]] : null; }
+  MK.draw = { current: function () { return { intel: drawnVal('intel'), func: drawnVal('func'), place: drawnVal('place') }; } };
 
   function drawCard(k) {
     var c = DRAW[k], v = drawnVal(k);

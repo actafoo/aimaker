@@ -412,7 +412,7 @@ window.MK = window.MK || {};
     else if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mineTitle ? ' · ' + esc(mineTitle) : ' · 도전과제 등록 전') + '</span>' +
       '<button class="ghost" data-act="switch">바꾸기</button>';
     else h += '<span class="me__text">도전과제를 등록하려면 이름부터</span><button data-act="identify">이름 등록</button>';
-    var helpN = admin && st.help ? st.help.length : 0; // 대기 중인 도움 요청
+    var helpN = 0; // 도움 요청 기능은 뺐음 (2026-11-12)
     if (admin) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff">' + ic('lock') + ' 관리자' + (helpN ? ' <span class="me__badge" title="대기 중인 도움 요청">도움 ' + helpN + '</span>' : '') + '</button>';
     else if (editorOnly) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff" title="편집자: 글자 고쳐 보내기·메모">' + ic('lock') + ' 편집자</button>';
     box.innerHTML = h;
