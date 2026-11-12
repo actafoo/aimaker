@@ -87,6 +87,29 @@ window.MK = window.MK || {};
     try { sessionStorage.setItem(tickKey(ul), JSON.stringify(list)); } catch (err) {}
   });
 
+  /* 제출 체크리스트 — 내 결과물이 채워지면 저절로 체크 (제출 창에 쓰는 동안에도 바로) */
+  function readyOk(k, v) {
+    if (k === 'title') return !!String(v.title || '').trim();
+    if (k === 'desc') return !!String(v.desc || '').trim();
+    if (k === 'mc') return !!MK.parseMakecode(v.makecodeUrl);
+    if (k === 'video') return MK.isHttpUrl(v.videoUrl);
+    return false;
+  }
+  function submitDraft() { // 제출 창이 열려 있으면 그 칸의 값
+    var f = document.querySelector('dialog[open] input[name="makecodeUrl"]'); if (!f) return null;
+    var d = f.closest('form'), v = {};
+    ['title', 'desc', 'makecodeUrl', 'videoUrl'].forEach(function (n) { var i = d.querySelector('[name="' + n + '"]'); v[n] = i ? i.value : ''; });
+    return v;
+  }
+  function paintReady() {
+    var v = submitDraft() || (MK.state && MK.state.mySubmission ? MK.state.mySubmission(st()) : null) || {};
+    $$('[data-widget="submit-ready"] li').forEach(function (li) { li.classList.toggle('is-done', readyOk(li.getAttribute('data-need'), v)); });
+  }
+  MK.widgets['submit-ready'] = function () { paintReady(); };
+  document.addEventListener('input', function (e) { if (e.target.closest && e.target.closest('dialog[open]') && submitDraft()) paintReady(); });
+  document.addEventListener('close', function () { setTimeout(paintReady, 60); }, true);
+  document.addEventListener('click', function (e) { if (e.target.closest('[data-act="submit"]')) setTimeout(paintReady, 120); }); // 제출 창이 열리면 미리 채워진 칸도 바로 체크
+
   /* =========================================================
      2. 내 도전과제 카드 — 빈칸을 바로 채우고 등록
      ========================================================= */

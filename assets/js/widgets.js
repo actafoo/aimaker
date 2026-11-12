@@ -155,19 +155,19 @@ window.MK = window.MK || {};
         onSubmit: function (v) { return MK.store.cancel(v).then(function () { MK.ui.toast('신청을 취소했어요.'); }); } });
     },
     submit: function () {
-      var st = MK.store.getStateSync(), m = me(), card = myCard(st), mine = myEnrollment(st), sub = mySubmission(st);
-      if (!card && !mine) { MK.ui.toast('먼저 내 도전과제(아이디어 카드)를 등록해 주세요.', true); if (MK.deck) MK.deck.goto('s-mycard'); return; }
-      var ch = card ? { title: card.title } : MK.challengeById(mine.challengeId);
+      var st = MK.store.getStateSync(), m = me(), card = myCard(st), sub = mySubmission(st);
+      if (!card) { MK.ui.toast('먼저 내 도전과제(아이디어 카드)를 등록해 주세요.', true); if (MK.deck) MK.deck.goto('s-mycard'); return; }
+      var ch = { title: card.title };
       var descDraft = card ? [card.servo1, card.servo2].filter(Boolean).join('. ') : '';
       if (descDraft && !/[.!?。]$/.test(descDraft)) descDraft += '.';
-      MK.ui.form({ wide: true, kicker: '내 도전과제 · ' + ch.title, title: sub ? '내 결과물 고치기' : '내 결과물 제출', desc: '30초 이내 영상으로 서로 다른 행동 두 가지 이상을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
+      MK.ui.form({ wide: true, kicker: '내 도전과제 · ' + ch.title, title: sub ? '내 결과물 수정' : '내 결과물 제출', desc: '30초 이내 영상으로 서로 다른 행동 두 가지 이상을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
         fields: personFields(m).concat([
           { name: 'title', label: '작품 제목', value: sub ? sub.title : (card ? card.title : ''), placeholder: '예: 손끝으로 지휘하는 작은 무대', maxlength: 40 },
           { name: 'desc', label: '간단한 설명', small: '무엇을 인식하면 어떻게 움직이는지 2~3문장', type: 'textarea', value: sub ? sub.desc : descDraft, maxlength: MK.config.descMax, placeholder: '예: 주먹을 쥐면 서보가 북을 치고, 손바닥을 펴면 탬버린을 흔듭니다.' },
           { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: sub ? sub.makecodeUrl : '', placeholder: 'https://makecode.microbit.org/_…', help: 'MakeCode 오른쪽 위 <b>공유</b> → 공유 링크 만들기 → 주소 복사' },
           { name: 'videoUrl', label: '작동 영상 주소', value: sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '구글 드라이브 영상은 <b>링크가 있는 모든 사용자</b>로 공유해야 발표 때 재생됩니다.' }
-        ]), submitText: sub ? '고친 내용 제출' : '결과물 제출하기',
-        onSubmit: function (v) { return MK.store.submit(v).then(function (r) { MK.ui.toast(r.updated ? '결과물을 고쳤어요.' : '결과물을 제출했어요. 수고하셨습니다!'); }); } });
+        ]), submitText: sub ? '수정한 내용 제출' : '결과물 제출하기',
+        onSubmit: function (v) { return MK.store.submit(v).then(function (r) { MK.ui.toast(r.updated ? '결과물을 수정했어요.' : '결과물을 제출했어요. 수고하셨습니다!'); }); } });
     },
     switchUser: function () {
       MK.ui.confirm({ title: '다른 사람으로 바꿀까요?', desc: '이 노트북에 저장된 이름과 비밀번호를 지웁니다. 신청과 제출 기록은 그대로 남습니다.', okText: '바꾸기' })
@@ -254,19 +254,23 @@ window.MK = window.MK || {};
 
   /* 내 결과물 (제출 슬라이드) */
   MK.widgets['my-submission'] = function (el, st) {
-    var m = me(), card = myCard(st), mine = myEnrollment(st), sub = mySubmission(st);
+    var m = me(), card = myCard(st), sub = mySubmission(st);
     var rows = function (k, v, link) {
       return '<div class="mine__row"><dt>' + k + '</dt><dd class="' + (v ? '' : 'empty') + '">' + (v ? (link ? '<a class="link" href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(v) + '</a>' : esc(v)) : '아직 없음') + '</dd></div>';
     };
     var h = '<div class="window fill"><div class="window__bar">내 결과물' + (sub ? ' · 제출 완료' : '') + '</div><div class="window__body" style="display:flex;flex-direction:column;gap:22px">';
     if (!m) {
       h += '<div class="t-lg">먼저 이름을 등록하고 내 도전과제를 등록해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 이름 등록</button><button class="btn btn--ghost" data-goto="s-mycard">내 도전과제 등록하러 가기</button></div>';
-    } else if (!card && !mine) {
-      h += '<div class="t-lg">' + esc(m.name) + ' 선생님, 아직 등록한 도전과제가 없어요.</div><div class="row"><button class="btn" data-goto="s-mycard">내 도전과제 등록하러 가기</button></div>';
+    } else if (!card) {
+      h += '<div class="t-lg">' + esc(m.name) + ' 선생님, 아직 등록한 도전과제가 없어요.</div><div class="t-sm t-muted">결과물은 내 도전과제(아이디어 카드)에 이어서 제출합니다.</div><div class="row"><button class="btn" data-goto="s-mycard">내 도전과제 등록하러 가기</button></div>';
     } else {
-      var ch = card ? { title: card.title } : MK.challengeById(mine.challengeId);
-      h += '<dl class="mine" style="margin:0">' + rows('이름', m.name) + rows('내 도전과제', ch.title) + rows('작품 제목', sub && sub.title) + rows('간단한 설명', sub && sub.desc) + rows('MakeCode', sub && sub.makecodeUrl, true) + rows('작동 영상', sub && sub.videoUrl, true) + '</dl>' +
-        '<div class="row" style="margin-top:auto"><button class="btn ' + (sub ? 'btn--ghost' : 'btn--green') + '" data-act="submit">' + ic(sub ? 'edit' : 'send') + (sub ? ' 고치기' : ' 결과물 제출하기') + '</button></div>';
+      // 내 도전과제(카드)를 위에 보여 주고, 결과물은 이 카드에 이어서 제출
+      var cat = MK.categories[card.model] || MK.catOf(null);
+      h += '<div class="mine-card c-' + cat.color + '"><div class="mine-card__top"><span class="kk">내 도전과제</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(card.model) + '</span>' +
+        '<button class="btn btn--ghost btn--sm" data-goto="s-mycard">' + ic('edit') + ' 도전과제 수정</button></div>' +
+        '<div class="mine-card__t">' + esc(card.title) + '</div>' + (MK.cardSentence ? '<div class="mine-card__s">' + esc(MK.cardSentence(card)) + '</div>' : '') + '</div>';
+      h += '<dl class="mine" style="margin:0">' + rows('작품 제목', sub && sub.title) + rows('간단한 설명', sub && sub.desc) + rows('MakeCode', sub && sub.makecodeUrl, true) + rows('작동 영상', sub && sub.videoUrl, true) + '</dl>' +
+        '<div class="row" style="margin-top:auto"><button class="btn ' + (sub ? 'btn--ghost' : 'btn--green') + '" data-act="submit">' + ic(sub ? 'edit' : 'send') + (sub ? ' 수정' : ' 결과물 제출하기') + '</button></div>';
     }
     el.innerHTML = h + '</div></div>';
   };
@@ -403,7 +407,7 @@ window.MK = window.MK || {};
     var m = me(), mine = myEnrollment(st), admin = MK.store.isAdmin(), editorOnly = !!(MK.store.isEditor && MK.store.isEditor());
     var h = '';
     var noEnroll = MK.page && MK.page.enroll === false; // 신청이 없는 교안(7~8차시): 관리자 버튼만
-    var card = myCard(st), mineTitle = card ? card.title : mine && MK.challengeById(mine.challengeId) ? MK.challengeById(mine.challengeId).title : '';
+    var card = myCard(st), mineTitle = card ? card.title : '';
     if (noEnroll) { /* 이름 칩 없음 */ }
     else if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mineTitle ? ' · ' + esc(mineTitle) : ' · 도전과제 등록 전') + '</span>' +
       '<button class="ghost" data-act="switch">바꾸기</button>';

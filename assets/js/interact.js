@@ -81,8 +81,7 @@ window.MK = window.MK || {};
   // 내 도전과제: 아이디어 카드가 있으면 카드의 모델, 없으면 예전 신청의 도전과제
   function myChallenge(s) {
     var card = MK.state.myCard ? MK.state.myCard(s) : null;
-    if (card) return { title: card.title, category: card.model, card: true };
-    var e = MK.state.myEnrollment(s); return e ? MK.challengeById(e.challengeId) : null;
+    return card ? { title: card.title, category: card.model, card: true } : null; // 예전 신청 기록은 쓰지 않음
   }
   function applyPersonal(s) {
     var c = myChallenge(s), cat = c && c.category !== '자유발명' ? c.category : null;

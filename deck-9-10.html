@@ -6,10 +6,10 @@
 <title>9~10차시 · AI 메이커 작품 제작</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=7b651b2c61">
-<link rel="stylesheet" href="assets/css/components.css?v=7b651b2c61">
-<link rel="stylesheet" href="assets/css/deck.css?v=7b651b2c61">
-<link rel="stylesheet" href="assets/css/ui.css?v=7b651b2c61">
+<link rel="stylesheet" href="assets/css/tokens.css?v=7e6af11625">
+<link rel="stylesheet" href="assets/css/components.css?v=7e6af11625">
+<link rel="stylesheet" href="assets/css/deck.css?v=7e6af11625">
+<link rel="stylesheet" href="assets/css/ui.css?v=7e6af11625">
 </head>
 <body class="deck-page">
 
@@ -64,7 +64,6 @@
         <div class="chain__desc">마이크로비트의 명령에 따라 정해진 방향이나 각도로 움직입니다.</div>
       </div>
     </div>
-    <div class="role-note mt-s"><span class="role-note__k">역할 나누기</span>작은 보드는 카메라 AI를 직접 돌리기 어렵습니다. 그래서 <b>알아보기는 노트북·태블릿의 웹앱</b>이, <b>판단과 움직임은 마이크로비트</b>가 맡고, 블루투스로 결과만 주고받습니다.</div>
     <div class="grid-3 mt-s recap-row">
       <div class="card card--soft c-blue"><div class="t-lg">왜 마이크로비트?</div><p class="t-sm" style="margin:8px 0 0">피지컬 AI의 기본 구조를<br>가장 빠르게 경험할 수 있는 보드</p></div>
       <div class="card card--soft c-green"><div class="t-lg">준비물 확인</div><p class="t-sm" style="margin:8px 0 0">마이크로비트·링비트·서보 2개,<br>골판지와 마스킹테이프</p></div>
@@ -81,28 +80,24 @@
   <div class="slide__body">
     <div class="pai">
       <div class="pai__corner"></div>
-      <div class="pai__h pai__h--screen"><img class="icon-badge icon-badge--sm" src="assets/img/icons/laptop.png" alt="">화면 속 AI</div>
-      <div class="pai__h pai__h--body"><img class="icon-badge icon-badge--sm" src="assets/img/icons/robot-arm.png" alt="">움직이는 AI <small>피지컬 AI</small></div>
+      <div class="pai__h pai__h--screen"><img class="icon-badge icon-badge--sm" src="assets/img/icons/laptop.png" alt="">일반 AI</div>
+      <div class="pai__h pai__h--body"><img class="icon-badge icon-badge--sm" src="assets/img/icons/robot-arm.png" alt="">피지컬 AI</div>
 
-      <div class="pai__k">받는 것</div>
+      <div class="pai__k">입력값</div>
       <div class="pai__c">글, 사진, 녹음된 소리, 데이터</div>
-      <div class="pai__c pai__c--body">카메라·마이크·거리·움직임 같은 <b>지금 이 순간의 현실</b></div>
+      <div class="pai__c pai__c--body">카메라·마이크·거리·움직임 같은 <b>지금 이 순간의 현실 물리값</b></div>
 
       <div class="pai__k">하는 일</div>
       <div class="pai__c">글과 그림 만들기, 분류, 예측</div>
       <div class="pai__c pai__c--body">알아보고, 판단하고, <b>어떻게 움직일지</b> 정하기</div>
 
-      <div class="pai__k">내놓는 것</div>
-      <div class="pai__c">화면에 뜨는 답</div>
+      <div class="pai__k">결과값</div>
+      <div class="pai__c">요청에 대한 응답(글, 그림, 분류 결과 등)</div>
       <div class="pai__c pai__c--body">돌리기·들기·옮기기, 빛과 소리</div>
 
-      <div class="pai__k pai__k--hot">틀리면</div>
-      <div class="pai__c pai__c--hot">답 하나가 틀립니다</div>
+      <div class="pai__k pai__k--hot">오류 발생</div>
+      <div class="pai__c pai__c--hot">답변이 틀립니다</div>
       <div class="pai__c pai__c--body pai__c--hot"><b>장치가 엉뚱하게 움직입니다</b></div>
-    </div>
-    <div class="callout mt-m pai-ex">
-      <span class="circle c-yellow"><svg class="i"><use href="#i-bulb"></use></svg></span>
-      <div class="t-md" style="font-weight:500">흰 돌을 ‘흑돌’로 잘못 알아보면, 웹앱만 쓸 때는 <b>화면 글자</b>가 틀리지만 분류기에서는 <b>흰 돌이 검은 통에 떨어집니다.</b> 그래서 오늘은 만들고, 움직여 보고, 고칩니다.</div>
     </div>
   </div>
 </section>
@@ -183,7 +178,7 @@
     </div>
     <div class="row mt-l" style="align-items:center;gap:30px">
       <button class="btn" data-act="identify"><svg class="i"><use href="#i-user"></use></svg> 지금 이름 등록하기</button>
-      <div class="callout callout--sky t-sm" style="flex:1;padding:14px 26px;font-size:23px;font-weight:500"><span class="kbd">←</span> <span class="kbd">→</span> 키나 오른쪽 아래 버튼으로 넘기고, <b class="t-strong">목차</b>로 원하는 쪽에 바로 갑니다.</div>
+      <div class="callout callout--sky t-sm" style="flex:1;padding:14px 26px;font-size:23px;font-weight:500"><span class="kbd">←</span> <span class="kbd">→</span> 키나 오른쪽 아래 버튼으로 넘기고, <b class="t-strong">목차</b>는 누르면 원하는 쪽으로 바로 이동합니다.</div>
     </div>
   </div>
 </section>
@@ -219,7 +214,7 @@
       </div>
       <div class="card card--soft c-blue cc-stuck">
         <div class="t-sm"><b class="t-strong">카드가 없거나 막혔나요?</b><br>수업 아이디어 7가지 중 하나를 가져와 내 상황에 맞게 바꿔 써도 됩니다.</div>
-        <div class="row" style="gap:12px;margin-top:12px"><button class="btn btn--sm" data-mc-import><svg class="i"><use href="#i-bulb"></use></svg> 수업 아이디어에서 가져오기</button></div>
+        <div class="row" style="gap:12px;margin-top:12px"><button class="btn btn--sm" data-mc-import=""><svg class="i"><use href="#i-bulb"></use></svg> 수업 아이디어에서 가져오기</button></div>
       </div>
     </div>
   </div>
@@ -259,8 +254,8 @@
 <section class="slide slide--body" id="s-code" data-section="2. 만들기" data-title="시작 전에: 모델별 코드">
   <div class="slide__head head--split">
     <div>
-      <div class="slide__kicker">시작 전에</div>
-      <h2 class="slide__title">내 모델에 맞는 코드부터</h2>
+      <div class="slide__kicker">만들기 전에</div>
+      <h2 class="slide__title">나의 모델 코드 확인하기</h2>
     </div>
     <div data-widget="my-model"></div>
   </div>
@@ -269,16 +264,17 @@
       <div class="window__bar">핸드포즈 · 이미지분류 — 7차시 기본 코드</div>
       <div class="window__body" style="display:flex;flex-direction:column;gap:16px">
         <div class="shot-mark sc-shot"><img src="assets/img/78/code-base.png" width="784" height="531" alt="7차시 기본 코드: 데이터가 ID1이면 move 1, ID2이면 move 2. 함수 move 1은 P0 서보 각도 묶음">
-          <span class="mk-fix" style="left:6.2%;top:63.8%;width:15.4%;height:9.6%"></span>
-          <span class="mk-fix" style="left:72.6%;top:58%;width:5.4%;height:31.6%"></span></div>
+          <span class="mk-fix" style="left:24%;top:45%;width:9.5%;height:20%"></span><span class="mk-badge sc-n" style="left:21%;top:39%">1</span>
+          <span class="mk-fix" style="left:6.2%;top:52.4%;width:15.6%;height:21%"></span><span class="mk-badge sc-n" style="left:3%;top:47%">2</span>
+          <span class="mk-fix" style="left:52.5%;top:57%;width:25.6%;height:32.5%"></span><span class="mk-badge sc-n" style="left:49.5%;top:51%">2</span></div>
         <div class="mcb-legend">
-          <div><span class="fixbox__sw"></span><b class="t-strong">고칠 곳 두 군데</b> → ID2에 move 2 넣기, 함수 속 각도 바꾸기</div>
-          <div><span class="mcb-badge">!</span><b class="t-strong">ID1·ID2</b>는 웹앱의 글자와 대소문자까지 같게</div>
+          <div><span class="mcb-badge">1</span><b class="t-strong">클래스 이름</b> → 바운더리엑스 AI 모델과 똑같이 ID1, ID2 (대소문자 주의!)</div>
+          <div><span class="mcb-badge">2</span><b class="t-strong">움직임 블록</b> → 원하는 동작으로 블록 또는 함수 입력(핀 값, 출력값 확인)</div>
         </div>
       </div>
     </div>
     <div class="window" style="align-self:stretch">
-      <div class="window__bar">예제 코드 — 누르면 새 탭에서 열립니다</div>
+      <div class="window__bar">예제 코드&nbsp;</div>
       <div class="window__body code-links">
         <a class="code-link c-yellow" href="https://makecode.microbit.org/S49771-77509-50114-72682" target="_blank" rel="noopener">
           <span class="circle circle--sm"><svg class="i"><use href="#i-cpu"></use></svg></span>
@@ -326,13 +322,13 @@
     </div>
     <div class="grid-2 mt-m" style="align-items:start">
       <div class="col" style="gap:14px">
-        <div class="callout" style="display:flex;align-items:center;gap:20px;padding:16px 26px"><span class="circle c-blue"><svg class="i"><use href="#i-target"></use></svg></span><div class="t-md" style="font-weight:500">로봇 관절에 서보를 쓰는 까닭: <b>목표 각도로 정확히 가서 멈추기</b> 때문입니다.</div></div>
+        <div class="callout" style="display:flex;align-items:center;gap:20px;padding:16px 26px"><span class="circle c-blue"><svg class="i"><use href="#i-target"></use></svg></span><div class="t-md" style="font-weight:500"><b>로봇 관절에 서보모터를 쓰는 까닭</b><br>일반 모터와 달리 목표 각도로 정확히 가서 멈출 수 있습니다.</div></div>
         <button type="button" class="yt-ref" data-yt="wR0E_qSBJgo" data-yt-title="로봇 관절에 서보를 쓰는 사례">
           <span class="yt-ref__thumb" style="background-image:url(https://i.ytimg.com/vi/wR0E_qSBJgo/hqdefault.jpg)"><span class="yt-ref__play"><svg class="i"><use href="#i-play"></use></svg></span></span>
           <span class="yt-ref__txt"><span class="yt-ref__k">참고 영상 · 로봇 관절에 서보를 쓰는 사례</span><span class="yt-ref__t">AI 시대에 펜을? 멍 때리며 로봇 필기 감상 하실?</span><span class="yt-ref__by">몰랐지식 · YouTube Shorts</span><span class="yt-ref__go"><svg class="i"><use href="#i-expand"></use></svg> 눌러서 크게 보기</span></span>
         </button>
       </div>
-      <div class="note" style="display:flex;align-items:center;gap:20px;padding:16px 26px"><span class="circle c-yellow"><svg class="i"><use href="#i-gear"></use></svg></span><div class="t-md" style="font-weight:500">축에 끼우는 날개(<b>서보혼</b>)는 작아서 잃어버리기 쉽습니다. 0°를 먼저 찾고 끼우세요.</div></div>
+      <div class="note" style="display:flex;align-items:center;gap:20px;padding:16px 26px"><span class="circle c-yellow"><svg class="i"><use href="#i-gear"></use></svg></span><div class="t-md" style="font-weight:500"><b>서보혼과 나사</b>는 작아서 잃어버리기 쉽습니다.<br>앞 차시에서 배운 대로 <b>0°</b>를 찾고 서보혼을 끼우세요.</div></div>
     </div>
   </div>
 </section>
@@ -356,7 +352,7 @@
     </div>
     <div class="callout callout--sky mt-s dof-go">
       <img class="icon-badge icon-badge--sm" src="assets/img/icons/sprout.png" alt="">
-      <div><div class="t-md"><b>그래서 오늘은 쉽게 갑니다.</b></div>
+      <div><div class="t-md"><b>완성도보다는 AI 모델과 서보모터를 연결하고 작동시키는 경험에 집중해 보세요.</b></div>
         <div class="dof-ex"><span class="tag c-green">다리 판 들기 · DoF 1</span><span class="tag c-green">분류 문 · DoF 1</span><span class="tag c-blue">북 치는 팔 + 딸랑이 · DoF 1씩 두 곳</span></div></div>
     </div>
   </div>
@@ -476,16 +472,16 @@
   </div>
   <div class="slide__body">
     <div class="steps">
-      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">이름 정하기</div><div class="step__text">아래 이름 칸(예: 김하늘-오케스트라)</div></div>
-      <div class="step c-green"><span class="step__num">2</span><div class="step__title">공유 누르기</div><div class="step__text">MakeCode 오른쪽 위 공유 버튼</div></div>
-      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">링크 만들기</div><div class="step__text">공유 창에서 링크를 만든다</div></div>
-      <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">주소 복사</div><div class="step__text">제출 창에 붙여 넣는다</div></div>
+      <div class="step c-blue"><span class="step__num">1</span><div class="step__title">공유 누르기</div><div class="step__text">MakeCode<br>오른쪽 위 공유 버튼</div></div>
+      <div class="step c-green"><span class="step__num">2</span><div class="step__title">프로젝트 이름</div><div class="step__text">프로젝트 이름 설정하기</div></div>
+      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">주소 복사하기</div><div class="step__text">복사 버튼 눌러서 복사</div></div>
+      <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">확인 후 제출</div><div class="step__text">정상적인 링크인지 확인 후 제출하기</div></div>
     </div>
     <div class="window mt-l">
       <div class="window__bar">이런 주소가 나오면 성공</div>
       <div class="window__body" style="display:flex;flex-direction:column;gap:12px">
         <div class="mono" style="font-size:36px;font-weight:800;color:var(--navy)">https://makecode.microbit.org/<span style="background:var(--yellow-mid);padding:0 8px">_aBcD1234eFgH</span></div>
-        <div class="t-sm t-muted">S12345-12345-12345-12345처럼 숫자로 된 주소도 됩니다. 공유한 코드는 누구나 볼 수 있으니 개인정보를 넣지 마세요.</div>
+        <div class="t-sm t-muted">S12345-12345-12345-12345처럼 숫자로 된 주소도 됩니다. 공유한 코드는 누구나 볼 수 있게 됩니다.</div>
       </div>
     </div>
     <div class="row mt-l" style="align-items:center;gap:28px">
@@ -502,14 +498,13 @@
   </div>
   <div class="slide__body" style="display:grid;grid-template-columns:520px 1fr;gap:40px">
     <div class="note" style="display:flex;flex-direction:column">
-      <div class="t-lg" style="font-size:28px">준비할 네 가지 <span class="t-muted" style="font-size:20px">· 눌러서 체크</span></div>
-      <ul class="checklist fill-rows mt-m cc-list" data-widget="tick-list" data-tick="submit" style="gap:14px;flex:1;height:auto">
-        <li><span class="box"></span><span class="bar">작품 제목 <span class="t-muted" style="font-size:20px">· 내 카드 이름이 채워져 있어요</span></span></li>
-        <li><span class="box"></span><span class="bar">간단한 설명 2~3문장</span></li>
-        <li><span class="box"></span><span class="bar">MakeCode 공유 주소</span></li>
-        <li><span class="box"></span><span class="bar">동영상 주소</span></li>
+      <div class="t-lg" style="font-size:28px">체크리스트</div>
+      <ul class="checklist fill-rows mt-m cc-list sr-list" data-widget="submit-ready" style="gap:14px;flex:1;height:auto">
+        <li data-need="title"><span class="box"></span><span class="bar">작품 제목 <span class="t-muted" style="font-size:20px">· 내 카드 이름이 채워져 있어요</span></span></li>
+        <li data-need="desc"><span class="box"></span><span class="bar">간단한 설명 2~3문장</span></li>
+        <li data-need="mc"><span class="box"></span><span class="bar">MakeCode 공유 주소</span></li>
+        <li data-need="video"><span class="box"></span><span class="bar">동영상 주소</span></li>
       </ul>
-      <p class="t-sm t-muted" style="margin:auto 0 0;padding-top:18px;font-size:20px">다시 제출하면 새 내용으로 바뀝니다.</p>
     </div>
     <div data-widget="my-submission"></div>
   </div>
@@ -698,18 +693,18 @@
 
 <div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
 
-<script src="assets/js/config.js?v=7b651b2c61"></script>
-<script src="assets/js/icons.js?v=7b651b2c61"></script>
-<script src="assets/js/challenges.js?v=7b651b2c61"></script>
-<script src="assets/js/store.js?v=7b651b2c61"></script>
-<script src="assets/js/deck.js?v=7b651b2c61"></script>
-<script src="assets/js/widgets.js?v=7b651b2c61"></script>
-<script src="assets/js/showcase.js?v=7b651b2c61"></script>
-<script src="assets/js/interact.js?v=7b651b2c61"></script>
-<script src="assets/js/cards.js?v=7b651b2c61"></script>
-<script src="assets/js/admin.js?v=7b651b2c61"></script>
-<script src="assets/js/editor.js?v=7b651b2c61"></script>
-<script src="assets/js/review.js?v=7b651b2c61"></script>
-<script src="assets/js/app.js?v=7b651b2c61"></script>
+<script src="assets/js/config.js?v=7e6af11625"></script>
+<script src="assets/js/icons.js?v=7e6af11625"></script>
+<script src="assets/js/challenges.js?v=7e6af11625"></script>
+<script src="assets/js/store.js?v=7e6af11625"></script>
+<script src="assets/js/deck.js?v=7e6af11625"></script>
+<script src="assets/js/widgets.js?v=7e6af11625"></script>
+<script src="assets/js/showcase.js?v=7e6af11625"></script>
+<script src="assets/js/interact.js?v=7e6af11625"></script>
+<script src="assets/js/cards.js?v=7e6af11625"></script>
+<script src="assets/js/admin.js?v=7e6af11625"></script>
+<script src="assets/js/editor.js?v=7e6af11625"></script>
+<script src="assets/js/review.js?v=7e6af11625"></script>
+<script src="assets/js/app.js?v=7e6af11625"></script>
 </body>
 </html>

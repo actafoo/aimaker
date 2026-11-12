@@ -469,11 +469,13 @@ window.MK = window.MK || {};
     var scope = scopeOf(item), k = String(item.key || ''), live = k && $('#stage [data-ek="' + k + '"]');
     var inScope = live && scope.contains(live) && pmap[k];
     if (inScope && norm(pmap[k].innerHTML) === item.before) return { key: k };
-    var cands = $$('[data-ek]', scope).filter(function (el) { var q = pmap[el.getAttribute('data-ek')]; return q && norm(q.innerHTML) === item.before; });
-    if (cands.length) return { key: cands[0].getAttribute('data-ek') };
     if (inScope && norm(pmap[k].innerHTML) === item.after) return { already: true, key: k };
+    // 같은 쪽에 이미 고친 글자가 있으면 넣은 것으로 봄 (자리 번호가 밀린 경우 엉뚱한 곳을 바꾸지 않게 먼저 확인)
     var done = $$('[data-ek]', scope).filter(function (el) { var q = pmap[el.getAttribute('data-ek')]; return q && norm(q.innerHTML) === item.after; });
     if (done.length) return { already: true, key: done[0].getAttribute('data-ek') };
+    // 원래 글자로 찾기: 한 곳뿐일 때만
+    var cands = $$('[data-ek]', scope).filter(function (el) { var q = pmap[el.getAttribute('data-ek')]; return q && norm(q.innerHTML) === item.before; });
+    if (cands.length === 1) return { key: cands[0].getAttribute('data-ek') };
     if (inScope) return { conflict: true, key: k, now: norm(pmap[k].innerHTML) };
     return { missing: true };
   }

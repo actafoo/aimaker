@@ -1098,3 +1098,22 @@ a.buy-shop:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11,
 .buy-shop { padding: 16px 22px; gap: 6px; }
 .buy-shop__name { font-size: 26px; }
 .buy-shop__t { font-size: 19px; }
+
+/* 제출 체크리스트: 저절로 체크 (누르는 목록이 아님) */
+.sr-list li { cursor: default; }
+.sr-list li:hover { background: var(--paper); }
+.sr-list li.is-done:hover { background: var(--green-soft); }
+/* 내 결과물: 내 도전과제 카드 */
+.mine-card { padding: 14px 18px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--c-soft); border-left: 8px solid var(--c-tab); }
+.mine-card__top { display: flex; align-items: center; gap: 12px; }
+.mine-card__top .tag { height: 32px; font-size: 16px; padding: 0 12px; }
+.mine-card__top .btn { margin-left: auto; }
+.mine-card__t { margin-top: 6px; font-size: 26px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.mine-card__s { margin-top: 4px; font-size: 18px; font-weight: 600; color: var(--muted); line-height: 1.45; }
+/* 안 될 때 다섯 가지 확인: 도움 요청 카드 가운데로 */
+[data-widget="help-request"] .help { justify-content: center; align-items: center; text-align: center; }
+[data-widget="help-request"] .help__head, [data-widget="help-request"] .help__btns { justify-content: center; }
+[data-widget="help-request"] .help__queue { margin-top: 6px; justify-content: center; width: 100%; }
+[data-widget="help-request"] .help--plain { flex-direction: column; }
+/* 시작 전 코드 캡처 위 번호 */
+.sc-n { width: 30px; height: 30px; font-size: 17px; }

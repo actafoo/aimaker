@@ -218,7 +218,12 @@ window.MK = window.MK || {};
         '<div class="acard__row">' +
           (E.length ? '<button class="ubtn ubtn--green" data-rv="apply-save">' + ic('download') + (applied ? ' 내 파일에 저장 (' + applied + '곳)' : ' 모두 내 파일에 반영 (' + E.length + '곳)') + '</button>' : '') +
           (E.length || open.length ? '<button class="ubtn ubtn--sm ubtn--ghost" data-rv="summary">' + ic('doc') + ' 글로 정리해 보기</button>' : '') +
-        '</div></div>';
+        '</div>' +
+        (E.length || open.length ? '<div class="acard__row">' +
+          (E.length ? '<button class="ubtn ubtn--sm ubtn--ghost" data-rv="clear-edits">받은 편집 모두 목록에서 빼기</button>' : '') +
+          (open.length ? '<button class="ubtn ubtn--sm ubtn--ghost" data-rv="done-memos">열린 메모 모두 완료</button>' : '') +
+          '</div><div class="acard__meta">이미 파일에 들어간 것(예: Claude에게 부탁해 고친 것)을 정리할 때 씁니다. 파일은 바뀌지 않습니다.</div>' : '') +
+        '</div>';
       if (E.length) h += '<h4>받은 편집</h4>' + grouped(E, function (e) { return editCard(e, true); });
     } else {
       h += '<div class="acard"><div class="acard__top"><div class="acard__title">보낸 편집 ' + E.length + '곳 · 열린 메모 ' + open.length + '개</div>' +
@@ -366,6 +371,20 @@ window.MK = window.MK || {};
         .then(function (y) { if (y) mark([e.id], '버림', mine ? '보낸 것을 취소했어요.' : '반영하지 않기로 했어요.'); });
     }
     else if (a === 'revive' && e) mark([e.id], '대기', '다시 받았어요. 받은 편집 목록에 있어요.');
+    else if (a === 'clear-edits') {
+      var ids = R.edits.map(function (x) { return x.id; });
+      MK.ui.confirm({ title: '받은 편집 ' + ids.length + '곳을 모두 목록에서 뺄까요?', desc: '파일은 바뀌지 않습니다. 이미 파일에 들어간 경우에만 쓰세요.<br>뺀 것은 <b>처리한 편집</b>에서 다시 받을 수 있어요.', okText: '모두 빼기' })
+        .then(function (y) { if (y) mark(ids, '반영', ids.length + '곳을 목록에서 뺐어요.'); });
+    }
+    else if (a === 'done-memos') {
+      var ms = openMemos();
+      MK.ui.confirm({ title: '열린 메모 ' + ms.length + '개를 모두 완료할까요?', desc: '완료한 메모는 아래 <b>완료한 메모</b>에서 다시 열 수 있어요.', okText: '모두 완료' })
+        .then(function (y) {
+          if (!y) return;
+          ms.reduce(function (p, m) { return p.then(function () { return call('memoUpdate', { id: m.id, done: true, by: savedName() }); }); }, Promise.resolve())
+            .then(function () { MK.ui.toast('메모 ' + ms.length + '개를 완료했어요.'); }, bad);
+        });
+    }
     else if (a === 'toggle-done') { R.showDone = !R.showDone; paint(); }
     else if (a === 'toggle-hist') { R.showHist = !R.showHist; paint(); }
     else if (a === 'memo-add') {
