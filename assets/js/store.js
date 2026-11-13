@@ -483,12 +483,12 @@ window.MK = window.MK || {};
     if (cached) this.lastJson = JSON.stringify(this.state);
     window.addEventListener('storage', function (e) { if (e.key === ME_KEY) self._emit(); });
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') self.refresh(); });
-    // 살아 있는 현황을 보여 주는 쪽에서만 자주(기본 10초), 나머지는 1분마다 받아 옵니다
+    // 살아 있는 현황을 보여 주는 쪽에서는 자주(기본 10초), 나머지는 20초마다 받아 옵니다
     this.lastFetch = 0;
     var every = Math.max(4, cfg.pollSeconds || 10) * 1000;
     setInterval(function () {
       if (document.visibilityState !== 'visible') return;
-      if (isLiveView() || Date.now() - self.lastFetch > 60000) self.refresh();
+      if (isLiveView() || Date.now() - self.lastFetch > 20000) self.refresh(); // 다른 쪽에서도 20초 안에 타이머 시작을 앎
     }, every);
     document.addEventListener('deck:enter', function () { if (isLiveView() && Date.now() - self.lastFetch > 5000) self.refresh(); });
     setTimeout(function () { self.refresh(); }, 0);
@@ -523,13 +523,15 @@ window.MK = window.MK || {};
                      : fetch(u + (u.indexOf('?') < 0 ? '?' : '&') + 'action=state&t=' + Date.now(), { redirect: 'follow' });
       return req.then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (j) {
-          self._setOnline(true);
+          self._fails = 0; self._setOnline(true);
           // 왕복 시간이 가장 짧았던 응답으로 서버 시계를 맞춤
           var t1 = Date.now();
           if (j && j.now && t1 - t0 <= self.rtt) { self.rtt = t1 - t0; self.offset = j.now - Math.round((t0 + t1) / 2); }
           return j;
         }, function (err) {
-          self._setOnline(false);
+          // 사람이 몰리면 구글 서버가 가끔 한 번씩 오류 쪽을 돌려줌 → 두 번 잇달아 실패할 때만 '연결 끊김' 표시
+          self._fails = (self._fails || 0) + 1;
+          if (self._fails >= 2) self._setOnline(false);
           throw new Error('서버에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.');
         });
     },
@@ -550,7 +552,8 @@ window.MK = window.MK || {};
       }
       // 사람이 몰려 실패하면 자동으로 다시 보냄 (두 번 보내도 결과가 같은 요청만)
       var canRetry = action !== 'moveSubmission' && action !== 'shuffleOrder' && action !== 'memoAdd' && !(action === 'setTimer' && body.cmd === 'add');
-      var waits = [1500, 3500], attempt = 0, sentOnce = false;
+      // 40명이 동시에 저장해도 버티도록: 서버가 '잠시 밀렸어요'면 1.5·3.5·6·10초 뒤에 다시 (모두 같은 결과가 나오는 요청만)
+      var waits = [1500, 3500, 6000, 10000], attempt = 0, sentOnce = false;
       function once() {
         return self._fetch(body).then(function (j) {
           if (j.state) self._setState(j.state);

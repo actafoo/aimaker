@@ -287,7 +287,7 @@ window.MK = window.MK || {};
         hh += '<div class="board__card c-' + cat.color + '"><div class="board__top"><span class="tag c-' + cat.color + '"><span class="dot"></span>' + esc(k) + '</span><span class="board__count">' + dn + '<small> / ' + list.length + '</small></span></div>' +
           '<div class="board__names board__names--cards">' + (list.length ? list.map(function (c) {
             var ok = !!subBy[c.name], isMe = mm && c.name === mm.name;
-            return '<span class="name-chip' + (isMe ? ' is-me' : '') + (ok ? '' : ' is-pending') + '" title="' + esc(c.title) + '">' + (ok ? '<span class="sub-mark">' + ic('check') + '</span>' : '') + esc(c.name) + '<small>' + esc(c.title) + '</small></span>';
+            return '<span class="name-chip' + (isMe ? ' is-me' : '') + (ok ? '' : ' is-pending') + '" title="' + esc(c.name + ' · ' + c.title) + '">' + (ok ? '<span class="sub-mark">' + ic('check') + '</span>' : '') + esc(c.name) + '</span>';
           }).join('') : '<span class="apply__empty">아직 없어요</span>') + '</div></div>';
       });
       hh += '<div class="board__summary"><div class="t-sm t-muted" style="font-size:21px;font-weight:800">제출</div><div class="big">' + doneN + '<small style="font-size:28px;color:var(--muted)"> / ' + cards.length + '명</small></div><div class="t-sm" style="font-size:20px">' + ic('check') + ' 표시는 제출 완료</div></div>';
@@ -361,16 +361,21 @@ window.MK = window.MK || {};
     el.innerHTML = '<div class="timer"><div class="timer__face"></div><div class="timer__bar"><i></i></div><div class="timer__btns"></div><div class="timer__note"></div></div>';
     var face = el.querySelector('.timer__face'), bar = el.querySelector('.timer__bar i'), btns = el.querySelector('.timer__btns'),
         note = el.querySelector('.timer__note'), box = el.querySelector('.timer'), lastKey = '';
+    // 강사가 시작하기 전(처음 상태)에는 연수생 화면에서 타이머 칸을 숨김
+    var card = el.closest('.timer-card'), grid = el.closest('.proto-grid');
     function paint() {
       var t = cur(), l = MK.timerLeft(t), started = l < t.total;
       face.textContent = fmtClock(l); bar.style.width = (t.total ? l / t.total * 100 : 0) + '%';
       box.classList.toggle('is-done', l <= 0);
-      var ctl = canControl(), key = [ctl, !!t.running, started, l <= 0].join('|');
+      var ctl = canControl(), active = !!(t.running || started), hide = !ctl && !active;
+      if (card) card.hidden = hide;
+      if (grid) grid.classList.toggle('is-timer-off', hide);
+      var key = [ctl, !!t.running, started, l <= 0].join('|');
       if (key === lastKey) return; // 버튼은 상태가 바뀔 때만 다시 그림 (누르는 중에 사라지지 않게)
       lastKey = key;
       btns.innerHTML = ctl ? '<button class="btn" data-t="toggle">' + (t.running ? '멈춤' : ic('play') + (started && l > 0 ? ' 이어서' : ' 시작')) + '</button>' +
         '<button class="btn btn--ghost" data-t="add">+5분</button><button class="btn btn--ghost" data-t="reset">' + ic('clock') + ' 처음으로</button>' : '';
-      note.textContent = MK.store.kind === 'local' ? '' : ctl ? '모든 연수생 화면에 같은 시간이 흐릅니다' : t.running ? '강사 화면과 같은 시간이 흐릅니다' : '강사가 시작하면 모든 화면에서 함께 흐릅니다';
+      note.textContent = MK.store.kind === 'local' ? '' : ctl ? (active ? '모든 연수생 화면에 같은 시간이 흐릅니다' : '시작하면 모든 연수생 화면에 나타나고, 다른 쪽에서도 위에 보입니다') : t.running ? '강사 화면과 같은 시간이 흐릅니다' : '잠시 멈췄어요';
     }
     btns.onclick = function (e) {
       var b = e.target.closest('[data-t]'); if (!b || b.disabled) return;
