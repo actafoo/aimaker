@@ -192,8 +192,7 @@ MK.widgets = MK.widgets || {};
         '</div>' +
         '<div class="fb-qc__side">' +
           '<div class="fb-qc__card" data-card></div>' +
-          '<div class="fb-qc__free"><b>움직임은 자유입니다</b><span>몇 도로, 몇 번, 얼마나 멈출지는 만들면서 코드에서 각자 정합니다. 여기에는 하고 싶은 움직임을 말로만 적어 두세요.</span>' +
-            '<button type="button" class="btn btn--sm btn--ghost" data-goto="s-servo">서보 각도 감 잡기 ' + ic('right') + '</button></div>' +
+          '<div class="fb-qc__free"><b>움직임은 자유입니다</b><span>몇 도로, 몇 번, 얼마나 멈출지는 만들면서 코드에서 각자 정합니다. 여기에는 하고 싶은 움직임을 말로만 적어 두세요.</span></div>' +
           '<button type="button" class="btn btn--green fb-qc__save" data-save></button>' +
           '<div class="fb-qc__st" data-st></div>' +
         '</div>' +

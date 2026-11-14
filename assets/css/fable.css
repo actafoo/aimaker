@@ -275,3 +275,75 @@
 .res-hint b { font-size: 23px; font-weight: 800; color: var(--ink); }
 .res-hint span:not(.circle) { font-size: 18px; font-weight: 600; line-height: 1.5; }
 @media (prefers-reduced-motion: reduce) { .deck-fable .res-tile, .deck-fable .res-tile__arrow { transition: none; } }
+
+/* 서보모터, 두 가지만: 그림 아래에 실험 쪽 바로가기(카드 높이는 그대로) */
+.servo2__fig { flex: none; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.servo2__fig .servo-ico { width: 214px; height: 156px; }
+
+/* =========================================================
+   누를 수 있는 것은 누를 수 있게 (이 교안의 슬라이드 안 전체)
+   - 실행·이동(버튼, 이동 카드): 아래로 튀어나온 그림자. 올리면 살짝 뜨고, 누르면 쑥 들어감
+   - 고르는 칩: 안 고른 것 = 튀어나옴, 고른 것 = 눌려 들어가고 색이 채워짐
+   ========================================================= */
+/* 1) 알약 버튼 */
+.deck-fable .deck-stage .btn,
+.deck-fable .deck-stage .my-model--empty,
+.deck-fable .deck-stage .tv button.tag { box-shadow: 0 4px 0 var(--navy); transition: transform .1s ease, box-shadow .1s ease, background-color .12s, filter .12s; }
+.deck-fable .deck-stage .btn:not(:disabled):hover,
+.deck-fable .deck-stage .my-model--empty:hover,
+.deck-fable .deck-stage .tv button.tag:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--navy); }
+.deck-fable .deck-stage .btn:not(:disabled):active,
+.deck-fable .deck-stage .my-model--empty:active,
+.deck-fable .deck-stage .tv button.tag:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--navy); transition-duration: .04s; }
+.deck-fable .deck-stage .btn:disabled, .deck-fable .deck-stage .btn[aria-disabled='true'] { box-shadow: none; transform: none; }
+.deck-fable .deck-stage .btn:focus-visible { outline: 4px solid var(--blue); outline-offset: 3px; }
+.deck-fable .deck-stage .my-model--empty { border-style: solid; color: var(--navy); }
+.deck-fable .deck-stage .tv button.tag { cursor: pointer; font-family: inherit; }
+
+/* 2) 누르면 이동하는 카드 */
+.deck-fable .deck-stage a.code-link,
+.deck-fable .deck-stage a.buy-shop,
+.deck-fable .deck-stage .show-tile,
+.deck-fable .deck-stage .yt-ref,
+.deck-fable .deck-stage .cb-tile { box-shadow: 0 5px 0 var(--navy); transition: transform .12s ease, box-shadow .12s ease, background-color .12s; }
+.deck-fable .deck-stage a.code-link:hover,
+.deck-fable .deck-stage a.buy-shop:hover,
+.deck-fable .deck-stage .show-tile:hover,
+.deck-fable .deck-stage .yt-ref:hover,
+.deck-fable .deck-stage .cb-tile:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--navy); }
+.deck-fable .deck-stage a.code-link:active,
+.deck-fable .deck-stage a.buy-shop:active,
+.deck-fable .deck-stage .show-tile:active,
+.deck-fable .deck-stage .yt-ref:active,
+.deck-fable .deck-stage .cb-tile:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--navy); transition-duration: .04s; }
+/* 참고 화면(사진)은 작게, 그래도 눌린다는 것은 보이게 */
+.deck-fable .deck-stage .fb-ref { border: var(--stroke) solid var(--navy); box-shadow: 0 4px 0 var(--navy); transition: transform .1s ease, box-shadow .1s ease; }
+.deck-fable .deck-stage .fb-ref:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--navy); }
+.deck-fable .deck-stage .fb-ref:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--navy); }
+
+/* 3) 고르는 칩 */
+.deck-fable .deck-stage .fb-qc__model,
+.deck-fable .deck-stage .cb-f,
+.deck-fable .deck-stage .lv__preset,
+.deck-fable .deck-stage .tv__tab,
+.deck-fable .deck-stage .fb-pr__c { transform: none; box-shadow: 0 4px 0 var(--navy); transition: transform .1s ease, box-shadow .1s ease, background-color .12s; }
+.deck-fable .deck-stage .fb-qc__model:not(.is-on):hover,
+.deck-fable .deck-stage .cb-f:not(.is-on):hover,
+.deck-fable .deck-stage .lv__preset:not(.is-on):hover,
+.deck-fable .deck-stage .tv__tab:not(.is-on):hover,
+.deck-fable .deck-stage .fb-pr__c:not(.is-on):hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--navy); }
+.deck-fable .deck-stage .fb-qc__model.is-on,
+.deck-fable .deck-stage .cb-f.is-on,
+.deck-fable .deck-stage .lv__preset.is-on,
+.deck-fable .deck-stage .tv__tab.is-on,
+.deck-fable .deck-stage .fb-pr__c.is-on { transform: translateY(4px); box-shadow: inset 0 3px 0 rgba(11, 26, 78, .18); }
+.deck-fable .deck-stage .fb-qc__model.is-on { background: var(--c-tab); }
+/* 난이도 표를 칸으로 직접 고친 상태(c-green)에서는 출발 예시가 고른 것이 아님 */
+.deck-fable .deck-stage .lv.c-green .lv__preset.is-on { transform: none; background: var(--paper); box-shadow: 0 4px 0 var(--navy); }
+/* 서보 실험의 「한 번만 / 무한반복」 */
+.deck-fable .deck-stage .servo__seg { box-shadow: 0 4px 0 var(--navy); }
+.deck-fable .deck-stage .servo__seg button.is-on { box-shadow: inset 0 4px 0 rgba(11, 26, 78, .16); }
+@media (prefers-reduced-motion: reduce) {
+  .deck-fable .deck-stage .btn, .deck-fable .deck-stage .fb-ref, .deck-fable .deck-stage .show-tile, .deck-fable .deck-stage .cb-tile,
+  .deck-fable .deck-stage .fb-qc__model, .deck-fable .deck-stage .lv__preset, .deck-fable .deck-stage .tv__tab, .deck-fable .deck-stage .fb-pr__c { transition: none; }
+}
