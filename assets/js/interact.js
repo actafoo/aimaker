@@ -5,9 +5,9 @@
    - 도움 요청 (안 될 때 다섯 가지 확인) + 관리자 알림
    - 같은 타이머 표시 (모든 쪽 위 가운데)
    - 지금 여기 (오늘의 흐름)
-   - 서보 각도 실험 (만들기)
+   - 서보 각도 실험 · 360° 서보 실험 (만들기)
    - 작품 하트 · 발표 순서 뽑기 (작품 발표회)
-   - 수업 아이디어 모으기 (수업으로)
+   - 수업 아이디어 모으기 · 난이도·제약 조건 설계 · 선생님도 바이브코딩 (수업으로)
    도움 요청·같은 타이머·하트·아이디어는 서버(Code.gs)가 새 버전일 때만 켜집니다.
    ========================================================= */
 window.MK = window.MK || {};
@@ -27,7 +27,7 @@ window.MK = window.MK || {};
   function withMe(then, why) {
     var m = me();
     if (m) return then(m);
-    MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: why || '신청과 제출에 쓰는 이름과 같은 이름을 적어 주세요.',
+    MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: why || '도전과제 등록과 제출에 쓰는 이름과 같은 이름을 적어 주세요.',
       fields: MK.ui.personFields(null), note: MK.ui.PIN_NOTE, submitText: '등록',
       onSubmit: function (v) {
         return MK.store.identify(v).then(function () { setTimeout(function () { var n = me(); if (n) then(n); }, 80); });
@@ -106,7 +106,7 @@ window.MK = window.MK || {};
      ========================================================= */
   var CHECK_KEY = MK.config.storageKey + '-check5';
   var STEPS = [
-    { v: '1', t: '1 · AI 연결용 코드' }, { v: '2', t: '2 · 내 장치 이름 연결' }, { v: '3', t: '3 · ID 글자 (모션인식은 핀 확인)' },
+    { v: '1', t: '1 · AI 연결용 코드' }, { v: '2', t: '2 · 내 장치 이름 연결' }, { v: '3', t: '3 · ID 글자' },
     { v: '4', t: '4 · 웹앱에서 ‘시작’' }, { v: '5', t: '5 · 링비트 전원' }, { v: '9', t: '재료·조립 등 다른 것' }, { v: '0', t: '잘 모르겠어요' }
   ];
   function stepText(v) { var x = STEPS.filter(function (s) { return s.v === String(v); })[0]; return x ? x.t.replace(/ \(.*\)$/, '') : '잘 모르겠어요'; }
@@ -301,81 +301,325 @@ window.MK = window.MK || {};
   function pauseStmt(v) { return '<div class="mcb-stmt mcb-stmt--basic">일시중지 (ms)<span class="mcb-num" data-p>' + v + '</span></div>'; }
 
   MK.widgets['servo-lab'] = function (el) {
-    var A0 = 0, B0 = 180, P0 = 500;
+    /* 오른쪽 아래 「내 코드대로 돌려 보기」: 블록을 넣고·빼고·순서를 바꾸고·숫자를 고쳐서 돌려 봄.
+       처음 값은 7차시 기본 코드의 함수 move 1 (0 → 45 → 90, 사이마다 500ms). 고친 내용은 이 브라우저에 남음 */
+    var PKEY = MK.config.storageKey + '-servo-prog', MAXN = 12, YIELD = 20; // 무한반복은 한 바퀴마다 약 20ms 쉼
+    var DEF = { mode: 'once', steps: [['s', 0], ['p', 500], ['s', 45], ['p', 500], ['s', 90], ['p', 500]] };
+    function fresh() { return JSON.parse(JSON.stringify(DEF)); }
+    function readProg() {
+      try {
+        var v = JSON.parse(localStorage.getItem(PKEY));
+        if (v && Array.isArray(v.steps)) { v.mode = v.mode === 'loop' ? 'loop' : 'once'; v.steps = v.steps.filter(function (s) { return s && (s[0] === 's' || s[0] === 'p'); }).slice(0, MAXN); return v; }
+      } catch (e) {}
+      return fresh();
+    }
+    var prog = readProg();
+    function keepProg() { try { localStorage.setItem(PKEY, JSON.stringify(prog)); } catch (e) {} }
+    function ang(v) { v = +v; return isFinite(v) ? Math.max(0, Math.min(180, Math.round(v))) : 0; }
+    function ms(v) { v = +v; return isFinite(v) ? Math.max(0, Math.min(10000, Math.round(v))) : 0; }
+
     el.innerHTML = '<div class="servo">' +
       '<div class="servo__stage card">' + servoSvg() + '<div class="servo__tip" data-tip>0°에서 혼(날개)을 끼우면 0~180°를 모두 쓸 수 있어요</div></div>' +
       '<div class="servo__side">' +
         '<div class="servo__one card"><div class="servo__h">각도 하나 보내기</div>' +
           '<div class="servo__row"><div class="servo__deg"><b data-deg>90</b>°</div><input class="servo__range" type="range" min="0" max="180" step="1" value="90" data-one aria-label="서보 각도"></div>' +
-          '<div class="servo__presets">' + [0, 45, 90, 135, 180].map(function (a) { return '<button type="button" class="btn btn--ghost btn--sm" data-preset="' + a + '">' + a + '°</button>'; }).join('') + '</div>' +
-          '<div class="mcb servo__code" data-code-one>' + stmt('P0', 90) + '</div></div>' +
-        '<div class="servo__swing card"><div class="servo__h">두 각도 번갈아 <small>무한반복 안에서</small></div>' +
-          '<div class="servo__swing-grid"><div class="servo__sliders">' +
-            '<label>각도 A <b data-show="a">' + A0 + '°</b><input type="range" min="0" max="180" step="5" value="' + A0 + '" data-a></label>' +
-            '<label>각도 B <b data-show="b">' + B0 + '°</b><input type="range" min="0" max="180" step="5" value="' + B0 + '" data-b></label>' +
-            '<label>pause <b data-show="p">' + P0 + 'ms</b><input type="range" min="100" max="1000" step="50" value="' + P0 + '" data-p></label></div>' +
-            '<div class="mcb servo__code"><div class="mcb-c mcb--loop"><div class="mcb-head"><svg class="i"><use href="#i-list"></use></svg>무한반복</div><div class="mcb-arm"></div>' +
-              '<div class="mcb-in" data-code-swing>' + stmt('P0', A0) + pauseStmt(P0) + stmt('P0', B0) + pauseStmt(P0) + '</div><div class="mcb-foot"></div></div></div></div>' +
-          '<div class="servo__go"><button type="button" class="btn" data-swing>' + ic('play') + ' 돌려 보기</button><div class="servo__verdict" data-verdict></div></div>' +
+          '<div class="servo__presets">' + [0, 45, 90, 135, 180].map(function (a) { return '<button type="button" class="btn btn--ghost btn--sm" data-preset="' + a + '">' + a + '°</button>'; }).join('') + '</div></div>' +
+        '<div class="servo__prog card"><div class="servo__h">내 코드대로 돌려 보기 <small>블록을 넣고, 빼고, 숫자를 바꿔 보세요</small></div>' +
+          '<div class="servo__prog-grid"><div class="mcb servo__code servo__list" data-list></div>' +
+            '<div class="servo__ctl">' +
+              '<div class="servo__seg" role="group" aria-label="실행 방식"><button type="button" data-mode="once">한 번만</button><button type="button" data-mode="loop">무한반복</button></div>' +
+              '<div class="servo__add"><button type="button" class="btn btn--ghost btn--sm" data-add="s">+ 서보 값 출력</button><button type="button" class="btn btn--ghost btn--sm" data-add="p">+ 일시중지</button></div>' +
+              '<div class="servo__go"><button type="button" class="btn" data-run>' + ic('play') + ' 돌려 보기</button><button type="button" class="linkish" data-reset>처음 값으로</button></div>' +
+              '<div class="servo__verdict" data-verdict></div>' +
+            '</div></div>' +
         '</div>' +
       '</div></div>';
 
     var horn = $('.servo__horn', el), ghost = $('.servo__ghost', el), tip = $('[data-tip]', el);
-    var one = $('[data-one]', el), deg = $('[data-deg]', el), codeOne = $('[data-code-one] [data-v]', el);
-    var inA = $('[data-a]', el), inB = $('[data-b]', el), inP = $('[data-p]', el), swingBtn = $('[data-swing]', el), verdict = $('[data-verdict]', el);
-    var actual = 90, target = 90, swinging = false, swingT = 0, swingSide = 0, raf = 0, last = 0;
+    var one = $('[data-one]', el), deg = $('[data-deg]', el), list = $('[data-list]', el), runBtn = $('[data-run]', el), verdict = $('[data-verdict]', el);
+    var actual = 90, target = 90, running = false, pc = 0, wait = 0, curRow = -1, raf = 0, last = 0;
+
+    function listHtml() {
+      var rows = prog.steps.map(function (s, i) {
+        var block = s[0] === 's'
+          ? '<div class="mcb-stmt"><span class="mcb-dd">P0 <i class="mcb-caret"></i></span>에 서보 값<input class="mcb-num" type="number" min="0" max="180" step="5" value="' + ang(s[1]) + '" data-num="' + i + '" aria-label="' + (i + 1) + '번째 줄 서보 값">출력</div>'
+          : '<div class="mcb-stmt mcb-stmt--basic">일시중지 (ms)<input class="mcb-num" type="number" min="0" max="10000" step="50" value="' + ms(s[1]) + '" data-num="' + i + '" aria-label="' + (i + 1) + '번째 줄 일시중지 밀리초"></div>';
+        return '<div class="servo__step" data-step="' + i + '">' + block + '<span class="servo__ops">' +
+          '<button type="button" data-op="up" data-i="' + i + '" aria-label="위로"' + (i ? '' : ' disabled') + '>↑</button>' +
+          '<button type="button" data-op="down" data-i="' + i + '" aria-label="아래로"' + (i < prog.steps.length - 1 ? '' : ' disabled') + '>↓</button>' +
+          '<button type="button" data-op="del" data-i="' + i + '" aria-label="이 블록 빼기">×</button></span></div>';
+      }).join('');
+      var loop = prog.mode === 'loop';
+      return '<div class="mcb-c ' + (loop ? 'mcb--loop' : 'mcb--event') + '"><div class="mcb-head"><svg class="i"><use href="#i-' + (loop ? 'list' : 'play') + '"></use></svg>' + (loop ? '무한반복' : '시작하면 실행') + '</div><div class="mcb-arm"></div>' +
+        '<div class="mcb-in">' + (rows || '<div class="servo__empty">블록을 넣어 보세요</div>') + '</div><div class="mcb-foot"></div></div>';
+    }
+    function renderList() {
+      list.innerHTML = listHtml();
+      $$('[data-mode]', el).forEach(function (b) { var on = b.getAttribute('data-mode') === prog.mode; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      $$('[data-add]', el).forEach(function (b) { b.disabled = prog.steps.length >= MAXN; });
+      judge(); mark();
+    }
+    function mark() { $$('.servo__step', list).forEach(function (r, i) { r.firstChild.classList.toggle('is-run', running && i === curRow); }); }
+
+    /* 지금 코드를 미리 따져 보기: 각도에 닿기 전에 다음 서보 명령이 오는 줄이 있는지 (좋다·나쁘다가 아니라 알려 주기만) */
+    function judge() {
+      var st = prog.steps, loop = prog.mode === 'loop';
+      var firstW = -1; st.forEach(function (s, i) { if (s[0] === 's' && firstW < 0) firstW = i; });
+      verdict.className = 'servo__verdict';
+      if (!st.length) { verdict.textContent = ''; return; }
+      if (firstW < 0) { verdict.textContent = '서보 값 출력 블록이 없어서 움직이지 않아요.'; return; }
+      var pos = loop ? ang(st[firstW][1]) : actual, tgt = pos, lastW = -1, since = 0, need = 0, miss = [], cycles = loop ? 3 : 1, total = 0;
+      for (var c = 0; c < cycles; c++) {
+        for (var i = 0; i < st.length; i++) {
+          if (st[i][0] === 's') {
+            if (lastW >= 0 && Math.abs(tgt - pos) > 1 && (!loop || c === 2 || (c === 1 && i > lastW))) { if (!loop || c >= 1) miss.push({ row: lastW, a: tgt, need: Math.round(need), given: Math.round(since) }); }
+            tgt = ang(st[i][1]); need = Math.abs(tgt - pos) / SPEED * 1000; since = 0; lastW = i;
+          } else {
+            var p = ms(st[i][1]), mv = SPEED * p / 1000, d = tgt - pos;
+            pos = Math.abs(d) <= mv ? tgt : pos + Math.sign(d) * mv; since += p; if (c === 0) total += p;
+          }
+        }
+        if (loop) { var mv2 = SPEED * YIELD / 1000, d2 = tgt - pos; pos = Math.abs(d2) <= mv2 ? tgt : pos + Math.sign(d2) * mv2; since += YIELD; if (c === 0) total += YIELD; }
+      }
+      var seen = {}; miss = miss.filter(function (m) { if (seen[m.row]) return false; seen[m.row] = 1; return true; });
+      if (!miss.length) {
+        verdict.className = 'servo__verdict is-ok';
+        verdict.innerHTML = ic('check') + ' 모든 각도에 끝까지 가요.' + (loop ? ' 한 바퀴에 약 ' + (total / 1000).toFixed(1) + '초' : '');
+      } else {
+        var m = miss[0];
+        verdict.className = 'servo__verdict is-note';
+        verdict.innerHTML = '<b>' + (m.row + 1) + '번째 줄</b> ' + m.a + '°에 닿기 전에 다음 명령이 와요. 가는 데 약 ' + m.need + 'ms, 준 시간 ' + m.given + 'ms.' + (miss.length > 1 ? ' 이런 줄이 ' + miss.length + '곳' : '');
+      }
+    }
 
     function draw() {
       horn.setAttribute('transform', 'rotate(' + (-actual).toFixed(2) + ' ' + CX + ' ' + CY + ')');
       ghost.setAttribute('transform', 'rotate(' + (-target) + ' ' + CX + ' ' + CY + ')');
       ghost.style.opacity = Math.abs(target - actual) > 1 ? '1' : '0';
       deg.textContent = Math.round(actual);
-      tip.classList.toggle('is-on', Math.round(actual) === 0 && !swinging);
+      tip.classList.toggle('is-on', Math.round(actual) === 0 && !running);
+    }
+    function exec(dt) { // 코드를 dt(ms)만큼 진행. 서보 값 출력은 시간이 들지 않고, 일시중지만 시간을 씀
+      var guard = 0, before = curRow;
+      while (running && guard++ < 400) {
+        if (wait > 0) { if (dt <= 0) break; var use = Math.min(wait, dt); wait -= use; dt -= use; if (wait > 0) break; }
+        if (pc >= prog.steps.length) {
+          if (prog.mode === 'loop' && prog.steps.length) { pc = 0; wait = YIELD; continue; }
+          running = false; curRow = -1; runBtn.innerHTML = ic('play') + ' 돌려 보기'; break;
+        }
+        var s = prog.steps[pc];
+        if (s[0] === 's') target = ang(s[1]); else wait = ms(s[1]);
+        curRow = pc; pc++;
+      }
+      if (before !== curRow || !running) mark();
     }
     function loop(ts) {
       var dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
-      if (swinging) {
-        swingT += dt * 1000;
-        var p = +inP.value;
-        if (swingT >= p) { swingT -= p; swingSide = 1 - swingSide; target = swingSide ? +inB.value : +inA.value; markCode(); }
-      }
+      if (running) exec(dt * 1000);
       var diff = target - actual, step = SPEED * dt;
       actual = Math.abs(diff) <= step ? target : actual + Math.sign(diff) * step;
       draw();
-      if (swinging || actual !== target) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
+      if (running || actual !== target) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
     }
     function kick() { if (!raf) { last = 0; raf = requestAnimationFrame(loop); } }
-    function markCode() {
-      var rows = $$('[data-code-swing] > .mcb-stmt', el);
-      rows.forEach(function (r, i) { r.classList.toggle('is-run', swinging && i === swingSide * 2); });
-    }
-    function judge() {
-      var need = Math.abs(+inA.value - +inB.value) / SPEED * 1000, p = +inP.value;
-      verdict.className = 'servo__verdict ' + (p >= need ? 'is-ok' : 'is-bad');
-      verdict.innerHTML = need < 1 ? '두 각도가 같아서 움직이지 않아요.' :
-        p >= need ? ic('check') + ' 끝까지 가요. 한 번 움직이는 데 약 ' + (need / 1000).toFixed(2) + '초' :
-        'pause가 짧아 끝까지 못 가고 되돌아와요. <b>' + Math.ceil(need / 50) * 50 + 'ms</b> 이상으로 늘려 보세요';
-    }
-    function syncSwing() {
-      $('[data-show="a"]', el).textContent = inA.value + '°'; $('[data-show="b"]', el).textContent = inB.value + '°'; $('[data-show="p"]', el).textContent = inP.value + 'ms';
-      var v = $$('[data-code-swing] [data-v]', el), p = $$('[data-code-swing] [data-p]', el);
-      v[0].textContent = inA.value; v[1].textContent = inB.value; p[0].textContent = inP.value; p[1].textContent = inP.value;
-      judge();
-    }
-    function stopSwing() { swinging = false; swingBtn.innerHTML = ic('play') + ' 돌려 보기'; markCode(); }
-    function setOne(a) { stopSwing(); target = a; one.value = a; codeOne.textContent = a; kick(); }
+    function stopRun() { if (!running) return; running = false; curRow = -1; runBtn.innerHTML = ic('play') + ' 돌려 보기'; mark(); }
+    function setOne(a) { stopRun(); target = a; one.value = a; kick(); }
+    function changed() { stopRun(); keepProg(); }
 
     one.addEventListener('input', function () { setOne(+one.value); });
     $$('[data-preset]', el).forEach(function (b) { b.addEventListener('click', function () { setOne(+b.getAttribute('data-preset')); }); });
-    [inA, inB, inP].forEach(function (i) { i.addEventListener('input', syncSwing); });
-    swingBtn.addEventListener('click', function () {
-      if (swinging) return stopSwing();
-      swinging = true; swingT = 0; swingSide = 0; target = +inA.value; swingBtn.innerHTML = '멈춤'; markCode(); kick();
+    list.addEventListener('input', function (e) {
+      var k = e.target.getAttribute('data-num'); if (k == null) return;
+      var s = prog.steps[+k]; if (!s) return;
+      s[1] = s[0] === 's' ? ang(e.target.value) : ms(e.target.value);
+      changed(); judge();
     });
-    document.addEventListener('deck:leave', function (e) { if (e.detail.slide.contains(el)) stopSwing(); });
-    syncSwing(); draw();
+    list.addEventListener('change', function (e) { // 칸을 떠날 때 범위 안의 값으로 정리
+      var k = e.target.getAttribute('data-num'); if (k == null || !prog.steps[+k]) return;
+      e.target.value = prog.steps[+k][1];
+    });
+    el.addEventListener('click', function (e) {
+      var b;
+      if ((b = e.target.closest('[data-op]'))) {
+        var i = +b.getAttribute('data-i'), op = b.getAttribute('data-op'), st = prog.steps;
+        if (op === 'del') st.splice(i, 1);
+        else { var j = op === 'up' ? i - 1 : i + 1; if (j < 0 || j >= st.length) return; var t = st[i]; st[i] = st[j]; st[j] = t; }
+        changed(); renderList(); return;
+      }
+      if ((b = e.target.closest('[data-add]'))) {
+        if (prog.steps.length >= MAXN) return;
+        prog.steps.push(b.getAttribute('data-add') === 's' ? ['s', 90] : ['p', 500]);
+        changed(); renderList(); list.scrollTop = list.scrollHeight; return;
+      }
+      if ((b = e.target.closest('[data-mode]'))) { prog.mode = b.getAttribute('data-mode'); changed(); renderList(); return; }
+      if (e.target.closest('[data-reset]')) { prog = fresh(); changed(); renderList(); return; }
+      if (e.target.closest('[data-run]')) {
+        if (running) return stopRun();
+        if (!prog.steps.length) return;
+        running = true; pc = 0; wait = 0; curRow = -1; runBtn.innerHTML = '멈춤'; kick();
+      }
+    });
+    document.addEventListener('deck:leave', function (e) { if (e.detail.slide.contains(el)) stopRun(); });
+    renderList(); draw();
   };
   MK.widgets['servo-lab'].once = true;
+
+  /* =========================================================
+     6-2. 360° 서보 실험 — 같은 「서보 값 출력」 블록이 각도 대신 방향과 빠르기를 정함
+          90 근처 = 멈춤, 90보다 작으면 시계 방향·크면 반시계 방향(흔한 제품 기준), 90에서 멀수록 빠름
+          화면 속 최고 속도는 예시(1분에 약 90바퀴). 실제 속도·방향·멈추는 값은 서보마다 조금 다름
+     ========================================================= */
+  var MAX360 = 540, DEAD360 = 2, W = 320, WY = 228;
+  function spin360(v, zero) { // +: 시계 방향, -: 반시계 방향, 크기 0~1
+    var d = v - zero, a = Math.abs(d);
+    if (a <= DEAD360) return 0;
+    var x = Math.min(1, (a - DEAD360) / (90 - DEAD360));
+    return (d < 0 ? 1 : -1) * (1 - (1 - x) * (1 - x));
+  }
+  function speedWord(s) { s = Math.abs(s); return !s ? '멈춤' : s < 0.3 ? '천천히' : s < 0.7 ? '보통' : s < 0.95 ? '빠르게' : '가장 빠르게'; }
+  function dirIco(cw) {
+    var g = cw ? '' : ' transform="matrix(-1 0 0 1 32 0)"';
+    return '<svg class="dir-ico" viewBox="0 0 32 32" aria-hidden="true"><g' + g + '><path d="M16 5.5 A10.5 10.5 0 1 1 5.5 16" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><polygon points="5.5,9.5 0,17.5 11,17.5" fill="currentColor"/></g></svg>';
+  }
+  function arcArrow(a1, a2, r) { // 시계 방향 화살표 호 (각도는 화면 기준, 0 = 오른쪽)
+    var p = function (a, rr) { a = a * Math.PI / 180; return [W + rr * Math.cos(a), WY + rr * Math.sin(a)]; };
+    var s = p(a1, r), e = p(a2, r), t = a2 * Math.PI / 180, tx = -Math.sin(t), ty = Math.cos(t), nx = Math.cos(t), ny = Math.sin(t);
+    var f = function (x, y) { return x.toFixed(1) + ',' + y.toFixed(1); };
+    return '<path d="M' + f(s[0], s[1]) + ' A' + r + ' ' + r + ' 0 0 1 ' + f(e[0], e[1]) + '"/>' +
+      '<polygon points="' + f(e[0] + tx * 22, e[1] + ty * 22) + ' ' + f(e[0] + nx * 16 - tx * 2, e[1] + ny * 16 - ty * 2) + ' ' + f(e[0] - nx * 16 - tx * 2, e[1] - ny * 16 - ty * 2) + '"/>';
+  }
+  function wheelSvg() {
+    var spokes = '';
+    for (var i = 0; i < 6; i++) { var a = i * Math.PI / 3; spokes += '<line x1="' + W + '" y1="' + WY + '" x2="' + (W + 112 * Math.cos(a)).toFixed(1) + '" y2="' + (WY + 112 * Math.sin(a)).toFixed(1) + '"/>'; }
+    return '<svg class="s360__svg" viewBox="0 0 640 456" role="img" aria-label="360도 서보에 끼운 바퀴">' +
+      '<circle class="s360__dial" cx="' + W + '" cy="' + WY + '" r="214"/>' +
+      '<g class="s360__dir">' + arcArrow(-160, -40, 186) + arcArrow(20, 140, 186) + '</g>' +
+      '<g class="s360__wheel"><circle class="s360__tire" cx="' + W + '" cy="' + WY + '" r="150"/><circle class="s360__tread" cx="' + W + '" cy="' + WY + '" r="138"/>' +
+        '<circle class="s360__rim" cx="' + W + '" cy="' + WY + '" r="122"/><g class="s360__spokes">' + spokes + '</g>' +
+        '<circle class="s360__mark" cx="' + W + '" cy="' + (WY - 100) + '" r="13"/></g>' +
+      '<circle class="servo__boss" cx="' + W + '" cy="' + WY + '" r="28"/><circle class="servo__shaft" cx="' + W + '" cy="' + WY + '" r="11"/>' +
+      '</svg>';
+  }
+
+  MK.widgets['servo360-lab'] = function (el) {
+    var V0 = 0, T0 = 1000;
+    el.innerHTML = '<div class="servo s360">' +
+      '<div class="servo__stage card">' + wheelSvg() +
+        '<div class="s360__read" data-read></div>' +
+        '<div class="s360__zero"><button type="button" class="btn btn--ghost btn--sm" data-zero>멈추는 값이 어긋난 서보로 바꾸기</button>' +
+          '<div class="s360__tip" data-tip></div></div></div>' +
+      '<div class="servo__side">' +
+        '<div class="servo__one card"><div class="servo__h">서보 값 하나 보내기 <small>360° 서보에서는 방향과 빠르기</small></div>' +
+          '<div class="servo__row"><div class="servo__deg"><b data-deg>90</b></div><input class="servo__range" type="range" min="0" max="180" step="1" value="90" data-one aria-label="서보 값"></div>' +
+          '<div class="servo__presets">' + [0, 45, 80, 90, 100, 135, 180].map(function (a) { return '<button type="button" class="btn btn--ghost btn--sm" data-preset="' + a + '">' + a + '</button>'; }).join('') + '</div>' +
+          '<div class="mcb servo__code" data-code-one>' + stmt('P0', 90) + '</div></div>' +
+        '<div class="servo__swing card"><div class="servo__h">돌리고 멈추기 <small>각도 대신 시간으로 돌릴 만큼을 정해요</small></div>' +
+          '<div class="servo__swing-grid"><div class="servo__sliders">' +
+            '<label>서보 값 <b data-show="v">' + V0 + '</b><input type="range" min="0" max="180" step="5" value="' + V0 + '" data-rv></label>' +
+            '<label>시간 <b data-show="t">' + T0 + 'ms</b><input type="range" min="100" max="3000" step="100" value="' + T0 + '" data-t></label></div>' +
+            '<div class="mcb servo__code"><div class="mcb-c mcb--event"><div class="mcb-head">버튼 A 누르면</div><div class="mcb-arm"></div>' +
+              '<div class="mcb-in" data-code-run>' + stmt('P0', V0) + pauseStmt(T0) + stmt('P0', 90) + '</div><div class="mcb-foot"></div></div></div></div>' +
+          '<div class="servo__go"><button type="button" class="btn" data-run>' + ic('play') + ' 돌려 보기</button><div class="servo__verdict" data-verdict></div></div>' +
+        '</div>' +
+      '</div></div>';
+
+    var wheel = $('.s360__wheel', el), dirG = $('.s360__dir', el), read = $('[data-read]', el), tip = $('[data-tip]', el), zeroBtn = $('[data-zero]', el);
+    var one = $('[data-one]', el), deg = $('[data-deg]', el), codeOne = $('[data-code-one] [data-v]', el);
+    var inV = $('[data-rv]', el), inT = $('[data-t]', el), runBtn = $('[data-run]', el), verdict = $('[data-verdict]', el);
+    var rows = $$('[data-code-run] > .mcb-stmt', el), runV = $$('[data-code-run] [data-v]', el), runP = $('[data-code-run] [data-p]', el);
+    var zero = 90, stopV = 90, found = false, cmd = 90, ang = 0, raf = 0, last = 0, onSlide = false;
+    var run = null; // { t: 지난 시간, turned: 돈 각도 }
+
+    function s() { return spin360(cmd, zero); }
+    function paint() {
+      var sp = s(), cw = sp > 0, n = Math.round(Math.abs(sp) * 5 + (sp ? 0.49 : 0));
+      wheel.setAttribute('transform', 'rotate(' + ang.toFixed(2) + ' ' + W + ' ' + WY + ')');
+      dirG.setAttribute('class', 's360__dir' + (sp ? (cw ? ' is-cw' : ' is-ccw') : ''));
+      dirG.setAttribute('transform', cw || !sp ? '' : 'matrix(-1 0 0 1 ' + (2 * W) + ' 0)');
+      var bars = ''; for (var i = 0; i < 5; i++) bars += '<i class="' + (i < n ? 'on' : '') + '"></i>';
+      read.className = 's360__read' + (sp ? (cw ? ' is-cw' : ' is-ccw') : ' is-stop');
+      read.innerHTML = '<span class="s360__val">서보 값 <b>' + cmd + '</b></span>' + (sp ? dirIco(cw) + '<b>' + (cw ? '시계 방향' : '반시계 방향') + '</b>' : '<i class="s360__sq"></i><b>멈춤</b>') +
+        (sp ? '<span class="s360__meter" title="빠르기">' + bars + '</span><span class="s360__word">' + speedWord(sp) + '</span>' : '');
+    }
+    function paintTip() {
+      if (zero === 90) {
+        tip.className = 's360__tip';
+        tip.innerHTML = '화면 속 바퀴는 흔한 360° 서보 기준이에요. 실제 서보가 반대로 돌면 방향만 바꿔 생각하세요.';
+      } else if (found) {
+        tip.className = 's360__tip is-ok';
+        tip.innerHTML = ic('check') + ' 찾았어요! 이 서보는 <b>' + stopV + '</b>에서 멈춰요. 코드의 90 대신 <b>' + stopV + '</b>을(를) 쓰세요.';
+      } else {
+        tip.className = 's360__tip is-warn';
+        tip.innerHTML = '90을 보내도 바퀴가 천천히 돌아요. 오른쪽 「서보 값 하나 보내기」에서 값을 <b>1씩</b> 바꿔 가며 멈추는 값을 찾아보세요. (슬라이더를 누른 뒤 ← → 키)';
+      }
+    }
+    function loop(ts) {
+      var dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
+      var step = s() * MAX360 * dt;
+      ang = (ang + step) % 360;
+      if (run) {
+        run.turned += Math.abs(step); run.t += dt * 1000;
+        if (run.t >= +inT.value) endRun();
+      }
+      paint();
+      if (onSlide && (s() || run)) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
+    }
+    function kick() { if (onSlide && !raf) { last = 0; raf = requestAnimationFrame(loop); } }
+    function setCmd(v, fromRun) {
+      if (!fromRun && run) stopRun(true);
+      cmd = v; one.value = v; deg.textContent = v; codeOne.textContent = v;
+      if (zero !== 90 && !fromRun && spin360(v, zero) === 0) { found = true; stopV = v; syncRun(); }
+      paint(); paintTip(); kick();
+    }
+    function mark(i) { rows.forEach(function (r, k) { r.classList.toggle('is-run', k === i); }); }
+    function predict() {
+      var v = +inV.value, t = +inT.value, sp = spin360(v, zero), d = Math.abs(sp) * MAX360 * t / 1000, after = spin360(stopV, zero);
+      if (!sp) return { cls: 'is-bad', html: '서보 값 ' + v + '은(는) 멈춤이라 돌지 않아요. 90에서 멀리 옮겨 보세요.' };
+      var txt = (sp > 0 ? '시계' : '반시계') + ' 방향으로 약 <b>' + (d / 360).toFixed(1) + '바퀴</b>(' + Math.round(d) + '°)';
+      if (after) return { cls: 'is-bad', html: txt + ' 돈 뒤에도 멈추지 않아요. 위 「서보 값 하나 보내기」로 <b>멈추는 값</b>을 먼저 찾아보세요.' };
+      return { cls: 'is-ok', html: ic('check') + ' ' + txt + ' 돌고 멈춰요. 더 돌리려면 시간을 늘리거나 값을 90에서 멀리' };
+    }
+    function judge() { var p = predict(); verdict.className = 'servo__verdict ' + p.cls; verdict.innerHTML = p.html; }
+    function syncRun() {
+      $('[data-show="v"]', el).textContent = inV.value; $('[data-show="t"]', el).textContent = inT.value + 'ms';
+      runV[0].textContent = inV.value; runV[1].textContent = stopV; runP.textContent = inT.value;
+      runV[1].parentNode.classList.toggle('is-fixed', stopV !== 90);
+      judge();
+    }
+    function endRun() {
+      var turned = run.turned; run = null; mark(2); setCmd(stopV, true);
+      runBtn.innerHTML = ic('play') + ' 다시 돌려 보기';
+      var p = predict();
+      verdict.className = 'servo__verdict ' + p.cls;
+      verdict.innerHTML = spin360(stopV, zero) ? p.html : ic('check') + ' 약 <b>' + (turned / 360).toFixed(1) + '바퀴</b>(' + Math.round(turned) + '°) 돌고 멈췄어요.';
+      setTimeout(function () { if (!run) mark(-1); }, 900);
+    }
+    function stopRun(silent) { run = null; mark(-1); runBtn.innerHTML = ic('play') + ' 돌려 보기'; if (!silent) judge(); }
+
+    one.addEventListener('input', function () { setCmd(+one.value); });
+    $$('[data-preset]', el).forEach(function (b) { b.addEventListener('click', function () { setCmd(+b.getAttribute('data-preset')); }); });
+    [inV, inT].forEach(function (i) { i.addEventListener('input', function () { if (run) stopRun(true); syncRun(); }); });
+    runBtn.addEventListener('click', function () {
+      if (run) { stopRun(); setCmd(stopV, true); return; }
+      run = { t: 0, turned: 0 }; mark(0); runBtn.innerHTML = '멈춤';
+      verdict.className = 'servo__verdict'; verdict.textContent = '도는 중…';
+      setCmd(+inV.value, true);
+    });
+    zeroBtn.addEventListener('click', function () {
+      if (run) stopRun(true);
+      if (zero === 90) {
+        var picks = [85, 86, 87, 93, 94, 95];
+        zero = picks[Math.floor(Math.random() * picks.length)]; found = false; stopV = 90;
+        zeroBtn.textContent = '처음 서보로 돌아가기';
+      } else { zero = 90; found = false; stopV = 90; zeroBtn.textContent = '멈추는 값이 어긋난 서보로 바꾸기'; }
+      syncRun(); setCmd(90, true); paintTip();
+    });
+    document.addEventListener('deck:enter', function (e) { onSlide = e.detail.slide.contains(el); if (onSlide) kick(); });
+    document.addEventListener('deck:leave', function (e) { if (e.detail.slide.contains(el)) { onSlide = false; if (run) stopRun(true); } });
+    onSlide = !!(MK.deck && MK.deck.current && el.closest('.slide') === MK.deck.current());
+    syncRun(); paint(); paintTip(); kick();
+  };
+  MK.widgets['servo360-lab'].once = true;
 
   /* =========================================================
      7. 작품 하트 · 발표 순서 뽑기
@@ -554,4 +798,150 @@ window.MK = window.MK || {};
   };
   document.addEventListener('DOMContentLoaded', function () { loadChecks(); });
   MK.store.subscribe(function () { setTimeout(deal, 30); });
+  /* =========================================================
+     11. 난이도·제약 조건 설계 (수업으로) — 조건 여섯 줄 × 기초·보통·도전
+         출발 예시(오늘 연수 · 초등 고학년 · 영재교육)를 고르거나 칸을 눌러 바꾸면
+         학생에게 줄 과제 문장과 난이도 막대가 함께 바뀜. 이 화면 안에서만 기억
+     ========================================================= */
+  var LV_ROWS = [
+    { label: '문제', icon: 'target', cells: ['교사가 문제 제시', '상황 카드에서 고르기', '학생이 직접 찾기'],
+      say: ['선생님이 정한 교실 문제를 풉니다', '상황 카드에서 고른 문제를 풉니다', '우리 학교에서 직접 찾은 불편을 풉니다'] },
+    { label: 'AI 인식', icon: 'binoculars', cells: ['신호 2가지', '신호 3가지', '두 모델 비교해 고르기'],
+      say: ['AI가 신호 2가지를 알아보면', 'AI가 신호 3가지를 알아보면', '두 AI 모델 중 더 잘 맞는 쪽을 골라 신호를 알아보면'] },
+    { label: '서보', icon: 'gear', cells: ['1개 · 한 동작', '2개 · 각자 움직이기', '2개 · 차례로 이어 움직이기'],
+      say: ['서보 1개가 움직이는', '서보 2개가 각자 움직이는', '서보 2개가 차례로 이어 움직이는'] },
+    { label: '코드', icon: 'code', cells: ['완성 코드의 값만 바꾸기', '기본 코드에 조건 채우기', '직접 설계 · AI 도움 가능'],
+      say: ['코드는 완성 코드의 값만 바꿉니다', '코드는 기본 코드에 조건을 채웁니다', '코드는 직접 설계합니다(생성형 AI 도움 가능)'] },
+    { label: '재료·구조', icon: 'scissors', cells: ['도안 따라 만들기', '골판지로 자유롭게', 'A4 골판지 2장만'],
+      say: ['도안을 따라', '골판지로 자유롭게', 'A4 골판지 2장만으로'] },
+    { label: '시험·발표', icon: 'flag', cells: ['작동하면 성공', '친구가 5번 시험 · 횟수 기록', '조건 바꿔 비교 · 고친 근거'],
+      say: ['작동하면 성공입니다', '옆 친구가 5번 시험해 성공 횟수를 기록합니다', '조건을 하나 바꿔 비교하고 고친 근거를 발표합니다'] }
+  ];
+  var LV_PRESETS = [
+    { id: 'today', name: '오늘 연수', color: 'yellow', pick: [1, 0, 1, 1, 1, 1] },
+    { id: 'upper', name: '5~6학년 · 첫 프로젝트', color: 'blue', pick: [0, 0, 0, 0, 1, 1] },
+    { id: 'gifted', name: '영재학급 · 동아리', color: 'purple', pick: [2, 1, 2, 2, 2, 2] }
+  ];
+  MK.widgets['level-design'] = function (el) {
+    var cur = LV_PRESETS[1].pick.slice(), preset = 'upper';
+    var today = LV_PRESETS[0].pick;
+    var head = '<div class="lv__h"></div>' + ['기초', '보통', '도전'].map(function (n, k) {
+      return '<div class="lv__h lv__h--' + (k + 1) + '"><span class="lv__dots">' + '●●●'.slice(0, k + 1) + '<i>' + '●●●'.slice(k + 1) + '</i></span>' + n + '</div>';
+    }).join('');
+    var body = LV_ROWS.map(function (r, ri) {
+      return '<div class="lv__label"><span class="circle">' + ic(r.icon) + '</span>' + esc(r.label) + '</div>' + r.cells.map(function (c, ci) {
+        return '<button type="button" class="lv__cell" data-r="' + ri + '" data-c="' + ci + '">' + esc(c) + (today[ri] === ci ? '<span class="lv__today">오늘</span>' : '') + '</button>';
+      }).join('');
+    }).join('');
+    el.innerHTML = '<div class="lv">' +
+      '<div class="lv__main">' +
+        '<div class="lv__presets" role="group" aria-label="출발 예시">' + LV_PRESETS.map(function (p) {
+          return '<button type="button" class="lv__preset c-' + p.color + '" data-preset="' + p.id + '">' + esc(p.name) + '</button>';
+        }).join('') + '</div>' +
+        '<div class="lv__table">' + head + body + '</div>' +
+        '<div class="lv__fix"><div class="lv__fix-a"><span>정해 준 것</span>이 표의 조건</div><div class="lv__fix-b"><span>열어 둔 것</span>어떤 문제를, 어떤 구조로 풀지</div></div>' +
+      '</div>' +
+      '<div class="lv__side">' +
+        '<div class="lv__card"><div class="lv__tag" data-tag></div><div class="kk">학생에게 줄 과제</div><p class="lv__task" data-task aria-live="polite"></p>' +
+          '<p class="lv__more" data-more hidden>더 조이려면: 서보 1개로 두 가지 일 하기</p>' +
+          '<div class="lv__meter"><div class="lv__bar"><i data-pin></i></div><div class="lv__scale"><span>기초</span><span>보통</span><span>도전</span></div></div></div>' +
+      '</div></div>';
+    var root = $('.lv', el), tag = $('[data-tag]', el), task = $('[data-task]', el), pin = $('[data-pin]', el);
+    function paint() {
+      var p = LV_PRESETS.filter(function (x) { return x.id === preset; })[0];
+      root.className = 'lv c-' + (p ? p.color : 'green');
+      $$('.lv__preset', el).forEach(function (b) { var on = b.getAttribute('data-preset') === preset; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      $$('.lv__cell', el).forEach(function (b) { var on = cur[+b.getAttribute('data-r')] === +b.getAttribute('data-c'); b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      tag.textContent = p ? p.name : '내가 고친 설계';
+      $('[data-more]', el).hidden = preset !== 'gifted';
+      var s = function (k) { return LV_ROWS[k].say[cur[k]]; };
+      task.textContent = s(0) + '. ' + s(1) + ' ' + s(2) + ' 장치를 ' + s(4) + ' 만듭니다. ' + s(3) + '. ' + s(5) + '.';
+      var sum = cur.reduce(function (a, b) { return a + b; }, 0); // 0~12
+      pin.style.left = (sum / 12 * 100).toFixed(1) + '%';
+    }
+    $$('.lv__preset', el).forEach(function (b) {
+      b.addEventListener('click', function () {
+        preset = b.getAttribute('data-preset');
+        cur = LV_PRESETS.filter(function (x) { return x.id === preset; })[0].pick.slice(); paint();
+      });
+    });
+    $$('.lv__cell', el).forEach(function (b) {
+      b.addEventListener('click', function () {
+        cur[+b.getAttribute('data-r')] = +b.getAttribute('data-c');
+        var same = LV_PRESETS.filter(function (x) { return x.pick.join() === cur.join(); })[0];
+        preset = same ? same.id : 'mine'; paint();
+      });
+    });
+    paint();
+  };
+  MK.widgets['level-design'].once = true;
+
+  /* =========================================================
+     12. 선생님도 바이브코딩으로 (수업으로) — 이 교안의 실제 화면 + 그 화면을 만드는 요청문
+     ========================================================= */
+  var VIBE = [
+    { id: 'flow', name: '수업 흐름 안내', slide: 's-flow', img: 'assets/img/910/vibe-flow.jpg', title: '오늘의 과제',
+      why: '지금 어느 단계인지, 시간이 얼마나 남았는지 모두가 같은 화면으로 봅니다.',
+      prompt: '초등 6학년 피지컬 AI 수업(80분) 안내 화면을 HTML 파일 하나로 만들어 줘. 문제 찾기 10분 → 만들기 40분 → 시험·고치기 20분 → 발표 10분. 지금 단계를 크게 보여 주고, 단계마다 할 일 두 가지와 체크 상자, 교사가 누르면 시작하는 타이머를 넣어 줘. 교실 TV에서 보이게 글씨는 크게.',
+      more: [['s-make', '같은 타이머'], ['s-check5', '체크 목록']] },
+    { id: 'sim', name: '시뮬레이션 안내', slide: 's-servo', img: 'assets/img/910/vibe-servo.jpg', title: '서보 각도 감 잡기',
+      why: '기기 없이도 값을 바꿔 보며 예상하고, 실제 서보로 확인할 때 덜 헤맵니다.',
+      prompt: '초등 5학년용 서보모터 시뮬레이션을 HTML 파일 하나로 만들어 줘. 0~180 슬라이더를 움직이면 서보 팔이 그 각도로 돌아가고, 0·90·180 버튼도 넣어 줘. 아래에는 MakeCode 블록 「P0에 서보 값 ○ 출력」과 「일시중지」를 넣고 빼며 순서대로 돌려 볼 수 있게 해 줘. 설명은 짧게.',
+      more: [['s-servo360', '360° 서보'], ['s-levels', '난이도 표']] },
+    { id: 'links', name: '필요한 사이트 모아 두기', slide: 's-code', img: 'assets/img/910/vibe-links.jpg', title: '나의 모델 코드 확인하기',
+      why: '주소를 하나씩 불러 주지 않아도 누르면 바로 들어가니, 수업이 끊기지 않고 이어집니다.',
+      prompt: '우리 반 피지컬 AI 수업의 바로가기 화면을 HTML 파일 하나로 만들어 줘. 아래 주소를 수업 순서대로 1·2·3 번호를 붙인 큰 버튼으로 모으고, 누르면 새 창으로 열리게 해 줘. 버튼마다 언제 쓰는지 한 줄 설명도 붙여 줘.\n① MakeCode 기본 코드: (주소)\n② 바운더리엑스 손동작 인식: (주소)\n③ 음성인식: (주소)',
+      more: [['s-voice', '음성인식 연결'], ['s-buy', '재료 구매처']] }
+  ];
+  function pageOf(id) {
+    var s = document.getElementById(id), all = MK.deck && MK.deck.slides ? MK.deck.slides() : [];
+    var n = all.indexOf(s); return n >= 0 ? n + 1 : '';
+  }
+  MK.widgets['teach-vibe'] = function (el) {
+    var at = 0;
+    el.innerHTML = '<div class="tv">' +
+      '<div class="tv__left">' +
+        '<div class="tv__tabs" role="tablist">' + VIBE.map(function (v, k) { return '<button type="button" role="tab" class="tv__tab" data-k="' + k + '">' + esc(v.name) + '</button>'; }).join('') + '</div>' +
+        '<p class="tv__why" data-why></p>' +
+        '<button type="button" class="tv__shot" data-go><img alt="" data-img><span class="tv__cap" data-cap></span></button>' +
+        '<div class="tv__more" data-more></div>' +
+      '</div>' +
+      '<div class="tv__right">' +
+        '<div class="card c-row tv__say"><span class="circle c-yellow">' + ic('chat') + '</span><div style="min-width:0"><div class="kk">생성형 AI에게 이렇게 말하면</div><p class="tv__q" data-q></p>' +
+          '<div class="tv__act"><button type="button" class="btn btn--ghost btn--sm" data-copy>' + ic('doc') + ' 요청문 복사</button><span class="tv__where">생성형 AI의 미리 보기(캔버스)에서 바로 열어 볼 수 있어요</span></div></div></div>' +
+        '<div class="tv__steps">' +
+          '<div class="tv__step"><b>1</b><div><strong>말로 요청</strong><span>대상·시간·화면</span></div></div>' +
+          '<div class="tv__step"><b>2</b><div><strong>보고 고치기</strong><span>“버튼 더 크게”</span></div></div>' +
+          '<div class="tv__step"><b>3</b><div><strong>기기로 확인</strong><span>주소로 나누기</span></div></div>' +
+        '</div>' +
+        '<div class="warn tv__warn"><span class="circle">' + ic('alert') + '</span><div><div class="warn__h">시뮬레이션은 실제와 조금 다릅니다</div><div class="warn__t">실제 서보로 꼭 확인하고, 학생 이름 같은 개인정보는 넣지 않습니다.</div></div></div>' +
+      '</div></div>';
+    var why = $('[data-why]', el), img = $('[data-img]', el), cap = $('[data-cap]', el), q = $('[data-q]', el), more = $('[data-more]', el), go = $('[data-go]', el), copyBtn = $('[data-copy]', el);
+    function paint() {
+      var v = VIBE[at];
+      $$('.tv__tab', el).forEach(function (b, k) { b.classList.toggle('is-on', k === at); b.setAttribute('aria-selected', k === at ? 'true' : 'false'); });
+      img.src = v.img; img.alt = '이 교안의 「' + v.title + '」 화면';
+      why.innerHTML = ic('check') + ' ' + esc(v.why);
+      cap.innerHTML = '이 교안 <b>' + pageOf(v.slide) + '쪽 · ' + esc(v.title) + '</b> ' + ic('expand') + ' 눌러서 가 보기';
+      q.textContent = '“' + v.prompt + '”';
+      more.innerHTML = '<span>다른 예</span>' + v.more.map(function (m) { return '<button type="button" class="tag" data-goto="' + m[0] + '">' + esc(m[1]) + ' <small>' + pageOf(m[0]) + '쪽</small></button>'; }).join('');
+      $$('[data-goto]', more).forEach(function (b) { b.addEventListener('click', function () { MK.deck.goto(b.getAttribute('data-goto')); }); });
+    }
+    $$('.tv__tab', el).forEach(function (b) { b.addEventListener('click', function () { at = +b.getAttribute('data-k'); paint(); }); });
+    go.addEventListener('click', function () { MK.deck.goto(VIBE[at].slide); });
+    copyBtn.addEventListener('click', function () {
+      var text = VIBE[at].prompt;
+      var done = function () { MK.ui.toast('요청문을 복사했어요. 생성형 AI에 붙여 넣으세요.'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+      function fallback() {
+        var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) { MK.ui.toast('복사하지 못했어요. 글을 길게 눌러 복사하세요.', true); }
+        ta.remove();
+      }
+    });
+    paint();
+    document.addEventListener('deck:enter', function (e) { if (e.detail.slide.contains(el)) paint(); });
+  };
+  MK.widgets['teach-vibe'].once = true;
+
 })();

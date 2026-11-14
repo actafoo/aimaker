@@ -52,10 +52,11 @@ window.MK = window.MK || {};
   /* ---------- 슬라이드 만들기 ---------- */
   function generate(st) {
     var items = MK.showcase.items(st), N = items.length;
-    var sec = '4. 작품 발표회';
+    var PG = MK.page || {}, sec = PG.showSection || '4. 작품 발표회';
     var h = '<section class="slide slide--pastel" id="s-show" data-section="' + sec + '" data-title="작품 발표회">' +
-      '<div class="show-cover"><span class="divider__part">PART 4</span><h2 class="show-cover__title">작품 발표회</h2>' +
-      '<p class="show-cover__text">' + (N ? N + '개의 작품을 함께 봅니다. 작품을 누르면 바로 이동합니다.' : '아직 발표할 작품이 없습니다.') + '</p></div>' +
+      '<div class="show-cover"><span class="divider__part">' + esc(PG.showPart || 'PART 4') + '</span><h2 class="show-cover__title">작품 발표회</h2>' +
+      '<p class="show-cover__text">' + (N ? N + '개의 작품을 함께 봅니다. 작품을 누르면 바로 이동합니다.' : '아직 발표할 작품이 없습니다.') + '</p>' +
+      '<p class="show-cover__ask">' + (PG.showAsk || '발표 끝에 한 문장 · <b>학생과 한다면 바꿀 조건 하나</b>') + '</p></div>' +
       (N > 1 ? '<button type="button" class="btn btn--sm btn--yellow admin-only show-shuffle" data-shuffle>' + ic('spark') + ' 발표 순서 뽑기</button>' : '');
     if (N) {
       h += '<div class="show-grid">';
@@ -76,7 +77,7 @@ window.MK = window.MK || {};
       var mcId = MK.parseMakecode(s.makecodeUrl);
       var long = (s.desc || '').length > 170;
       h += '<section class="slide slide--body c-' + cat.color + '" id="show-' + s.id + '" data-section="' + sec + '" data-title="' + (i + 1) + '. ' + esc(s.title) + '">' +
-        '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(inf.label) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
+        '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(inf.label) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span><span class="tag sv-ask">끝에 한 문장 · 학생과 한다면 바꿀 조건 하나</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
         '<h2 class="sv-head__title">' + esc(s.title) + '</h2><p class="sv-head__who">' + esc(inf.sub) + '</p>' + (inf.sentence ? '<p class="sv-head__card">' + esc(inf.sentence) + '</p>' : '') + '</div>' +
         '<div class="sv-heart" data-widget="hearts" data-sub="' + esc(s.id) + '"></div>' +
         '<div class="sv-grid">' +

@@ -50,7 +50,7 @@ window.MK = window.MK || {};
     f += '<div class="modal__msg" role="alert"></div>';
     f += '<div class="modal__wait" role="status">사람이 몰려 차례대로 처리하고 있어요. 창을 닫지 말고 잠시만 기다려 주세요.</div>';
     if (o.note) f += '<div class="modal__note">' + o.note + '</div>';
-    f += '<div class="modal__actions">' + (o.extra || '') + '<button type="button" class="ubtn ubtn--ghost" data-cancel>취소</button><button type="submit" class="ubtn' + (o.danger ? ' ubtn--danger' : '') + '">' + esc(o.submitText || '확인') + '</button></div></form>';
+    f += '<div class="modal__actions">' + (o.extra || '') + '<button type="button" class="ubtn ubtn--ghost" data-cancel>' + esc(o.cancelText || '취소') + '</button><button type="submit" class="ubtn' + (o.danger ? ' ubtn--danger' : '') + '">' + esc(o.submitText || '확인') + '</button></div></form>';
     var d = dialog(f, o.wide);
     var form = d.querySelector('form'), msg = d.querySelector('.modal__msg'), wait = d.querySelector('.modal__wait');
     d.querySelector('[data-cancel]').onclick = function () { d.close(); };
@@ -155,19 +155,31 @@ window.MK = window.MK || {};
         onSubmit: function (v) { return MK.store.cancel(v).then(function () { MK.ui.toast('신청을 취소했어요.'); }); } });
     },
     submit: function () {
-      var st = MK.store.getStateSync(), m = me(), card = myCard(st), sub = mySubmission(st);
+      var st = MK.store.getStateSync(), m = me(), card = myCard(st), sub = mySubmission(st), dr = subDraft();
       if (!card) { MK.ui.toast('먼저 내 도전과제(아이디어 카드)를 등록해 주세요.', true); if (MK.deck) MK.deck.goto('s-mycard'); return; }
       var ch = { title: card.title };
       var descDraft = card ? [card.servo1, card.servo2].filter(Boolean).join('. ') : '';
       if (descDraft && !/[.!?。]$/.test(descDraft)) descDraft += '.';
+      var peerLine = MK.peerSentence ? MK.peerSentence() : ''; // 옆 사람 시험 기록 (fable.js)
+      if (peerLine) descDraft = (descDraft ? descDraft + ' ' : '') + peerLine;
       MK.ui.form({ wide: true, kicker: '내 도전과제 · ' + ch.title, title: sub ? '내 결과물 수정' : '내 결과물 제출', desc: '30초 이내 영상으로 서로 다른 행동 두 가지 이상을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
         fields: personFields(m).concat([
-          { name: 'title', label: '작품 제목', value: sub ? sub.title : (card ? card.title : ''), placeholder: '예: 손끝으로 지휘하는 작은 무대', maxlength: 40 },
-          { name: 'desc', label: '간단한 설명', small: '무엇을 인식하면 어떻게 움직이는지 2~3문장', type: 'textarea', value: sub ? sub.desc : descDraft, maxlength: MK.config.descMax, placeholder: '예: 주먹을 쥐면 서보가 북을 치고, 손바닥을 펴면 탬버린을 흔듭니다.' },
-          { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: sub ? sub.makecodeUrl : '', placeholder: 'https://makecode.microbit.org/_…', help: 'MakeCode 오른쪽 위 <b>공유</b> → 공유 링크 만들기 → 주소 복사' },
-          { name: 'videoUrl', label: '작동 영상 주소', value: sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '구글 드라이브 영상은 <b>링크가 있는 모든 사용자</b>로 공유해야 발표 때 재생됩니다.' }
-        ]), submitText: sub ? '수정한 내용 제출' : '결과물 제출하기',
-        onSubmit: function (v) { return MK.store.submit(v).then(function (r) { MK.ui.toast(r.updated ? '결과물을 수정했어요.' : '결과물을 제출했어요. 수고하셨습니다!'); }); } });
+          { name: 'title', label: '작품 제목', value: dr ? dr.title : sub ? sub.title : (card ? card.title : ''), placeholder: '예: 손끝으로 지휘하는 작은 무대', maxlength: 40 },
+          { name: 'desc', label: '간단한 설명', small: '무엇을 인식하면 어떻게 움직이는지 2~3문장', type: 'textarea', value: dr ? dr.desc : sub ? sub.desc : descDraft, maxlength: MK.config.descMax, placeholder: '예: 주먹을 쥐면 서보가 북을 치고, 손바닥을 펴면 탬버린을 흔듭니다.' },
+          { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: dr ? dr.makecodeUrl : sub ? sub.makecodeUrl : '', placeholder: 'https://makecode.microbit.org/_…', help: 'MakeCode 오른쪽 위 <b>공유</b> → 공유 링크 만들기 → 주소 복사' },
+          { name: 'videoUrl', label: '작동 영상 주소', value: dr ? dr.videoUrl : sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '구글 드라이브 영상은 <b>링크가 있는 모든 사용자</b>로 공유해야 발표 때 재생됩니다.' }
+        ]), submitText: sub ? '수정한 내용 제출' : '결과물 제출하기', cancelText: '닫기',
+        note: '쓰던 내용은 이 노트북에 <b>저절로 저장</b>됩니다. 주소를 가지러 창을 닫았다가 다시 열어도 그대로 남아 있어요.',
+        onOpen: function (d) { // 쓰는 대로 초안 저장 (제출에 성공하면 지움)
+          var f = d.querySelector('form');
+          f.addEventListener('input', function () {
+            var v = { owner: m ? m.name : '', at: Date.now() };
+            SUB_KEYS.forEach(function (k) { v[k] = f.elements[k] ? f.elements[k].value : ''; });
+            setSubDraft(v);
+          });
+          d.addEventListener('close', function () { setTimeout(function () { MK.renderWidgets(); }, 60); });
+        },
+        onSubmit: function (v) { return MK.store.submit(v).then(function (r) { setSubDraft(null); MK.ui.toast(r.updated ? '결과물을 수정했어요.' : '결과물을 제출했어요. 수고하셨습니다!'); }); } });
     },
     switchUser: function () {
       MK.ui.confirm({ title: '다른 사람으로 바꿀까요?', desc: '이 노트북에 저장된 이름과 비밀번호를 지웁니다. 신청과 제출 기록은 그대로 남습니다.', okText: '바꾸기' })
@@ -253,12 +265,21 @@ window.MK = window.MK || {};
   };
 
   /* 내 결과물 (제출 슬라이드) */
+  /* 결과물 제출 창의 초안: 쓰다가 닫아도 남도록 이 브라우저에 저장 (이름이 같을 때만 꺼냄) */
+  var SUB_DRAFT = MK.config.storageKey + '-subdraft', SUB_KEYS = ['title', 'desc', 'makecodeUrl', 'videoUrl'];
+  function subDraft() {
+    var m = me(); if (!m) return null;
+    try { var d = JSON.parse(localStorage.getItem(SUB_DRAFT)); return d && d.owner === m.name ? d : null; } catch (e) { return null; }
+  }
+  function setSubDraft(v) { try { if (v) localStorage.setItem(SUB_DRAFT, JSON.stringify(v)); else localStorage.removeItem(SUB_DRAFT); } catch (e) {} }
+  MK.subDraft = subDraft;
+
   MK.widgets['my-submission'] = function (el, st) {
-    var m = me(), card = myCard(st), sub = mySubmission(st);
+    var m = me(), card = myCard(st), sub = mySubmission(st), dr = subDraft();
     var rows = function (k, v, link) {
       return '<div class="mine__row"><dt>' + k + '</dt><dd class="' + (v ? '' : 'empty') + '">' + (v ? (link ? '<a class="link" href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(v) + '</a>' : esc(v)) : '아직 없음') + '</dd></div>';
     };
-    var h = '<div class="window fill"><div class="window__bar">내 결과물' + (sub ? ' · 제출 완료' : '') + '</div><div class="window__body" style="display:flex;flex-direction:column;gap:22px">';
+    var h = '<div class="window fill"><div class="window__bar">내 결과물' + (dr ? ' · 쓰는 중 (아직 제출 전)' : sub ? ' · 제출 완료' : '') + '</div><div class="window__body" style="display:flex;flex-direction:column;gap:22px">';
     if (!m) {
       h += '<div class="t-lg">먼저 이름을 등록하고 내 도전과제를 등록해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 이름 등록</button><button class="btn btn--ghost" data-goto="s-mycard">내 도전과제 등록하러 가기</button></div>';
     } else if (!card) {
@@ -269,8 +290,9 @@ window.MK = window.MK || {};
       h += '<div class="mine-card c-' + cat.color + '"><div class="mine-card__top"><span class="kk">내 도전과제</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(card.model) + '</span>' +
         '<button class="btn btn--ghost btn--sm" data-goto="s-mycard">' + ic('edit') + ' 도전과제 수정</button></div>' +
         '<div class="mine-card__t">' + esc(card.title) + '</div>' + (MK.cardSentence ? '<div class="mine-card__s">' + esc(MK.cardSentence(card)) + '</div>' : '') + '</div>';
-      h += '<dl class="mine" style="margin:0">' + rows('작품 제목', sub && sub.title) + rows('간단한 설명', sub && sub.desc) + rows('MakeCode', sub && sub.makecodeUrl, true) + rows('작동 영상', sub && sub.videoUrl, true) + '</dl>' +
-        '<div class="row" style="margin-top:auto"><button class="btn ' + (sub ? 'btn--ghost' : 'btn--green') + '" data-act="submit">' + ic(sub ? 'edit' : 'send') + (sub ? ' 수정' : ' 결과물 제출하기') + '</button></div>';
+      h += '<dl class="mine" style="margin:0">' + rows('작품 제목', (dr || sub || {}).title) + rows('간단한 설명', (dr || sub || {}).desc) + rows('MakeCode', (dr || sub || {}).makecodeUrl, !dr) + rows('작동 영상', (dr || sub || {}).videoUrl, !dr) + '</dl>' +
+        '<div class="row" style="margin-top:auto;align-items:center;gap:18px"><button class="btn ' + (sub && !dr ? 'btn--ghost' : 'btn--green') + '" data-act="submit">' + ic(dr || sub ? 'edit' : 'send') + (dr ? ' 이어서 쓰기' : sub ? ' 수정' : ' 결과물 제출하기') + '</button>' +
+          (dr ? '<span class="t-sm" style="font-size:20px;font-weight:700;color:#9A7400">쓰던 내용이 저장돼 있어요. 아직 ' + (sub ? '다시 ' : '') + '제출 전입니다.</span>' : '') + '</div>';
     }
     el.innerHTML = h + '</div></div>';
   };

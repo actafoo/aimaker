@@ -1,0 +1,277 @@
+/* =========================================================
+   Fable 구성판에서 새로 넣은 부품의 모양 (fable.js 와 짝)
+   색·선·글자는 tokens.css 의 값만 씁니다. 크기는 1920×1080 기준(px).
+   ========================================================= */
+
+/* 이 구성판에서는 쓰지 않는 버튼 */
+.deck-fable [data-mc-import] { display: none !important; }
+
+/* ---------- 오늘의 과제 ---------- */
+.fb-mission { display: flex; align-items: center; gap: 28px; padding: 26px 36px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); box-shadow: 0 6px 0 var(--navy); }
+.fb-mission .circle { width: 68px; height: 68px; }
+.fb-mission__k { font-size: 21px; font-weight: 800; color: #9A7400; }
+.fb-mission__v { margin-top: 2px; font-size: 40px; font-weight: 800; line-height: 1.3; letter-spacing: -0.03em; color: var(--navy); }
+.fb-mission__v b { color: var(--blue); }
+.fb-crit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 26px; }
+.fb-crit__c { display: flex; align-items: center; gap: 18px; padding: 18px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); }
+.fb-crit__c .circle { background: var(--c-tab); }
+.fb-crit__c b { display: block; font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1.3; letter-spacing: -0.02em; }
+.fb-crit__c span span { display: block; margin-top: 2px; font-size: 20px; font-weight: 600; color: var(--muted); }
+.fb-flow { margin-top: 64px; }
+.fb-flow .timeline > div { font-size: 19px; }
+
+
+/* ---------- 만들기: 페이스 체크포인트 ---------- */
+.fb-make { display: grid; grid-template-columns: 1.15fr 1fr; gap: 36px; height: 100%; }
+.fb-pace { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: 1fr; gap: 12px; height: 100%; }
+.fb-pace li { display: flex; align-items: center; gap: 18px; padding: 12px 22px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--paper); transition: background-color .15s, opacity .15s; }
+.fb-pace__t { flex: none; width: 92px; font-size: 26px; font-weight: 800; color: var(--navy); font-variant-numeric: tabular-nums; }
+.fb-pace__b { flex: 1; min-width: 0; }
+.fb-pace__b b { display: block; font-size: 26px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.fb-pace__b small { display: block; margin-top: 2px; font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.4; }
+.fb-pace li.is-now { background: var(--yellow-soft); box-shadow: inset 0 0 0 3px var(--yellow); }
+.fb-pace li.is-now .fb-pace__t::after { content: '지금'; display: block; width: max-content; margin-top: 2px; padding: 1px 10px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 15px; }
+.fb-make__side { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.fb-make__side .timer-card { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px 30px; }
+.fb-make__side .timer { width: 100%; }
+.fb-make__side .timer__face { font-size: 128px; }
+.fb-make__rule { padding: 16px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--blue-soft); font-size: 23px; font-weight: 600; color: var(--navy); line-height: 1.45; }
+.fb-make__links { display: flex; gap: 12px; flex-wrap: wrap; }
+
+
+
+/* ---------- 수업으로: 세 갈래와 우리 반 숫자 ---------- */
+.fb-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.fb-three__c { padding: 24px 28px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); }
+.fb-three__k { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--c-tab); font-size: 21px; font-weight: 800; color: var(--navy); }
+.fb-three__t { margin-top: 12px; font-size: 31px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; line-height: 1.3; }
+.fb-three__d { margin-top: 8px; font-size: 22px; font-weight: 500; line-height: 1.5; color: var(--ink); }
+.fb-three__d b { color: var(--navy); font-weight: 800; }
+.fb-three__w { margin-top: 12px; padding-top: 12px; border-top: 2px dashed var(--navy); font-size: 20px; font-weight: 700; color: var(--c-deep); line-height: 1.4; }
+.fb-cs { display: flex; align-items: center; gap: 34px; margin-top: 24px; padding: 18px 30px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); box-shadow: 0 6px 0 var(--navy); }
+.fb-cs.is-empty { font-size: 23px; font-weight: 600; color: var(--muted); box-shadow: none; border-style: dashed; }
+.fb-cs__n { display: flex; align-items: baseline; gap: 8px; flex: none; }
+.fb-cs__n b { font-size: 60px; font-weight: 800; color: var(--blue); line-height: 1; font-variant-numeric: tabular-nums; }
+.fb-cs__n span { font-size: 24px; font-weight: 800; color: var(--navy); }
+.fb-cs__m { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; min-width: 0; }
+.fb-cs__m small { flex-basis: 100%; font-size: 20px; font-weight: 600; color: var(--muted); }
+.fb-take { display: flex; align-items: center; gap: 22px; margin-top: 22px; padding: 18px 30px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--blue-soft); font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; line-height: 1.4; }
+.fb-take b { color: var(--blue); }
+.fb-lvcopy { align-self: flex-start; margin-top: 6px; }
+
+/* 발표회 표지: '발표 끝에 한 문장'이 두 줄이 되어도 작품 목록과 겹치지 않게 */
+.deck-fable .show-cover__ask { max-width: 1100px; line-height: 1.4; }
+.deck-fable .show-grid { top: 452px; }
+.deck-fable .show-empty { top: 480px; }
+
+/* 제출 쪽: 체크리스트와 시험 기록이 한 칸에 들어가게 */
+.deck-fable #s-submit .sr-list li { padding: 7px 18px; }
+.deck-fable #s-submit .sr-list .bar { font-size: 23px; }
+.deck-fable #s-submit .note { min-height: 0; }
+
+/* ---------- 내 도전과제 정하기: 한 쪽에서 네 칸 ---------- */
+.fb-qc { display: grid; grid-template-columns: 1fr 500px; gap: 32px; height: 100%; }
+.fb-qc__form { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.fb-qc__row { flex: 1; display: flex; align-items: center; gap: 20px; padding: 12px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); transition: background-color .15s, box-shadow .15s; }
+.fb-qc__row.is-next { background: var(--yellow-soft); box-shadow: 0 0 0 5px var(--yellow-mid); }
+.fb-qc__row.is-done { background: var(--green-soft); }
+.fb-qc__n { flex: none; width: 50px; height: 50px; display: grid; place-items: center; border: var(--stroke) solid var(--navy); border-radius: 50%; background: var(--paper); font-size: 25px; font-weight: 800; color: var(--navy); }
+.fb-qc__row.is-next .fb-qc__n { background: var(--yellow-tab); }
+.fb-qc__row.is-done .fb-qc__n { background: var(--green-mid); font-size: 0; }
+.fb-qc__row.is-done .fb-qc__n::after { content: '✓'; font-size: 26px; }
+.fb-qc__b { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.fb-qc__q { font-size: 23px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.fb-qc__q small { margin-left: 10px; font-size: 18px; font-weight: 600; color: var(--muted); }
+.fb-qc__in { height: 54px; min-width: 0; padding: 0 16px; border: var(--stroke) solid var(--navy); border-radius: 12px; background: #fff; font: 700 24px/1 var(--font); color: var(--navy); }
+.fb-qc__in::placeholder { color: var(--muted); font-weight: 500; opacity: .7; }
+.fb-qc__in:focus-visible, .fb-qc__verb:focus-visible, .fb-qc__model:focus-visible { outline: 4px solid var(--blue); outline-offset: 2px; }
+.fb-qc__in.is-title { width: 100%; }
+.fb-qc__in.is-sig { flex: 0 0 150px; background: var(--blue-soft); text-align: center; }
+.fb-qc__in.is-fixed { border-style: dashed; color: var(--ink); }
+.fb-qc__models { display: flex; gap: 12px; }
+.fb-qc__model { height: 54px; padding: 0 22px; font-size: 23px; cursor: pointer; }
+.fb-qc__model.is-on { box-shadow: 0 4px 0 var(--navy); }
+.fb-qc__sent { display: flex; align-items: center; gap: 10px; }
+.fb-qc__sent > i { flex: none; font-style: normal; font-size: 23px; font-weight: 800; color: var(--navy); white-space: nowrap; }
+.fb-qc__opt { flex: none; display: flex; align-items: center; gap: 12px; padding: 0 6px; }
+.fb-qc__opt > span { flex: none; font-size: 19px; font-weight: 700; color: var(--muted); }
+.fb-qc__opt .fb-qc__in { flex: 1; height: 46px; font-size: 20px; border-style: dashed; }
+.fb-qc__opt .btn { flex: none; }
+.fb-qc__side { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+.fb-qc__card { flex: none; padding: 14px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--paper); display: grid; gap: 8px; }
+.fb-qc__card i { font-style: normal; color: var(--muted); font-weight: 500; opacity: .7; }
+.fb-qc__ct { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 25px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.fb-qc__ct .tag { flex: none; height: 34px; font-size: 17px; }
+.fb-qc__cl { display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .75; }
+.fb-qc__cl.is-on { opacity: 1; }
+.fb-qc__cl .pin, .fb-qc__card .pin { flex: none; display: inline-grid; place-items: center; min-width: 50px; height: 32px; border-radius: 8px; background: var(--navy); color: #fff; font-size: 17px; font-weight: 800; }
+.fb-qc__save { flex: none; }
+.fb-qc__save.is-wait { background: var(--sky); color: var(--muted); box-shadow: none; }
+.fb-qc__st { flex: none; min-height: 52px; font-size: 18px; font-weight: 500; line-height: 1.45; color: var(--ink); }
+.fb-qc__st b { color: var(--navy); font-weight: 800; }
+.fb-qc__st.is-ok b { color: var(--green-deep); }
+
+/* ---------- 돌아가기 버튼 (건너뛴 뒤에만 보임) ---------- */
+.fb-back { position: fixed; left: 50%; bottom: 62px; transform: translateX(-50%); z-index: 60; display: flex; align-items: center; gap: 6px; padding: 5px; border: 2.5px solid var(--navy); border-radius: 999px; background: var(--yellow-mid); box-shadow: 0 4px 0 var(--navy); animation: fb-back-in .25s ease-out; }
+.fb-back[hidden] { display: none; }
+.fb-back__go { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: transparent; font: 800 16px/1 var(--font); color: var(--navy); cursor: pointer; max-width: 70vw; }
+.fb-back__go span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fb-back__go:hover { background: var(--yellow-tab); }
+.fb-back__go .i { width: 18px; height: 18px; flex: none; }
+.fb-back__x { width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; font: 800 18px/1 var(--font); color: var(--navy); cursor: pointer; opacity: .6; }
+.fb-back__x:hover { opacity: 1; background: var(--yellow-tab); }
+@keyframes fb-back-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (prefers-reduced-motion: reduce) { .fb-back { animation: none; } }
+.deck-fable .res-grid { grid-template-columns: repeat(4, 1fr); }
+
+.fb-qc [hidden] { display: none !important; }
+
+/* 움직임은 자유롭게 적는 칸 */
+.fb-qc { grid-template-columns: 1fr 440px; }
+.fb-qc__row.is-slim { flex: 0 0 auto; }
+.fb-qc__in.is-act { flex: 1; background: var(--yellow-soft); }
+.fb-qc__sent > i { color: var(--navy); }
+.fb-qc__card { padding: 18px 22px; }
+.fb-qc__card .kk { color: var(--blue); font-size: 18px; }
+.fb-qc__cl { white-space: normal; align-items: flex-start; line-height: 1.4; opacity: 1; }
+.fb-qc__cl .pin { margin-top: 1px; }
+.fb-qc__free { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding: 18px 22px; border: var(--stroke) dashed var(--navy); border-radius: var(--r-md); background: var(--blue-soft); }
+.fb-qc__free b { font-size: 23px; font-weight: 800; color: var(--navy); }
+.fb-qc__free span { font-size: 19px; font-weight: 500; line-height: 1.5; color: var(--ink); }
+
+/* 만들기 체크포인트: 지나간 줄은 흐리게 */
+.fb-pace li.is-past { opacity: .5; }
+.fb-make__tip { padding: 14px 24px; border: var(--stroke) dashed var(--navy); border-radius: var(--r-md); background: var(--yellow-soft); font-size: 22px; font-weight: 600; color: var(--navy); line-height: 1.45; }
+
+/* ---------- 바꿔서 해 보기 (앞 화면용 안내): 틀린 모양 → 고칠 곳 ---------- */
+.fb-fixes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin-top: 26px; }
+.fb-fixes__i { display: flex; align-items: flex-start; gap: 16px; padding: 14px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--paper); }
+.fb-fixes__i .tag { flex: none; height: 38px; min-width: 104px; justify-content: center; font-size: 19px; }
+.fb-fixes__i b { display: block; font-size: 24px; font-weight: 800; color: var(--navy); }
+.fb-fixes__i span span { display: block; margin-top: 2px; font-size: 20px; font-weight: 500; line-height: 1.45; color: var(--ink); }
+.fb-testnotes { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+.fb-testnotes > div { padding: 12px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); font-size: 20px; font-weight: 500; line-height: 1.45; color: var(--ink); }
+.fb-testnotes b { color: var(--navy); font-weight: 800; }
+
+/* 제출 쪽: 옆 사람 시험 결과를 숫자로만 고름 */
+.fb-pr { display: flex; flex-direction: column; gap: 10px; padding: 18px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); }
+.fb-pr__row { display: flex; align-items: center; gap: 8px; }
+.fb-pr__k { flex: none; width: 86px; font-size: 20px; font-weight: 800; color: var(--navy); }
+.fb-pr__c { flex: 1; height: 46px; border: var(--stroke) solid var(--navy); border-radius: 12px; background: var(--sky); font: 800 22px/1 var(--font); color: var(--navy); cursor: pointer; font-variant-numeric: tabular-nums; }
+.fb-pr__c:hover { background: var(--yellow-soft); }
+.fb-pr__c.is-on { background: var(--yellow-mid); box-shadow: 0 3px 0 var(--navy); }
+.fb-pr__n { margin: 0; font-size: 18px; font-weight: 500; line-height: 1.45; color: var(--muted); }
+
+/* 예시 자세히 창: 이 구성판에서는 보기만 (예전 문장 틀 카드로 가져오는 버튼은 숨김) */
+.deck-fable [data-ig-use] { display: none !important; }
+
+/* ---------- 서보 각도 감 잡기: 내 코드대로 돌려 보기 (블록을 넣고·빼고·고치는 목록) ---------- */
+.servo__prog { padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.servo__prog-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: max-content 1fr; gap: 24px; }
+.servo__list { min-height: 0; overflow-y: auto; padding: 4px 8px 4px 4px; align-self: stretch; }
+.servo__step { display: flex; align-items: center; gap: 10px; }
+.servo__step .mcb-stmt { flex: none; }
+.servo__list input.mcb-num { width: 76px; padding: 0 4px 0 10px; border: 0; font: inherit; text-align: center; font-variant-numeric: tabular-nums; }
+.servo__list .mcb-stmt--basic input.mcb-num { width: 92px; }
+.servo__list input.mcb-num:focus-visible { outline: 3px solid var(--yellow); outline-offset: 1px; }
+.servo__ops { display: flex; gap: 4px; }
+.servo__ops button { width: 28px; height: 28px; padding: 0; border: 1.5px solid var(--navy); border-radius: 50%; background: #fff; font: 800 15px/1 var(--font); color: var(--navy); cursor: pointer; }
+.servo__ops button:hover { background: var(--yellow-soft); }
+.servo__ops button:disabled { opacity: .25; cursor: default; }
+.servo__empty { padding: 8px 14px; font-size: 17px; color: var(--muted); font-weight: 600; }
+.servo__ctl { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.servo__seg { display: flex; border: var(--stroke) solid var(--navy); border-radius: 999px; overflow: hidden; }
+.servo__seg button { flex: 1; height: 44px; border: 0; background: var(--paper); font: 800 19px/1 var(--font); color: var(--navy); cursor: pointer; }
+.servo__seg button + button { border-left: var(--stroke) solid var(--navy); }
+.servo__seg button.is-on { background: var(--yellow-mid); }
+.servo__add { display: flex; gap: 8px; flex-wrap: wrap; }
+.servo__add .btn { height: 42px; padding: 0 14px; font-size: 18px; }
+.servo__add .btn:disabled { opacity: .35; cursor: default; }
+.servo__prog .servo__go { margin-top: 0; }
+.servo__prog .servo__verdict { font-size: 18px; }
+.servo__verdict.is-note { color: #9A7400; }
+.deck-fable [data-widget="servo-lab"] { height: 100%; }
+.deck-fable [data-widget="servo-lab"] .servo { grid-template-rows: minmax(0, 1fr); }
+.deck-fable [data-widget="servo-lab"] .servo__side { grid-template-rows: auto minmax(0, 1fr); }
+.servo__prog-grid { grid-template-rows: minmax(0, 1fr); }
+
+/* ---------- 도전과제 예시 창: 사진을 크게, 옆에 「무엇을 보면 → 어떻게 움직이나」 ---------- */
+.fb-ig .fb-ig__box { position: relative; width: min(1280px, 96vw, calc((94vh - 250px) * 16 / 9 + 400px)); max-height: 94vh; overflow: auto; padding: 22px 26px 20px; border: 2px solid var(--navy); border-radius: 24px; background: var(--paper); box-shadow: 0 8px 0 var(--navy); font-family: var(--font); color: var(--navy); }
+.fb-ig__head { display: flex; align-items: center; gap: 14px; padding-right: 52px; }
+.fb-ig__count { flex: none; padding: 4px 12px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 14px; font-weight: 800; }
+.fb-ig__title { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
+.fb-ig__head .tag { height: 30px; font-size: 14px; }
+.fb-ig__main { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; margin-top: 14px; }
+.fb-ig__photo { position: relative; border: 2px solid var(--navy); border-radius: 18px; overflow: hidden; background: var(--sky); aspect-ratio: 16 / 9; }
+.fb-ig__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fb-ig__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; display: grid; place-items: center; border: 2px solid var(--navy); border-radius: 50%; background: rgba(255,255,255,.92); cursor: pointer; }
+.fb-ig__nav.is-prev { left: 12px; } .fb-ig__nav.is-next { right: 12px; }
+.fb-ig__nav .i { width: 22px; height: 22px; stroke: var(--navy); }
+.fb-ig__nav:hover { background: var(--yellow-mid); }
+.fb-ig__side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.fb-ig__k { font-size: 15px; font-weight: 800; color: var(--blue); }
+.fb-ig__io { display: grid; gap: 12px; }
+.fb-ig__row { display: grid; gap: 6px; padding: 14px 16px; border: 2px solid var(--navy); border-radius: 16px; background: var(--c-soft); }
+.fb-ig__sig { justify-self: start; padding: 4px 14px; border: 2px solid var(--navy); border-radius: 999px; background: var(--c-tab); font-size: 17px; font-weight: 800; }
+.fb-ig__arrow { display: none; }
+.fb-ig__row b { font-size: 24px; font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; }
+.fb-ig__row b::before { content: '→ '; color: var(--c-deep); }
+.fb-ig__q { margin: 4px 0 0; font-size: 16px; font-weight: 500; line-height: 1.5; color: var(--ink); }
+.fb-ig__side .linkish { align-self: flex-start; margin-top: auto; font-size: 14px; }
+.fb-ig__thumbs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 16px; }
+.fb-ig__thumb { display: flex; flex-direction: column; gap: 5px; padding: 5px; border: 2px solid var(--line); border-radius: 12px; background: #fff; cursor: pointer; font-family: var(--font); color: var(--navy); text-align: left; opacity: .7; }
+.fb-ig__thumb span { display: block; aspect-ratio: 16 / 9; border-radius: 7px; background: var(--sky) center / cover; }
+.fb-ig__thumb b { font-size: 12.5px; font-weight: 700; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fb-ig__thumb:hover { opacity: 1; }
+.fb-ig__thumb.is-on { opacity: 1; border-color: var(--navy); background: var(--yellow-soft); box-shadow: 0 3px 0 var(--navy); }
+@media (max-width: 900px) { .fb-ig__main { grid-template-columns: 1fr; } .fb-ig__thumbs { grid-template-columns: repeat(4, 1fr); } }
+
+/* ---------- MakeCode 공유 주소 만들기: 주인공은 순서 글, 사진은 오른쪽 작은 참고 화면(누르면 크게) ---------- */
+.fb-share { display: flex; flex-direction: column; gap: 14px; }
+.fb-share__steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.fb-share__steps li { display: flex; align-items: center; gap: 24px; min-height: 104px; padding: 12px 16px 12px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); }
+.fb-share__n { flex: none; display: grid; place-items: center; width: 60px; height: 60px; border: var(--stroke) solid var(--navy); border-radius: 50%; background: var(--c-tab); font-size: 30px; font-weight: 800; color: var(--navy); }
+.fb-share__txt { flex: 1; min-width: 0; }
+.fb-share__txt b { display: block; font-size: 32px; font-weight: 800; color: var(--navy); line-height: 1.25; letter-spacing: -0.03em; }
+.fb-share__txt span { display: block; margin-top: 4px; font-size: 23px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+.fb-share__url { padding: 0 4px; font: 700 .92em/1.3 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--navy); }
+.fb-share__url mark { padding: 0 4px; border-radius: 4px; background: var(--yellow-mid); color: inherit; }
+.fb-share__warn { display: flex; align-items: center; gap: 20px; padding: 10px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--yellow-soft); font-size: 23px; font-weight: 600; color: var(--navy); line-height: 1.4; }
+.fb-share__warn .icon-badge { width: 64px; height: 64px; }
+.fb-share__warn small { display: block; margin-top: 2px; font-size: 18px; font-weight: 500; color: var(--muted); }
+/* 참고 화면(작은 사진). 빨간 점선 = 누를 곳, 초록 = 확인할 곳 */
+.fb-ref { flex: none; width: 340px; display: flex; flex-direction: column; gap: 6px; padding: 8px 8px 6px; border: 1.5px solid var(--line); border-radius: var(--r-md); background: #F2F4F8; cursor: zoom-in; font-family: var(--font); transition: border-color .12s, transform .12s; }
+.fb-ref:hover { border-color: var(--navy); transform: translateY(-2px); }
+.fb-ref:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+.fb-ref__pic { position: relative; display: block; line-height: 0; }
+.fb-ref__pic img { display: block; width: 100%; height: auto; border-radius: 6px; box-shadow: 0 0 0 1px var(--line); }
+.fb-ref__pic .mk-fix { border-width: 2.5px; }
+.fb-ref__ok { position: absolute; border: 2.5px solid var(--green); border-radius: 5px; background: rgba(44, 176, 84, .08); }
+.fb-ref__cap { display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: 15px; font-weight: 700; color: var(--muted); line-height: 1.2; }
+.fb-ref__cap .i { font-size: 16px; }
+/* 크게 보기 창 */
+.fb-zoom { width: auto !important; max-width: 94vw; }
+.fb-zoom .fb-ref__pic { margin-top: 10px; }
+.fb-zoom .fb-ref__pic .mk-fix, .fb-zoom .fb-ref__ok { border-width: 3px; }
+
+/* ---------- 가져가실 자료: 눌러 보고 싶게 (튀어나온 버튼 + 아래 「○○ 보기」 막대) ---------- */
+.deck-fable .res-grid { gap: 30px 24px; margin-top: 0; }
+.deck-fable .res-tile { position: relative; min-height: 262px; padding: 22px 22px 20px; gap: 6px; border-width: 2.5px; background: var(--c-soft); box-shadow: 0 8px 0 var(--navy); transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease; }
+.deck-fable .res-tile .circle { width: 62px; height: 62px; background: var(--c-tab); }
+.deck-fable .res-tile .circle .i { font-size: 30px; }
+.deck-fable .res-tile__t { margin-top: 4px; font-size: 28px; }
+.deck-fable .res-tile__d { font-size: 19px; }
+.deck-fable .res-tile__tag { position: absolute; top: 20px; right: 18px; padding: 5px 12px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--yellow-tab); font-size: 16px; font-weight: 800; color: var(--navy); line-height: 1.2; }
+.deck-fable .res-tile__go { margin-top: auto; align-self: stretch; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 54px; padding: 0 7px 0 22px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--c-tab); font-size: 22px; font-weight: 800; color: var(--navy); line-height: 1; }
+.deck-fable .res-tile__arrow { display: grid; place-items: center; width: 40px; height: 40px; border: var(--stroke) solid var(--navy); border-radius: 50%; background: var(--paper); transition: transform .15s ease; }
+.deck-fable .res-tile__arrow .i { font-size: 22px; stroke-width: 2.6; }
+.deck-fable .res-tile:hover { transform: translateY(-4px); box-shadow: 0 12px 0 var(--navy); background: var(--c-mid); }
+.deck-fable .res-tile:hover .res-tile__arrow { transform: translateX(5px); }
+.deck-fable .res-tile:active { transform: translateY(6px); box-shadow: 0 2px 0 var(--navy); transition-duration: .05s; }
+.deck-fable .res-tile:focus-visible { outline: 4px solid var(--blue); outline-offset: 6px; }
+/* 빈 칸: 버튼이 아닌 안내(점선·납작) — 옆의 튀어나온 버튼과 대비 */
+.res-hint { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; padding: 22px 24px; border: var(--stroke) dashed var(--muted); border-radius: var(--r-lg); background: rgba(255, 255, 255, .7); color: var(--muted); }
+.res-hint .circle { background: var(--paper); border-color: var(--muted); color: var(--muted); }
+.res-hint b { font-size: 23px; font-weight: 800; color: var(--ink); }
+.res-hint span:not(.circle) { font-size: 18px; font-weight: 600; line-height: 1.5; }
+@media (prefers-reduced-motion: reduce) { .deck-fable .res-tile, .deck-fable .res-tile__arrow { transition: none; } }

@@ -3,7 +3,7 @@
    - card-check   : 아이디어 카드 다듬기 (눌러서 체크, 이 브라우저에만)
    - my-card      : 슬라이드 위에서 카드 빈칸을 바로 채우고 등록 (문장이 저절로 완성)
    - card-board   : 우리 반 도전과제 보드 (모델별 거르기, 누르면 크게)
-   - idea-gallery : 수업 아이디어 = 예전 도전과제 7가지 (누르면 자세히, 내 도전과제로 가져오기)
+   - idea-gallery : 도전과제 예시 7가지 = 원래 오늘 하려다 접은 도전과제 (PART 5 덤. 누르면 자세히, 내 도전과제로 가져오기)
    데이터: 서버의 카드 탭(한 사람에 한 장). 제출물은 카드와 이름으로 이어집니다.
    ========================================================= */
 window.MK = window.MK || {};
@@ -102,7 +102,7 @@ window.MK = window.MK || {};
     return v;
   }
   function paintReady() {
-    var v = submitDraft() || (MK.state && MK.state.mySubmission ? MK.state.mySubmission(st()) : null) || {};
+    var v = submitDraft() || (MK.subDraft ? MK.subDraft() : null) || (MK.state && MK.state.mySubmission ? MK.state.mySubmission(st()) : null) || {}; // 열린 창 → 저장된 초안 → 제출한 것
     $$('[data-widget="submit-ready"] li').forEach(function (li) { li.classList.toggle('is-done', readyOk(li.getAttribute('data-need'), v)); });
   }
   MK.widgets['submit-ready'] = function () { paintReady(); };
@@ -126,8 +126,8 @@ window.MK = window.MK || {};
       '<div class="mc">' +
         '<div class="mc-card">' +
           '<div class="mc-title"><span class="mc-k">작품 이름</span><input class="mc-title__in" data-k="title" maxlength="30" placeholder="예: 손 대신 들어 주는 도움 깃발" autocomplete="off" spellcheck="false"></div>' +
-          '<div class="mc-sec"><span class="mc-k">① 문장 틀</span>' +
-            '<p class="mc-frame">' + blankIn('situation', '○○한 상황', 'purple', 40) + '에서 ' + blankIn('who', '○○이', 'yellow', 20) + '<span class="mc-josa" data-josa="who">가</span> 겪는 불편을 줄이기 위해, ' +
+          '<div class="mc-sec"><div class="mc-sec__h"><span class="mc-k">① 문장 틀</span><span class="mc-genres" role="group" aria-label="작품 종류"><button type="button" class="mc-genre" data-mc-genre="fix">문제 해결 작품</button><button type="button" class="mc-genre" data-mc-genre="show">표현·놀이 작품</button></span></div>' +
+            '<p class="mc-frame">' + blankIn('situation', '○○한 상황', 'purple', 40) + '에서 <span class="mc-who">' + blankIn('who', '○○이', 'yellow', 20) + '<span class="mc-josa" data-josa="who">가</span> 겪는 불편을 줄이기 위해,</span> ' +
               'AI가 ' + blankIn('sense', '○', 'blue', 30) + '<span class="mc-josa" data-josa="sense">을</span> 인식하면 서보모터가 ' + blankIn('act', '○○하도록', 'green', 30) + ' 만든다.</p></div>' +
           '<div class="mc-sec mc-row"><span class="mc-k">② 쓸 AI 모델</span><span class="mc-models">' + (MK.cardModels || []).map(function (k) {
             var cat = MK.categories[k];
@@ -143,7 +143,7 @@ window.MK = window.MK || {};
           '<button type="button" class="btn btn--green mc-save" data-mc-save>' + ic('check') + ' 내 도전과제 등록</button>' +
           '<div class="mc-preview"><div class="mc-k">완성된 문장</div><p data-mc-preview></p></div>' +
           '<div class="mc-from" data-mc-from></div>' +
-          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-goto="s-draw">' + ic('spark') + ' 카드 뽑기</button><button type="button" class="btn btn--ghost btn--sm" data-mc-import>' + ic('bulb') + ' 수업 아이디어에서 가져오기</button>' +
+          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-goto="s-draw">' + ic('spark') + ' 카드 뽑기</button><button type="button" class="btn btn--ghost btn--sm" data-mc-import>' + ic('bulb') + ' 도전과제 예시에서 가져오기</button>' +
             '<button type="button" class="btn btn--ghost btn--sm" data-goto="s-cardboard">우리 반 도전과제 보기 ' + ic('right') + '</button></div>' +
         '</div>' +
       '</div>';
@@ -166,6 +166,7 @@ window.MK = window.MK || {};
     var v = {}; if (!form.el) return v;
     $$('[data-k]', form.el).forEach(function (i) { v[i.getAttribute('data-k')] = i.value.trim(); });
     var on = $('.mc-model.is-on', form.el); v.model = on ? on.getAttribute('data-mc-model') : '';
+    v.genre = form.genre || 'fix'; if (v.genre === 'show') v.who = ''; // 표현·놀이 작품: ‘누가 겪는 불편’ 없이
     v.from = form.from || '';
     return v;
   }
@@ -175,9 +176,16 @@ window.MK = window.MK || {};
     $$('[data-k]', form.el).forEach(function (i) { i.value = v[i.getAttribute('data-k')] || ''; });
     $$('.mc-model', form.el).forEach(function (b) { var on = b.getAttribute('data-mc-model') === v.model; b.classList.toggle('is-on', on); b.classList.toggle('tag--solid', on); b.setAttribute('aria-pressed', on); });
     form.from = v.from || '';
+    form.genre = v.genre || (v.who || !(v.title || v.sense || v.act) ? 'fix' : 'show');
+    paintGenre();
     form.dirty = !!dirty;
     form.owner = me() ? me().name : null;
     live();
+  }
+  function paintGenre() {
+    var root = form.el && $('.mc', form.el); if (!root) return;
+    root.classList.toggle('is-show', form.genre === 'show');
+    $$('.mc-genre', form.el).forEach(function (b) { var on = b.getAttribute('data-mc-genre') === form.genre; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
   }
   // 빈칸 너비를 글자에 맞추고, 조사와 완성 문장을 바로 바꿈
   var measurer = null;
@@ -197,7 +205,7 @@ window.MK = window.MK || {};
     if (js) js.textContent = v.sense ? eulReul(v.sense) : '을';
     var p = $('[data-mc-preview]', form.el); if (p) p.textContent = MK.cardSentence(v);
     var fr = $('[data-mc-from]', form.el), ch = v.from && MK.challengeById(v.from);
-    if (fr) fr.innerHTML = ch ? '<span class="mc-k">가져온 수업 아이디어</span> ' + esc(ch.title) + ' · <span class="t-muted">' + esc(ch.question) + '</span> <button type="button" class="linkish" data-mc-unfrom>빼기</button>' : '';
+    if (fr) fr.innerHTML = ch ? '<span class="mc-k">가져온 도전과제 예시</span> ' + esc(ch.title) + ' · <span class="t-muted">' + esc(ch.question) + '</span> <button type="button" class="linkish" data-mc-unfrom>빼기</button>' : '';
   }
   function paintStatus() {
     if (!form.el) return;
@@ -236,6 +244,12 @@ window.MK = window.MK || {};
   });
   document.addEventListener('click', function (e) {
     var t = e.target;
+    var gb = t.closest('.mc-genre');
+    if (gb && form.el && form.el.contains(gb)) {
+      form.genre = gb.getAttribute('data-mc-genre'); paintGenre();
+      form.dirty = true; live(); paintStatus(); var gv = values(); gv.at = Date.now(); gv.owner = me() ? me().name : ''; writeDraft(gv);
+      return;
+    }
     var mb = t.closest('.mc-model');
     if (mb && form.el && form.el.contains(mb)) {
       $$('.mc-model', form.el).forEach(function (b) { var on = b === mb; b.classList.toggle('is-on', on); b.classList.toggle('tag--solid', on); b.setAttribute('aria-pressed', on); });
@@ -255,7 +269,7 @@ window.MK = window.MK || {};
     paintStatus();
   });
 
-  /* 수업 아이디어에서 가져오기 */
+  /* 도전과제 예시에서 가져오기 */
   function fromIdea(id) {
     var c = MK.challengeById(id); if (!c) return;
     var cur = values();
@@ -276,13 +290,23 @@ window.MK = window.MK || {};
     paintStatus();
     return true;
   }
+  /* 다른 부품(움직임 고르기 등)이 카드 빈칸 일부를 채울 때 */
+  MK.cardValues = function () { return values(); };
+  MK.cardPatch = function (patch) {
+    if (!form.el) return false;
+    var v = Object.assign({}, values(), patch || {});
+    fill(v, true);
+    var w = values(); w.at = Date.now(); w.owner = me() ? me().name : ''; writeDraft(w);
+    paintStatus();
+    return true;
+  };
   document.addEventListener('click', function (e) {
     if (!e.target.closest('[data-draw-use]') || editing()) return;
     if (fromDraw()) { MK.deck.goto('s-mycard'); MK.ui.toast('뽑은 카드를 넣었어요. 작품 이름과 ‘누가’를 채워 주세요.'); }
   });
 
   function pickIdea() {
-    var h = '<div class="modal__kicker">수업 아이디어에서 가져오기</div><h3 class="modal__title">어떤 아이디어로 시작할까요?</h3>' +
+    var h = '<div class="modal__kicker">도전과제 예시에서 가져오기</div><h3 class="modal__title">어떤 아이디어로 시작할까요?</h3>' +
       '<p class="modal__desc">작품 이름과 AI 모델을 채워 드립니다. 문장 틀은 <b>내 상황에 맞게</b> 직접 채워 주세요.</p><div class="cd-pick">' +
       MK.challenges.map(function (c) {
         var cat = MK.catOf(c);
@@ -317,7 +341,7 @@ window.MK = window.MK || {};
       '<span class="cb-bar__sp"></span><span class="cb-bar__n">' + ic('users') + ' 등록 ' + all.filter(function (c) { return !c.hidden; }).length + '명 · 제출 ' + all.filter(function (c) { return subBy[c.name]; }).length + '명</span></div>';
     if (!list.length) {
       h += '<div class="cb-empty dashed"><div class="t-lg">' + (all.length ? '이 모델로 등록한 도전과제가 없어요.' : '아직 등록한 도전과제가 없어요.') + '</div>' +
-        '<div class="t-sm t-muted">앞 쪽 「내 도전과제 등록」에서 아이디어 카드를 옮겨 적으면 여기에 바로 나타납니다.</div><button class="btn btn--sm" data-goto="s-mycard">' + ic('edit') + ' 내 도전과제 등록하러 가기</button></div>';
+        '<div class="t-sm t-muted">앞 쪽 「내 도전과제 정하기」에서 네 칸을 채워 등록하면 여기에 바로 나타납니다.</div><button class="btn btn--sm" data-goto="s-mycard">' + ic('edit') + ' 내 도전과제 등록하러 가기</button></div>';
     } else {
       h += '<div class="cb-grid">' + list.map(function (c) {
         var cat = catOf(c.model), mine = m && c.name === m.name, sub = subBy[c.name];
@@ -336,7 +360,7 @@ window.MK = window.MK || {};
     return '<div class="modal__kicker">' + esc(c.name) + (c.team ? ' · 함께: ' + esc(c.team) : '') + ' 선생님의 도전과제</div>' +
       '<h3 class="modal__title">' + esc(c.title) + '</h3>' +
       '<div class="cd-tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.model) + '</span>' + (sub ? '<span class="tag c-green">' + ic('check') + ' 제출 완료</span>' : '<span class="tag">만드는 중</span>') + (from ? '<span class="tag c-yellow">수업 아이디어: ' + esc(from.title) + '</span>' : '') + '</div>' +
-      '<div class="cd-sentence">' + esc(MK.cardSentence(c)) + '</div>' +
+      '<div class="cd-sentence">' + esc(MK.cardIntro ? MK.cardIntro(c) : MK.cardSentence(c)) + '</div>' +
       '<dl class="cd-servo"><div><dt><span class="pin">P0</span> 서보 1</dt><dd>' + (c.servo1 ? esc(c.servo1) : '<span class="t-muted">비어 있음</span>') + '</dd></div>' +
         '<div><dt><span class="pin">P1</span> 서보 2</dt><dd>' + (c.servo2 ? esc(c.servo2) : '<span class="t-muted">비어 있음</span>') + '</dd></div></dl>' +
       (sub ? '<div class="cd-sub"><b>제출한 결과물</b> · ' + esc(sub.title) + (MK.isHttpUrl(sub.videoUrl) ? ' · <a class="link" href="' + esc(sub.videoUrl) + '" target="_blank" rel="noopener">영상 ↗</a>' : '') + (sub.makecodeUrl ? ' · <a class="link" href="' + esc(sub.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode ↗</a>' : '') + '</div>' : '');
@@ -368,7 +392,7 @@ window.MK = window.MK || {};
   });
 
   /* =========================================================
-     4. 수업 아이디어 갤러리 (예전 도전과제 7가지)
+     4. 도전과제 예시 갤러리 (PART 5 덤)
      ========================================================= */
   var galFilter = null;
   MK.widgets['idea-gallery'] = function (el) {
@@ -384,7 +408,7 @@ window.MK = window.MK || {};
         '<div class="ch-card__title">' + esc(c.title) + '</div><div class="ig-q">' + esc(c.question) + '</div></div></button>';
     });
     h += '<div class="dashed ig-note"><div class="t-lg" style="font-size:23px">카드를 누르면<br>자세히 볼 수 있어요.</div>' +
-      '<div class="t-sm t-muted" style="font-size:19px;line-height:1.45">학교에서는 이 7가지를<br>도전과제로 그대로 써도 되고,<br>아이디어 카드가 막힌 학생의<br>출발점으로 써도 됩니다.</div></div>';
+      '<div class="t-sm t-muted" style="font-size:19px;line-height:1.45">원래 오늘 연수에서<br>해 보려다 접은 과제입니다.<br>초등학생과 해 봐도<br>좋을 것 같아 남겨 둡니다.</div></div>';
     el.innerHTML = h + '</div>';
   };
   function openIdea(id) {
@@ -392,13 +416,14 @@ window.MK = window.MK || {};
     var cat = MK.catOf(c), guide = MK.guideUrl(c.ref);
     var sec = function (icon, color, t, body) { return '<div class="ig-sec"><div class="ig-sec__h"><span class="circle circle--sm c-' + color + '">' + ic(icon) + '</span>' + t + '</div><div class="ig-sec__b">' + body + '</div></div>'; };
     var d = modal(
-      '<div class="modal__kicker">수업 아이디어 · ' + esc(c.category) + '</div><h3 class="modal__title">' + esc(c.title) + '</h3>' +
+      '<div class="modal__kicker">도전과제 예시 · ' + esc(c.category) + '</div><h3 class="modal__title">' + esc(c.title) + '</h3>' +
       '<p class="modal__desc" style="font-size:16px;color:var(--navy);font-weight:700">' + esc(c.question) + '</p>' +
       '<div class="ig-detail"><div class="ig-photo" style="background-image:url(' + MK.challengeImage(c.id) + ')"></div><div class="ig-secs">' +
         sec('doc', 'blue', '문제 상황', esc(c.problem).replace(/\n/g, '<br>')) +
         sec('flag', 'purple', '성공 기준', esc(c.success)) +
         sec('gear', 'green', '준비물', esc(c.materials)) +
         (c.start ? sec('bulb', 'yellow', '이렇게 시작해 보세요', c.start) : '') +
+        ((MK.challengeLinks || {})[c.id] ? sec('book', 'sky', '교과와 잇기', '<b>' + esc(MK.challengeLinks[c.id][0]) + '</b> · ' + esc(MK.challengeLinks[c.id][1])) : '') +
       '</div></div>' +
       '<div class="ig-links">' + (cat.app ? '<a class="link" href="' + cat.app + '" target="_blank" rel="noopener">' + esc(cat.model) + ' 웹앱 ↗</a>' : '') + (guide ? '<a class="link" href="' + guide + '" target="_blank" rel="noopener">모델 안내 ↗</a>' : '') + '</div>' +
       '<div class="modal__actions"><button type="button" class="ubtn ubtn--ghost" data-ig-close>닫기</button><button type="button" class="ubtn" data-ig-use>' + ic('edit') + ' 이 아이디어로 내 도전과제 쓰기</button></div>', true);

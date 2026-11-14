@@ -93,7 +93,7 @@ window.MK = window.MK || {};
       var cards = (st.cards || []).slice().sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
       var subBy = {}; st.submissions.forEach(function (x) { subBy[x.name] = x; });
       if (MK.store.isShared && MK.store.loaded && !MK.store.supports('cards')) h += '<div class="admin__notice"><b>서버 코드가 예전 버전</b>이라 내 도전과제(아이디어 카드) 등록이 꺼져 있어요. <b>backend/Code.gs</b>를 새로 붙여 넣고 <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</div>';
-      h += '<p class="small">연수생이 「내 도전과제 등록」에서 올린 아이디어 카드 ' + cards.length + '장 · 제출 ' + cards.filter(function (c) { return subBy[c.name]; }).length + '명. 숨긴 카드는 연수생 보드에 보이지 않습니다.</p>';
+      h += '<p class="small">연수생이 「내 도전과제 정하기」에서 올린 도전과제 카드 ' + cards.length + '장 · 제출 ' + cards.filter(function (c) { return subBy[c.name]; }).length + '명. 숨긴 카드는 연수생 보드에 보이지 않습니다.</p>';
       (MK.cardModels || []).forEach(function (k) {
         var cat = MK.categories[k], list = cards.filter(function (c) { return c.model === k; });
         h += '<h4 class="c-' + cat.color + '" style="display:flex;align-items:center;gap:8px"><span class="cat-dot"></span>' + esc(k) + ' · ' + list.length + '장</h4>';
@@ -170,7 +170,7 @@ window.MK = window.MK || {};
     }
 
     if (tab === 'data') {
-      h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">신청·제출 기록을 파일로 저장합니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
+      h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">도전과제·제출 기록을 파일로 저장합니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
       h += '<div class="acard"><div class="acard__title">가져오기</div><div class="acard__meta">이 교안에서 내보낸 JSON을 불러옵니다. 지금 데이터는 덮어씁니다.</div><div class="acard__row"><input type="file" accept="application/json,.json" data-import style="font-size:13px"></div></div>';
       h += '<div class="acard"><div class="acard__title">샘플 결과물</div><div class="acard__meta">샘플 아이디어 카드와 결과물 6개를 넣어 보드와 발표 슬라이드를 미리 봅니다. "샘플" 표시가 붙습니다.</div><div class="acard__row"><button class="ubtn ubtn--sm" data-seed>샘플 넣기</button><button class="ubtn ubtn--sm ubtn--ghost" data-unseed>샘플 지우기</button></div></div>';
       h += '<div class="acard"><div class="acard__title">전체 초기화</div><div class="acard__meta">내 도전과제(카드)·제출·신청 기록, 도움 요청·하트·수업 아이디어·타이머를 모두 지웁니다. 되돌릴 수 없으니 먼저 내보내기를 하세요.</div><div class="acard__row"><button class="ubtn ubtn--sm ubtn--danger" data-reset>' + ic('trash') + ' 초기화</button></div></div>';
@@ -199,11 +199,11 @@ window.MK = window.MK || {};
     else if (t.hasAttribute('data-show-go')) { MK.deck.refresh(true); MK.deck.goto('s-show'); MK.admin.close(); }
     else if (t.hasAttribute('data-shuffle')) { /* interact.js가 처리 */ }
     else if (t.hasAttribute('data-export-html')) MK.showcase.exportHtml().then(ok('발표 파일을 저장했어요.'), bad);
-    else if (t.hasAttribute('data-export-json')) MK.store.exportAll().then(function (data) { download('신청제출-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json'); }, bad);
-    else if (t.hasAttribute('data-export-csv')) MK.store.exportAll().then(function (data) { download('신청제출-' + today() + '.csv', '﻿' + toCsv(data), 'text/csv'); }, bad);
+    else if (t.hasAttribute('data-export-json')) MK.store.exportAll().then(function (data) { download('연수기록-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json'); }, bad);
+    else if (t.hasAttribute('data-export-csv')) MK.store.exportAll().then(function (data) { download('연수기록-' + today() + '.csv', '﻿' + toCsv(data), 'text/csv'); }, bad);
     else if (t.hasAttribute('data-seed')) MK.store.seedSamples().then(ok('샘플 6개를 넣었어요.'), bad);
     else if (t.hasAttribute('data-unseed')) MK.store.clearSamples().then(ok('샘플을 지웠어요.'), bad);
-    else if (t.hasAttribute('data-reset')) MK.ui.confirm({ title: '전체 초기화', desc: '모든 신청·제출·정원 설정을 지웁니다. 계속하려면 <b>초기화</b>라고 적어 주세요.', okText: '모두 지우기', danger: true, fields: [{ name: 'word', label: '확인 글자', placeholder: '초기화' }] })
+    else if (t.hasAttribute('data-reset')) MK.ui.confirm({ title: '전체 초기화', desc: '모든 도전과제·제출 기록과 설정을 지웁니다. 계속하려면 <b>초기화</b>라고 적어 주세요.', okText: '모두 지우기', danger: true, fields: [{ name: 'word', label: '확인 글자', placeholder: '초기화' }] })
       .then(function (v) { if (!v) return; if (v.word !== '초기화') return MK.ui.toast('확인 글자가 달라서 취소했어요.', true); MK.store.reset().then(ok('초기화했어요.'), bad); });
   }
   function onChange(e) {
