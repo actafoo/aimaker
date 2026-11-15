@@ -6,10 +6,10 @@
 <title>7~8차시 · 피지컬 AI 작품 설계</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=fc2b36a722">
-<link rel="stylesheet" href="assets/css/components.css?v=fc2b36a722">
-<link rel="stylesheet" href="assets/css/deck.css?v=fc2b36a722">
-<link rel="stylesheet" href="assets/css/ui.css?v=fc2b36a722">
+<link rel="stylesheet" href="assets/css/tokens.css?v=7e56412b56">
+<link rel="stylesheet" href="assets/css/components.css?v=7e56412b56">
+<link rel="stylesheet" href="assets/css/deck.css?v=7e56412b56">
+<link rel="stylesheet" href="assets/css/ui.css?v=7e56412b56">
 </head>
 <body class="deck-page">
 
@@ -188,7 +188,7 @@
     <div class="tools4">
       <div class="tool c-blue"><span class="circle"><svg class="i"><use href="#i-cpu"></use></svg></span><div class="tool__name">마이크로비트와 링비트</div><div class="tool__desc">판단하고, 서보에 전원을 준다</div></div>
       <div class="tool c-green"><span class="circle"><svg class="i"><use href="#i-gear"></use></svg></span><div class="tool__name">180° 서보모터 2개</div><div class="tool__desc">움직임은 이 두 개로만</div></div>
-      <div class="tool c-purple"><span class="circle"><svg class="i"><use href="#i-binoculars"></use></svg></span><div class="tool__name">바운더리엑스 AI</div><div class="tool__desc">핸드포즈·이미지·모션 중 하나</div></div>
+      <div class="tool c-purple"><span class="circle"><svg class="i"><use href="#i-binoculars"></use></svg></span><div class="tool__name">바운더리엑스 AI</div><div class="tool__desc">핸드포즈·이미지·음성·모션 중 하나</div></div>
       <div class="tool c-yellow"><span class="circle"><svg class="i"><use href="#i-scissors"></use></svg></span><div class="tool__name">골판지와 마스킹테이프</div><div class="tool__desc">빨리 만들고 쉽게 고친다</div></div>
     </div>
     <div class="fixopen">
@@ -207,7 +207,7 @@
     <div class="steps map5">
       <div class="step c-blue"><span class="step__num">1</span><div class="step__title">문제 상황</div><div class="step__text">누구의, 어떤 불편?</div></div>
       <div class="step c-blue"><span class="step__num">2</span><div class="step__title">도구 조건</div><div class="step__text">네 가지로만</div></div>
-      <div class="step c-yellow is-here"><span class="step__num">3</span><span class="now-tag">지금 여기</span><div class="step__title">도구 익히기</div><div class="step__text">서보 2개와 AI 3종</div></div>
+      <div class="step c-yellow is-here"><span class="step__num">3</span><span class="now-tag">지금 여기</span><div class="step__title">도구 익히기</div><div class="step__text">서보 2개와 AI 4종</div></div>
       <div class="step c-green"><span class="step__num">4</span><div class="step__title">주제 잡기</div><div class="step__text">아이디어 카드</div></div>
       <div class="step c-green"><span class="step__num">5</span><div class="step__title">만들기와 공유</div><div class="step__text">첫 모형, 고치기, 나누기</div></div>
     </div>
@@ -618,16 +618,16 @@
 
 <!-- ============ 4. 8차시 · 이미지분류와 모션인식 ============ -->
 
-<section class="slide slide--pixel" id="s-part4" data-section="4. 이미지·모션" data-title="PART 4 · 이미지분류와 모션인식">
+<section class="slide slide--pixel" id="s-part4" data-section="4. 이미지·음성·모션" data-title="PART 4 · 이미지분류·음성인식·모션인식">
   <div class="divider">
     <span class="divider__part">PART 4</span>
-    <h2 class="divider__title">이미지분류와 모션인식</h2>
+    <h2 class="divider__title" style="font-size:80px;white-space:nowrap">이미지분류 · 음성인식 · 모션인식</h2>
     <p class="divider__text">코드는 그대로 두고, 보는 눈만 바꿔 끼웁니다.</p>
     <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 8차시 · 15:00 ~ 15:50</div>
   </div>
 </section>
 
-<section class="slide slide--body" id="s-swap" data-section="4. 이미지·모션" data-title="코드는 그대로, AI만 바꿔 끼운다">
+<section class="slide slide--body" id="s-swap" data-section="4. 이미지·음성·모션" data-title="코드는 그대로, AI만 바꿔 끼운다">
   <div class="slide__head">
     <div class="slide__kicker">8차시 · KNN 이미지분류</div>
     <h2 class="slide__title">코드는 그대로, AI만 바꿔 끼운다</h2>
@@ -663,7 +663,7 @@
   </div>
 </section>
 
-<section class="slide slide--body" id="s-teach-img" data-section="4. 이미지·모션" data-title="물체 두 가지 가르치기">
+<section class="slide slide--body" id="s-teach-img" data-section="4. 이미지·음성·모션" data-title="물체 두 가지 가르치기">
   <div class="slide__head">
     <div class="slide__kicker">KNN 이미지분류</div>
     <h2 class="slide__title">물체 두 가지 가르치기</h2>
@@ -689,7 +689,7 @@
   </div>
 </section>
 
-<section class="slide slide--body" id="s-sorter" data-section="4. 이미지·모션" data-title="분류기로 상상해 보기">
+<section class="slide slide--body" id="s-sorter" data-section="4. 이미지·음성·모션" data-title="분류기로 상상해 보기">
   <div class="slide__head">
     <div class="slide__kicker">KNN 이미지분류</div>
     <h2 class="slide__title">분류기로 상상해 보기</h2>
@@ -708,7 +708,81 @@
   </div>
 </section>
 
-<section class="slide slide--body" id="s-motion" data-section="4. 이미지·모션" data-title="고르기 대신 따라 하기">
+<section class="slide slide--body" id="s-voice" data-section="4. 이미지·음성·모션" data-title="말로 움직이기: 배운 AI를 빌려 쓴다">
+  <div class="slide__head">
+    <div class="slide__kicker">8차시 · 음성인식</div>
+    <h2 class="slide__title">말로 움직이기: 배운 AI를 빌려 쓴다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="chain chain--sm chain--4">
+      <div class="card chain__node">
+        <span class="circle chain__ico c-purple"><svg class="i"><use href="#i-megaphone"></use></svg></span>
+        <div class="chain__step">① 말하기</div>
+        <div class="chain__name">“손 들어”</div>
+        <div class="chain__desc">버튼을 꾹 누른 채 말한다</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">
+        <div class="chain__step">② 글자로 바꾸기</div>
+        <div class="chain__name">음성인식 모델</div>
+        <div class="chain__desc">들은 말을 글자로 바꾼다</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div class="card card--soft chain__node c-yellow is-hot">
+        <span class="circle chain__ico c-yellow"><svg class="i"><use href="#i-list"></use></svg></span>
+        <div class="chain__step">③ 명령어 표</div>
+        <div class="chain__name">손 들어 → ID1</div>
+        <div class="chain__desc">등록한 말이 들어 있으면 짝지은 데이터를 보낸다</div>
+      </div>
+      <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+      <div class="card chain__node">
+        <img class="icon-badge" src="assets/img/icons/microbit.png" alt="">
+        <div class="chain__step">④ 마이크로비트</div>
+        <div class="chain__name">move 1</div>
+        <div class="chain__desc">7차시 기본 코드 그대로</div>
+      </div>
+    </div>
+    <div class="grid-2 mt-m" style="gap:24px">
+      <div class="card card--soft c-blue" style="padding:18px 26px"><div class="kk">KNN 핸드포즈·이미지분류</div><div class="t-lg" style="margin-top:4px">우리가 예시를 모아 가르친다</div><div class="t-sm" style="margin-top:2px">손 모양·물체마다 예시를 모아 학습</div></div>
+      <div class="card card--soft c-purple is-hot" style="padding:18px 26px"><div class="kk">음성인식</div><div class="t-lg" style="margin-top:4px">이미 배운 모델을 빌려 쓴다</div><div class="t-sm" style="margin-top:2px">우리는 ‘말 → 데이터’ 명령어 표만 만든다</div></div>
+    </div>
+    <div class="callout callout--sky c-row mt-m" style="padding:12px 26px">
+      <span class="circle circle--sm c-yellow"><svg class="i"><use href="#i-bulb"></use></svg></span>
+      <div style="font-size:25px"><b>말로 하면 좋은 때:</b> 손이 바쁠 때, 멀리 있을 때, 손을 쓰기 어려울 때</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-voice-go" data-section="4. 이미지·음성·모션" data-title="명령어 두 개로 서보 2개 움직이기">
+  <div class="slide__head">
+    <div class="slide__kicker">음성인식</div>
+    <h2 class="slide__title">명령어 두 개로 서보 2개 움직이기</h2>
+  </div>
+  <div class="slide__body">
+    <div class="grid-5">
+      <div class="numcard c-purple"><span class="numcard__n">1</span><div class="numcard__h">웹앱 열기</div><div class="numcard__t">음성인식 웹앱 접속, 마이크 허용</div></div>
+      <div class="numcard c-purple"><span class="numcard__n">2</span><div class="numcard__h">방식 고르기</div><div class="numcard__t">노트북·안드로이드는 Web Speech API</div></div>
+      <div class="numcard c-purple"><span class="numcard__n">3</span><div class="numcard__h">블루투스 연결</div><div class="numcard__t">‘기기 연결’에서 내 장치 이름 선택</div></div>
+      <div class="numcard c-purple"><span class="numcard__n">4</span><div class="numcard__h">명령어 추가</div><div class="numcard__t">말과 데이터를 두 쌍 등록(아래)</div></div>
+      <div class="numcard c-purple"><span class="numcard__n">5</span><div class="numcard__h">말하기</div><div class="numcard__t">버튼을 꾹 누른 채 말하고 손 떼기</div></div>
+    </div>
+    <div class="vcmd mt-m">
+      <div class="vcmd__k">명령어 추가</div>
+      <div class="vcmd__pair"><span class="vcmd__say">손 들어</span><span class="vcmd__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span class="vcmd__data">ID1</span></div>
+      <div class="vcmd__pair"><span class="vcmd__say">손 내려</span><span class="vcmd__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span class="vcmd__data">ID2</span></div>
+      <div class="vcmd__note">데이터를 <b>ID1·ID2</b>로 적으면 <b class="t-blue">코드는 그대로</b></div>
+    </div>
+    <div class="grid-3 mt-m" style="gap:20px">
+      <div class="card" style="padding:16px 24px"><div class="kk">잘 알아듣게</div><div class="t-sm">짧고 서로 다른 말로, 마이크 가까이에서</div></div>
+      <div class="card" style="padding:16px 24px"><div class="kk">안 움직이면</div><div class="t-sm">‘인식 결과’에 등록한 말이 들어 있는지 확인</div></div>
+      <div class="card card--soft c-yellow" style="padding:16px 24px"><div class="kk">저장해 두기</div><div class="t-sm">“엑셀 내보내기” → 9~10차시에 “엑셀 불러오기”</div></div>
+    </div>
+    <p class="src mt-s">웹앱: <a class="link" href="https://boundary-x.github.io/voice_recogntion_ondevice/" target="_blank" rel="noopener">boundary-x.github.io/voice_recogntion_ondevice ↗</a></p>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-motion" data-section="4. 이미지·음성·모션" data-title="고르기 대신 따라 하기">
   <div class="slide__head">
     <div class="slide__kicker">8차시 · 모션인식</div>
     <h2 class="slide__title">고르기 대신 따라 하기</h2>
@@ -716,7 +790,7 @@
   <div class="slide__body">
     <div class="motion">
       <div class="col" style="gap:18px">
-        <div class="card card--soft c-blue"><div class="kk">분류 · 핸드포즈와 이미지</div><div class="t-xl" style="margin-top:4px">스위치</div><div class="t-sm" style="margin-top:4px">무엇인지 골라 ID를 보낸다</div></div>
+        <div class="card card--soft c-blue"><div class="kk">분류 · 핸드포즈·이미지·음성</div><div class="t-xl" style="margin-top:4px">스위치</div><div class="t-sm" style="margin-top:4px">무엇인지 골라 ID를 보낸다</div></div>
         <div class="card card--soft c-purple is-hot"><div class="kk">모션인식</div><div class="t-xl" style="margin-top:4px">조이스틱</div><div class="t-sm" style="margin-top:4px">양손의 높이를 계속 보낸다</div></div>
         <div class="t-md" style="font-weight:600;color:var(--navy)"><b>왼손</b> → 첫 번째 서보(P0), <b>오른손</b> → 두 번째 서보(P1)</div>
         <p class="src">보내는 값 예: <span class="mono">LF255RB150</span> (왼쪽 앞으로 255, 오른쪽 뒤로 150)</p>
@@ -730,7 +804,7 @@
   </div>
 </section>
 
-<section class="slide slide--body" id="s-motion-go" data-section="4. 이미지·모션" data-title="예제 코드 불러오고 연결하기">
+<section class="slide slide--body" id="s-motion-go" data-section="4. 이미지·음성·모션" data-title="예제 코드 불러오고 연결하기">
   <div class="slide__head">
     <div class="slide__kicker">모션인식</div>
     <h2 class="slide__title">예제 코드 불러오고 연결하기</h2>
@@ -764,7 +838,7 @@
   </div>
 </section>
 
-<section class="slide slide--body" id="s-motion-try" data-section="4. 이미지·모션" data-title="두 손으로 조종해 보기">
+<section class="slide slide--body" id="s-motion-try" data-section="4. 이미지·음성·모션" data-title="두 손으로 조종해 보기">
   <div class="slide__head">
     <div class="slide__kicker">모션인식</div>
     <h2 class="slide__title">두 손으로 조종해 보기</h2>
@@ -783,30 +857,31 @@
       <span class="circle"><svg class="i"><use href="#i-hand"></use></svg></span>
       <div><div class="motto__h">‘무엇을’이 아니라 <em>‘얼마나’</em>를 손으로 정한다</div><div class="motto__t">어울리는 작품: 손을 대지 않는 로봇팔, 손짓에 반응하는 조형물 (바운더리엑스 예시)</div></div>
     </div>
-    <div class="c-row mt-s"><span class="circle circle--sm c-yellow"><svg class="i"><use href="#i-alert"></use></svg></span><div class="t-sm" style="font-weight:700;color:var(--navy)">9~10차시에 핸드포즈·이미지분류로 만들려면 7차시 기본 코드를 다시 보내세요.</div></div>
+    <div class="c-row mt-s"><span class="circle circle--sm c-yellow"><svg class="i"><use href="#i-alert"></use></svg></span><div class="t-sm" style="font-weight:700;color:var(--navy)">9~10차시에 핸드포즈·이미지분류·음성인식으로 만들려면 7차시 기본 코드를 다시 보내세요.</div></div>
   </div>
 </section>
 
-<section class="slide slide--body" id="s-compare" data-section="4. 이미지·모션" data-title="세 모델 한눈에 비교">
+<section class="slide slide--body" id="s-compare" data-section="4. 이미지·음성·모션" data-title="네 모델 한눈에 비교">
   <div class="slide__head">
-    <div class="slide__kicker">8차시 · 세 모델 비교</div>
-    <h2 class="slide__title">세 모델 한눈에 비교</h2>
+    <div class="slide__kicker">8차시 · 네 모델 비교</div>
+    <h2 class="slide__title">네 모델 한눈에 비교</h2>
   </div>
-  <div class="slide__body">
-    <table class="table cmp3">
-      <thead><tr><th>구분</th><th>KNN 핸드포즈분류</th><th>KNN 이미지분류</th><th>모션인식</th></tr></thead>
+  <div class="slide__body" style="top:250px;bottom:150px">
+    <table class="table cmp4">
+      <thead><tr><th>구분</th><th>KNN 핸드포즈분류</th><th>KNN 이미지분류</th><th>음성인식</th><th>모션인식</th></tr></thead>
       <tbody>
-        <tr><td>보는 것</td><td>손 모양</td><td>물체</td><td>양손의 높이</td></tr>
-        <tr><td>보내는 값</td><td>ID1, ID2 …</td><td>ID1, ID2 …</td><td><span class="mono">LF255RB150</span> (10글자)</td></tr>
-        <tr><td>서보 움직임</td><td>정해 둔 동작(스위치)</td><td>정해 둔 동작(스위치)</td><td>손을 따라 계속(조이스틱)</td></tr>
-        <tr><td>어울리는 문제</td><td>몸짓으로 신호 보내기</td><td>보고 나누기</td><td>손 대지 않고 조종하기</td></tr>
-        <tr><td>마이크로비트 코드</td><td>7차시 기본 코드</td><td>7차시 기본 코드(그대로)</td><td>180° 서보용 예제 코드</td></tr>
-        <tr><td>권장 기기</td><td>스마트폰·태블릿</td><td>스마트폰·태블릿·노트북</td><td>노트북·태블릿</td></tr>
+        <tr><td>알아보는 것</td><td>손 모양</td><td>물체</td><td>말</td><td>양손의 높이</td></tr>
+        <tr><td>학습</td><td>예시를 모아 직접</td><td>예시를 모아 직접</td><td>이미 학습된 모델</td><td>이미 학습된 모델</td></tr>
+        <tr><td>보내는 값</td><td>ID1, ID2 …</td><td>ID1, ID2 …</td><td>명령어 표의 값(ID1 …)</td><td><span class="mono">LF255RB150</span> (10글자)</td></tr>
+        <tr><td>서보 움직임</td><td>정해 둔 동작(스위치)</td><td>정해 둔 동작(스위치)</td><td>정해 둔 동작(스위치)</td><td>손 따라 계속(조이스틱)</td></tr>
+        <tr><td>어울리는 문제</td><td>몸짓으로 신호 보내기</td><td>보고 나누기</td><td>말로 명령하기</td><td>손 대지 않고 조종하기</td></tr>
+        <tr><td>마이크로비트 코드</td><td>7차시 기본 코드</td><td>7차시 코드 그대로</td><td>7차시 코드 그대로</td><td>180° 서보 예제 코드</td></tr>
+        <tr><td>권장 기기</td><td>스마트폰·태블릿</td><td>스마트폰·태블릿·노트북</td><td>노트북·안드로이드 폰</td><td>노트북·태블릿</td></tr>
       </tbody>
     </table>
-    <div class="callout callout--sky c-row mt-m" style="padding:14px 28px">
+    <div class="callout callout--sky c-row mt-m" style="padding:12px 26px">
       <span class="circle circle--sm c-yellow"><svg class="i"><use href="#i-target"></use></svg></span>
-      <div style="font-size:25px">고르는 기준: 몸짓으로 신호 → <b class="t-blue">핸드포즈</b> · 보고 나누기 → <b class="t-blue">이미지분류</b> · 얼마나 움직일지 → <b class="t-blue">모션인식</b></div>
+      <div style="font-size:23px">고르는 기준: 몸짓 신호 → <b class="t-blue">핸드포즈</b> · 보고 나누기 → <b class="t-blue">이미지분류</b> · 말로 명령 → <b class="t-blue">음성인식</b> · 얼마나 움직일지 → <b class="t-blue">모션인식</b></div>
     </div>
   </div>
 </section>
@@ -863,7 +938,7 @@
   </div>
   <div class="slide__body">
     <div class="kcards">
-      <div class="kcard c-blue"><span class="dcard__kind"><svg class="i"><use href="#i-binoculars"></use></svg> 지능 카드 · 입력</span><div class="kcard__h">AI가 무엇을 알아보나</div><div class="kcard__t">예: 손 모양 · 물체 · 손 높이</div></div>
+      <div class="kcard c-blue"><span class="dcard__kind"><svg class="i"><use href="#i-binoculars"></use></svg> 지능 카드 · 입력</span><div class="kcard__h">AI가 무엇을 알아보나</div><div class="kcard__t">예: 손 모양 · 물체 · 말 · 손 높이</div></div>
       <div class="kcard c-green"><span class="dcard__kind"><svg class="i"><use href="#i-move"></use></svg> 기능 카드 · 출력</span><div class="kcard__h">로봇이 어떻게 움직이나</div><div class="kcard__t">예: 들어 올리기 · 열고 닫기 · 가리키기</div></div>
       <div class="kcard c-purple"><span class="dcard__kind"><svg class="i"><use href="#i-home"></use></svg> 상황 카드 · 환경</span><div class="kcard__h">어디에서 쓰이나</div><div class="kcard__t">예: 교실 · 급식실 · 복도</div></div>
     </div>
@@ -897,7 +972,7 @@
         <div class="icard__k">① 문장 틀</div>
         <div class="icard__line"></div>
         <div class="icard__k">② 쓸 AI 모델</div>
-        <div class="icard__opts"><span>핸드포즈</span><span>이미지분류</span><span>모션인식</span></div>
+        <div class="icard__opts"><span>핸드포즈</span><span>이미지분류</span><span>음성인식</span><span>모션인식</span></div>
         <div class="icard__k">③ 서보가 하는 일</div>
         <div class="icard__sv"><span>서보 1</span><i class="icard__line"></i></div>
         <div class="icard__sv"><span>서보 2</span><i class="icard__line"></i></div>
@@ -928,9 +1003,9 @@
     <div class="chain">
       <div class="card chain__node c-blue">
         <img class="icon-badge" src="assets/img/icons/ai-chip.png" alt="">
-        <div class="chain__step">① 보는 눈</div>
-        <div class="chain__name">AI 웹앱 3종</div>
-        <div class="chain__desc">핸드포즈 · 이미지분류 · 모션인식</div>
+        <div class="chain__step">① 인식</div>
+        <div class="chain__name">AI 웹앱 4종</div>
+        <div class="chain__desc">핸드포즈 · 이미지<br>음성 · 모션</div>
       </div>
       <div class="chain__arrow"><svg viewBox="0 0 80 40"><path d="M4 20h64M56 8l14 12-14 12" fill="none" stroke="#0B1F55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>블루투스</div>
       <div class="card chain__node">
@@ -974,21 +1049,21 @@
 
 <div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
 
-<script src="assets/js/config.js?v=fc2b36a722"></script>
+<script src="assets/js/config.js?v=7e56412b56"></script>
 <script>
   /* 이 교안만의 값: 꼬리말, 마지막으로 본 쪽 기억, 신청 기능 없음 (나머지는 config.js 그대로) */
   MK.page = { session: '7~8차시', title: '링비트와 바운더리 AI를 활용한 문제해결 작품 설계', key: 'mk78', enroll: false };
 </script>
-<script src="assets/js/icons.js?v=fc2b36a722"></script>
-<script src="assets/js/challenges.js?v=fc2b36a722"></script>
-<script src="assets/js/store.js?v=fc2b36a722"></script>
-<script src="assets/js/deck.js?v=fc2b36a722"></script>
-<script src="assets/js/widgets.js?v=fc2b36a722"></script>
-<script src="assets/js/showcase.js?v=fc2b36a722"></script>
-<script src="assets/js/interact.js?v=fc2b36a722"></script>
-<script src="assets/js/admin.js?v=fc2b36a722"></script>
-<script src="assets/js/editor.js?v=fc2b36a722"></script>
-<script src="assets/js/review.js?v=fc2b36a722"></script>
-<script src="assets/js/app.js?v=fc2b36a722"></script>
+<script src="assets/js/icons.js?v=7e56412b56"></script>
+<script src="assets/js/challenges.js?v=7e56412b56"></script>
+<script src="assets/js/store.js?v=7e56412b56"></script>
+<script src="assets/js/deck.js?v=7e56412b56"></script>
+<script src="assets/js/widgets.js?v=7e56412b56"></script>
+<script src="assets/js/showcase.js?v=7e56412b56"></script>
+<script src="assets/js/interact.js?v=7e56412b56"></script>
+<script src="assets/js/admin.js?v=7e56412b56"></script>
+<script src="assets/js/editor.js?v=7e56412b56"></script>
+<script src="assets/js/review.js?v=7e56412b56"></script>
+<script src="assets/js/app.js?v=7e56412b56"></script>
 </body>
 </html>

@@ -1377,3 +1377,34 @@ a.buy-shop:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11,
 .tv__why { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 21px; font-weight: 700; color: var(--green-deep); }
 .tv__why .i { flex: none; width: 24px; height: 24px; stroke-width: 3; }
 .tv__q { white-space: pre-line; }
+
+/* =========================================================
+   7~8차시 새 판(deck-7-8-new.html): 음성인식 두 쪽과 네 모델 비교
+   ========================================================= */
+/* 네 단계 흐름 (말하기 → 글자 → 명령어 표 → 마이크로비트) */
+.chain--4 { grid-template-columns: 1fr 64px 1fr 64px 1fr 64px 1fr; }
+.chain--4 .chain__arrow svg { width: 56px; height: 32px; }
+.chain--4 .chain__name { font-size: 29px; }
+.chain--4 .chain__desc { font-size: 21px; }
+.chain__ico { width: 80px; height: 80px; margin-top: -4px; background: var(--c-mid); }
+.chain__ico .i { font-size: 38px; }
+
+/* 음성인식 명령어 두 쌍 */
+.vcmd { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 14px 26px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--purple-soft); }
+.vcmd__k { font-size: 22px; font-weight: 800; color: var(--purple-deep); }
+.vcmd__pair { display: inline-flex; align-items: center; gap: 10px; }
+.vcmd__say, .vcmd__data { display: inline-flex; align-items: center; height: 52px; padding: 0 20px; border: var(--stroke) solid var(--navy); border-radius: 12px; background: var(--paper); font-size: 26px; font-weight: 800; color: var(--navy); }
+.vcmd__data { background: var(--yellow-mid); font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 24px; }
+.vcmd__arrow svg { display: block; width: 44px; height: 24px; }
+.vcmd__note { margin-left: auto; font-size: 22px; font-weight: 600; color: var(--navy); }
+
+/* 네 모델 비교 표 */
+.cmp4 th, .cmp4 td { padding: 10px 16px; font-size: 20px; }
+.cmp4 th { font-size: 21px; }
+.cmp4 th:nth-child(1) { background: var(--sky); }
+.cmp4 th:nth-child(2) { background: var(--blue-mid); }
+.cmp4 th:nth-child(3) { background: var(--green-mid); }
+.cmp4 th:nth-child(4) { background: var(--purple-mid); }
+.cmp4 th:nth-child(5) { background: var(--yellow-mid); }
+.cmp4 td:first-child { width: 190px; }
+.cmp4 .mono { font-size: 18px; }

@@ -347,3 +347,130 @@
   .deck-fable .deck-stage .btn, .deck-fable .deck-stage .fb-ref, .deck-fable .deck-stage .show-tile, .deck-fable .deck-stage .cb-tile,
   .deck-fable .deck-stage .fb-qc__model, .deck-fable .deck-stage .lv__preset, .deck-fable .deck-stage .tv__tab, .deck-fable .deck-stage .fb-pr__c { transition: none; }
 }
+
+/* 수업 적용: 배울 내용별 사례 · 수업 여건 · 개인 메모 (9~10차시 전용) */
+.teach-intro { margin: 0 0 26px; font-size: 29px; color: var(--navy); }
+.teach-small { font-size: 23px; font-weight: 500; }
+#s-skeleton .fb-three__d { min-height: 102px; font-size: 25px; }
+#s-skeleton .fb-three__w { font-size: 24px; }
+#s-skeleton .fb-take { margin-top: 32px; }
+.teach-tabs { display: flex; gap: 18px; margin-bottom: 22px; }
+.teach-tabs button { flex: 1; padding: 16px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); color: var(--navy); font: 800 27px var(--font); cursor: pointer; }
+.teach-tabs button[aria-pressed="true"] { background: var(--yellow-mid); box-shadow: 0 5px 0 var(--navy); }
+.teach-tabs button:focus-visible, .teach-field textarea:focus-visible { outline: 4px solid var(--blue); outline-offset: 4px; }
+.teach-goal { display: flex; align-items: center; gap: 24px; padding: 20px 26px; background: var(--blue-soft); border-radius: var(--r-md); color: var(--navy); }
+.teach-goal span { flex: none; font-size: 21px; font-weight: 800; }
+.teach-goal strong { font-size: 27px; line-height: 1.4; }
+.teach-case { display: grid; grid-template-columns: .9fr 1.5fr; gap: 32px; margin-top: 22px; }
+.teach-task { padding: 28px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--yellow-soft); }
+.teach-task h3 { font-size: 34px; line-height: 1.55; color: var(--navy); margin: 20px 0 0; word-break: keep-all; }
+.teach-details { display: grid; gap: 15px; }
+.teach-details > div { padding: 0 0 15px; border-bottom: 2px solid var(--line); }
+.teach-details h4 { margin: 0 0 5px; font-size: 23px; color: var(--blue); }
+.teach-details p { margin: 0; font-size: 24px; line-height: 1.5; word-break: keep-all; }
+.teach-foot { display: flex; align-items: center; gap: 20px; margin-top: 20px; font-size: 21px; color: var(--navy); flex-wrap: wrap; }
+.teach-status { font-size: 18px; color: var(--blue); min-height: 24px; }
+#s-starts .start3__c { padding: 24px; gap: 16px; }
+#s-starts .start3__name { font-size: 29px; min-height: 74px; }
+#s-starts .start3__list { gap: 20px; }
+#s-starts .start3__list li { font-size: 23px; line-height: 1.5; word-break: keep-all; }
+#s-starts .start3__top .tag { font-size: 17px; }
+#s-starts .fb-take { font-size: 26px; }
+.teach-note { display: grid; grid-template-columns: 1.65fr 1fr; gap: 34px; }
+.teach-fields { display: grid; gap: 18px; }
+.teach-field { display: grid; gap: 10px; }
+.teach-field > span { display: flex; align-items: center; gap: 12px; font-size: 25px; font-weight: 800; color: var(--navy); }
+.teach-field b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--blue-soft); font-size: 21px; }
+.teach-field textarea { box-sizing: border-box; width: 100%; height: 88px; padding: 12px 18px; border: 2px solid var(--navy); border-radius: 14px; background: var(--paper); font: 500 23px/1.4 var(--font); color: var(--navy); resize: none; }
+.teach-field textarea::placeholder { color: #68718A; opacity: 1; }
+.teach-note-side { display: flex; flex-direction: column; align-items: flex-start; padding: 30px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--green-soft); }
+.teach-note-side h3 { margin: 28px 0 22px; font-size: 36px; line-height: 1.4; color: var(--navy); }
+.teach-note-side p { margin: 0; font-size: 27px; line-height: 1.65; word-break: keep-all; }
+.teach-note-actions { display: grid; gap: 12px; margin-top: auto; padding-top: 28px; }
+.teach-note-actions small { font-size: 18px; line-height: 1.5; color: var(--muted); }
+.teach-end-links { display: flex; justify-content: center; gap: 24px; margin-top: 45px; }
+
+/* ---------- 10쪽 만들기: 시각 없이 네 단계를 크게 ---------- */
+.fb-make2 { display: flex; flex-direction: column; gap: 30px; }
+.fb-make2 .step { position: relative; min-height: 300px; }
+.fb-make2 .step__title { margin-top: 16px; font-size: 36px; letter-spacing: -0.03em; }
+.fb-make2 .step__text { margin-top: 10px; font-size: 25px; line-height: 1.45; }
+.fb-make2__first { position: absolute; top: 28px; left: 126px; padding: 4px 14px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--yellow-tab); font-size: 18px; font-weight: 800; color: var(--navy); }
+.fb-make2__bottom { display: grid; grid-template-columns: 1fr 1fr 400px; gap: 24px; align-items: stretch; }
+.fb-make2__note { display: flex; align-items: center; gap: 18px; padding: 18px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); }
+.fb-make2__note .circle { width: 60px; height: 60px; background: var(--c-tab); }
+.fb-make2__note b { display: block; font-size: 27px; font-weight: 800; color: var(--navy); line-height: 1.3; letter-spacing: -0.02em; }
+.fb-make2__note span { display: block; margin-top: 4px; font-size: 21px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+.fb-make2__notes { display: contents; }
+.fb-make2__side { display: flex; flex-direction: column; justify-content: center; gap: 14px; min-width: 0; }
+.fb-make2__side .timer-card { display: flex; align-items: center; justify-content: center; padding: 12px 20px; }
+.fb-make2__side .timer { width: 100%; }
+.fb-make2__side .timer__face { font-size: 84px; }
+
+/* ---------- 13쪽 내 작품 시험해 보기 (self-test) ---------- */
+.fb-st { display: grid; grid-template-columns: 1fr 400px; gap: 28px; height: 100%; }
+.fb-st__list { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: 1fr; gap: 10px; min-width: 0; }
+.fb-st__row { display: flex; align-items: center; gap: 16px; min-width: 0; padding: 8px 14px 8px 18px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--paper); transition: background-color .15s; }
+.fb-st__row.is-ok { background: var(--green-soft); }
+.fb-st__row.is-some { background: var(--yellow-soft); }
+.fb-st__row.is-no { background: #FFF0EE; }
+.fb-st__n { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border: var(--stroke) solid var(--navy); border-radius: 50%; background: var(--blue-soft); font-size: 22px; font-weight: 800; color: var(--navy); }
+.fb-st__row.is-ok .fb-st__n { background: var(--green-tab); }
+.fb-st__txt { flex: 1; min-width: 0; }
+.fb-st__txt b { display: block; font-size: 27px; font-weight: 800; color: var(--navy); line-height: 1.25; letter-spacing: -0.02em; }
+.fb-st__txt span { display: block; margin-top: 2px; font-size: 19px; font-weight: 500; color: var(--ink); line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fb-st__fix { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 14px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--yellow-tab); font: 800 17px/1 var(--font); color: var(--navy); cursor: pointer; white-space: nowrap; }
+.fb-st__marks { flex: none; display: flex; gap: 8px; }
+.fb-st__c { width: 84px; height: 52px; border: var(--stroke) solid var(--navy); border-radius: 12px; background: var(--paper); font: 800 21px/1 var(--font); color: var(--navy); cursor: pointer; }
+.fb-st__c.is-ok.is-on { background: var(--green-tab); }
+.fb-st__c.is-some.is-on { background: var(--yellow-tab); }
+.fb-st__c.is-no.is-on { background: var(--dot-red); }
+.fb-st__side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.fb-st__sum { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 22px 24px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--blue-soft); }
+.fb-st__sum.is-good { background: var(--green-soft); }
+.fb-st__sum.is-bad { background: var(--yellow-soft); }
+.fb-st__sum b { font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1.3; letter-spacing: -0.02em; }
+.fb-st__sum span { font-size: 19px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+.fb-st__sum .btn { margin-top: 8px; }
+.fb-st__tip { padding: 14px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-md); background: var(--paper); }
+.fb-st__tip.is-voice { background: var(--purple-soft); }
+.fb-st__tip b { display: block; font-size: 21px; font-weight: 800; color: var(--navy); }
+.fb-st__tip span { display: block; margin-top: 4px; font-size: 18px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+.fb-st__reset { align-self: flex-start; font-size: 17px; }
+
+/* ---------- 14쪽 안 된 곳 고치기 ---------- */
+.fb-fix { display: flex; flex-direction: column; gap: 14px; }
+.fb-fix__q { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; padding: 12px 22px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--yellow-soft); }
+.fb-fix__q > .circle { width: 50px; height: 50px; }
+.fb-fix__q > b { margin-right: 10px; font-size: 27px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.fb-fix__go { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border-radius: 8px; background: var(--c-mid); font-size: 18px; font-weight: 800; color: var(--navy); white-space: nowrap; }
+.fb-fix__go .i { font-size: 16px; }
+.fb-fix__cols { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.fb-fix__col { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 14px 16px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); }
+.fb-fix__h { display: flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 800; color: var(--navy); }
+.fb-fix__h .circle { width: 46px; height: 46px; background: var(--c-tab); }
+.fb-fix__h .circle .i { font-size: 24px; }
+.fb-fix__i { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 10px 14px; border-radius: 12px; background: var(--paper); }
+.fb-fix__i b { font-size: 21px; font-weight: 800; color: var(--navy); line-height: 1.3; }
+.fb-fix__i span { font-size: 18px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+.fb-fix__i .btn { margin-top: 6px; height: 38px; padding: 0 14px; font-size: 16px; }
+.fb-fix__mark { display: flex; align-items: center; gap: 18px; padding: 10px 20px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); }
+.fb-fix__mark > b { flex: none; font-size: 22px; font-weight: 800; color: var(--navy); }
+.fb-fix__mark > div { flex: 1; min-width: 0; }
+
+/* 고친 곳 고르기 (peer-result) */
+.fb-pr__row { flex-wrap: wrap; }
+.fb-pr__c { flex: 1 1 auto; padding: 0 14px; font-size: 20px; white-space: nowrap; background: var(--paper); }
+.fb-pr__c.is-none.is-on { background: var(--green-mid); }
+.fb-pr--compact { flex-direction: row; align-items: center; gap: 16px; padding: 0; border: 0; background: none; }
+.fb-pr--compact .fb-pr__row { flex: none; flex-wrap: nowrap; }
+.fb-pr--compact .fb-pr__c { flex: none; height: 44px; }
+.fb-pr--compact .fb-pr__n { flex: 1; min-width: 0; }
+
+/* 새로 생긴 버튼·칩도 같은 규칙으로 (튀어나옴 / 고르면 눌림) */
+.deck-fable .deck-stage .fb-st__fix { box-shadow: 0 3px 0 var(--navy); transition: transform .1s ease, box-shadow .1s ease; }
+.deck-fable .deck-stage .fb-st__fix:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--navy); }
+.deck-fable .deck-stage .fb-st__fix:active { transform: translateY(3px); box-shadow: 0 0 0 var(--navy); }
+.deck-fable .deck-stage .fb-st__c { box-shadow: 0 4px 0 var(--navy); transition: transform .1s ease, box-shadow .1s ease, background-color .12s; }
+.deck-fable .deck-stage .fb-st__c:not(.is-on):hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--navy); }
+.deck-fable .deck-stage .fb-st__c.is-on { transform: translateY(4px); box-shadow: inset 0 3px 0 rgba(11, 26, 78, .18); }

@@ -2,8 +2,9 @@
    Fable 구성판에서 새로 넣은 조작 부품
    - card-quick  : 내 도전과제를 한 쪽에서 네 칸으로 정하고 등록 (움직임은 자유롭게 적음)
    - (돌아가기)  : 버튼으로 다른 쪽에 건너뛰면 원래 쪽으로 돌아가는 버튼
-   - pace        : 만들기 35분 체크포인트 (앞 화면용. 시각에 맞춰 '지금'만 표시)
-   - peer-result : 제출 쪽에서 옆 사람 시험 결과를 숫자로만 고름 (설명 문장에 들어감)
+   - pace        : (지금은 쓰지 않음) 시각별 체크포인트
+   - self-test   : 「내 작품 시험해 보기」 줄마다 됨·가끔·안 됨 표시, 안 된 줄은 「안 된 곳 고치기」로
+   - peer-result : 시험하며 고친 곳(AI 인식·코드·구조)을 고름 (제출 설명 문장에 들어감)
    - class-stats : 오늘 우리 반 숫자 (카드·모델·제출)
    기록은 모두 이 브라우저에만 남습니다(localStorage). 서버는 바꾸지 않았습니다.
    ========================================================= */
@@ -338,34 +339,87 @@ MK.widgets = MK.widgets || {};
   setInterval(function () { $$('[data-widget="pace"]').forEach(paintPace); }, 20000);
 
   /* =========================================================
-     3. 옆 사람 시험 결과 — 제출 쪽에서 숫자만 고름 <div data-widget="peer-result">
-        시험하는 동안 노트북에는 AI 웹앱이 떠 있으므로 교안에 기록하지 않습니다.
-        (바꿔서 해 보기 쪽은 앞 화면에 띄워 두는 안내 쪽. 횟수는 손가락으로 셈)
+     3. 시험하고 고치기
+        self-test   : 「내 작품 시험해 보기」 줄마다 됨 / 가끔 / 안 됨 (이 브라우저에만 기억). 안 된 줄은 「안 된 곳 고치기」 쪽으로
+        peer-result : 고친 곳 고르기(AI 인식·코드·구조 / 고칠 것 없었음). 제출 설명에 한 문장으로 들어감 (부품 이름은 예전 그대로)
+        카메라를 켜 두면 AI가 계속 알아보므로 몇 번 됐는지는 세지 않습니다.
      ========================================================= */
-  var TRIES = 5;
-  function prState() { var v = load('peer2', null) || {}; return { a: v.a == null ? null : +v.a, b: v.b == null ? null : +v.b }; }
+  var ST_ROWS = [
+    { t: '신호 1 → 움직임 1', d: '카드의 첫 번째 움직임이 나오나요?', card: 'servo1', fix: 'AI 인식·코드' },
+    { t: '신호 2 → 움직임 2', d: '카드의 두 번째 움직임이 나오나요?', card: 'servo2', fix: 'AI 인식·코드' },
+    { t: '신호를 바꾸면 바로 따라 바뀌기', d: '1 → 2 → 1로 바꿔 가며 해 봐요', fix: 'AI 인식' },
+    { t: '옆 사람이 설명 없이 해도', d: '자리를 바꿔 옆 사람이 해 봐요', fix: 'AI 인식' },
+    { t: '자리·거리·조명이 달라져도', d: '조금 떨어지거나 배경이 바뀌어도 되나요?', fix: 'AI 인식' },
+    { t: '외형을 붙인 채로 끝까지', d: '걸리거나 떨어지지 않고 움직이나요?', fix: '구조' }
+  ];
+  var ST_MARKS = [['ok', '됨'], ['some', '가끔'], ['no', '안 됨']];
+  function stState() { var v = load('selftest', null); return v && typeof v === 'object' ? v : {}; }
+  MK.widgets['self-test'] = function (el, st) {
+    var S = stState(); st = st || (MK.store.getStateSync ? MK.store.getStateSync() : {});
+    var card = MK.state && MK.state.myCard ? MK.state.myCard(st) : null, bad = 0, done = 0;
+    var rows = ST_ROWS.map(function (r, i) {
+      var v = S[i] || '', line = card && r.card ? String(card[r.card] || '').trim() : '';
+      if (v) done++;
+      if (v && v !== 'ok') bad++;
+      return '<li class="fb-st__row' + (v ? ' is-' + v : '') + '"><span class="fb-st__n">' + (i + 1) + '</span>' +
+        '<div class="fb-st__txt"><b>' + esc(r.t) + '</b><span>' + esc(line || r.d) + '</span></div>' +
+        (v && v !== 'ok' ? '<button type="button" class="fb-st__fix" data-goto="s-fix">' + esc(r.fix) + ' 고치기 ' + ic('right') + '</button>' : '') +
+        '<div class="fb-st__marks" role="group" aria-label="' + esc(r.t) + '">' + ST_MARKS.map(function (m) {
+          return '<button type="button" class="fb-st__c is-' + m[0] + (v === m[0] ? ' is-on' : '') + '" data-st="' + i + '" data-v="' + m[0] + '" aria-pressed="' + (v === m[0]) + '">' + m[1] + '</button>';
+        }).join('') + '</div></li>';
+    }).join('');
+    var sum = !done ? '<b>해 본 줄마다 눌러 표시해요</b><span>표시는 이 브라우저에만 남아요. 같은 칸을 다시 누르면 지워져요.</span>'
+      : bad ? '<b>' + bad + '줄이 아직이에요</b><span>줄 옆 「고치기」를 누르거나, 아래 버튼으로 고칠 곳을 찾아요.</span><button type="button" class="btn btn--yellow" data-goto="s-fix">' + ic('binoculars') + ' 고칠 곳 찾기</button>'
+      : done < ST_ROWS.length ? '<b>지금까지 모두 됐어요</b><span>남은 줄도 해 보세요.</span>'
+      : '<b>모두 됐어요!</b><span>이제 30초 영상을 찍어요.</span><button type="button" class="btn btn--green" data-goto="s-video">' + ic('video') + ' 영상 찍으러 가기</button>';
+    el.innerHTML = '<div class="fb-st"><ol class="fb-st__list">' + rows + '</ol>' +
+      '<div class="fb-st__side"><div class="fb-st__sum' + (done && !bad ? ' is-good' : bad ? ' is-bad' : '') + '">' + sum + '</div>' +
+      '<div class="fb-st__tip"><b>몇 번 됐는지는 세지 않아요</b><span>카메라를 켜 두면 AI가 계속 알아봅니다. 신호를 바꿀 때 바로 따라 움직이는지를 봐요.</span></div>' +
+      '<div class="fb-st__tip is-voice"><b>음성인식이라면</b><span>정해 둔 말 두 가지만 옆 사람에게 알려 주고 직접 말해 보게 해요.</span></div>' +
+      (done ? '<button type="button" class="linkish fb-st__reset" data-st-reset>표시 모두 지우기</button>' : '') +
+      '</div></div>';
+  };
+  function paintST() { $$('[data-widget="self-test"]').forEach(function (x) { MK.widgets['self-test'](x); }); }
+
+  var FIX_OPTS = ['AI 인식', '코드', '구조'];
+  function fxState() {
+    var v = load('fixed', null) || {};
+    return { list: FIX_OPTS.filter(function (k) { return Array.isArray(v.list) && v.list.indexOf(k) >= 0; }), none: !!v.none };
+  }
   MK.peerSentence = function () {
-    var S = prState();
-    if (S.a == null) return '';
-    return S.b == null ? '옆 사람이 ' + TRIES + '번 해 보니 ' + S.a + '번 됐습니다.'
-      : '옆 사람이 ' + TRIES + '번 해 보니 ' + S.a + '번 됐고, 고친 뒤에는 ' + S.b + '번 됐습니다.';
+    var S = fxState();
+    if (S.none) return '시험해 보니 고칠 곳 없이 잘 움직였습니다.';
+    if (!S.list.length) return '';
+    var last = S.list[S.list.length - 1];
+    return '시험해 보고 ' + S.list.join('·') + (batchim(last) ? '을' : '를') + ' 고쳤습니다.';
   };
   MK.widgets['peer-result'] = function (el) {
-    var S = prState();
-    function row(key, name) {
-      var h = '<div class="fb-pr__row"><span class="fb-pr__k">' + name + '</span>';
-      for (var n = 0; n <= TRIES; n++) h += '<button type="button" class="fb-pr__c' + (S[key] === n ? ' is-on' : '') + '" data-pr="' + key + '" data-n="' + n + '" aria-pressed="' + (S[key] === n ? 'true' : 'false') + '">' + n + '</button>';
-      return h + '</div>';
-    }
-    el.innerHTML = '<div class="fb-pr"><div class="kk">옆 사람 시험 · ' + TRIES + '번 중 몇 번 됐나요?</div>' + row('a', '처음') + row('b', '고친 뒤') +
-      '<p class="fb-pr__n">' + (S.a == null ? '고르면 제출 설명에 한 문장으로 들어갑니다. 안 골라도 됩니다.' : esc(MK.peerSentence())) + '</p></div>';
+    var S = fxState(), compact = el.hasAttribute('data-compact');
+    var chips = FIX_OPTS.map(function (k) {
+      var on = S.list.indexOf(k) >= 0;
+      return '<button type="button" class="fb-pr__c' + (on ? ' is-on' : '') + '" data-fx="' + esc(k) + '" aria-pressed="' + on + '">' + esc(k) + '</button>';
+    }).join('') + '<button type="button" class="fb-pr__c is-none' + (S.none ? ' is-on' : '') + '" data-fx="" aria-pressed="' + S.none + '">고칠 것 없었음</button>';
+    var note = MK.peerSentence() || '고르면 제출 설명에 한 문장으로 들어갑니다. 안 골라도 됩니다.';
+    el.innerHTML = '<div class="fb-pr' + (compact ? ' fb-pr--compact' : '') + '">' + (compact ? '' : '<div class="kk">시험하며 고친 곳 · 여러 개 골라도 돼요</div>') +
+      '<div class="fb-pr__row">' + chips + '</div><p class="fb-pr__n">' + esc(note) + '</p></div>';
   };
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-pr]'); if (!b || editing()) return;
-    var S = prState(), k = b.getAttribute('data-pr'), n = +b.getAttribute('data-n');
-    S[k] = S[k] === n ? null : n; // 다시 누르면 지움
-    save('peer2', S);
-    $$('[data-widget="peer-result"]').forEach(function (x) { MK.widgets['peer-result'](x); });
+    if (editing()) return;
+    var b = e.target.closest('[data-st]');
+    if (b) {
+      var S = stState(), i = b.getAttribute('data-st'), v = b.getAttribute('data-v');
+      if (S[i] === v) delete S[i]; else S[i] = v; // 다시 누르면 지움
+      save('selftest', S); paintST(); return;
+    }
+    if (e.target.closest('[data-st-reset]')) { save('selftest', {}); paintST(); return; }
+    var f = e.target.closest('[data-fx]');
+    if (f) {
+      var F = fxState(), k = f.getAttribute('data-fx');
+      if (!k) { F.none = !F.none; if (F.none) F.list = []; }
+      else { var at = F.list.indexOf(k); if (at >= 0) F.list.splice(at, 1); else F.list.push(k); F.none = false; }
+      save('fixed', F);
+      $$('[data-widget="peer-result"]').forEach(function (x) { MK.widgets['peer-result'](x); });
+    }
   });
 
   /* =========================================================
