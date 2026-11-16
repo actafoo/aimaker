@@ -311,3 +311,22 @@
 .repair-structure { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
 .repair-number { display: block; font-size: 24px; font-weight: 800; color: var(--c-deep); margin-bottom: 18px; }
 .repair-structure .btn { margin-top: 10px; font-size: 22px; }
+
+/* 개념의 관계: 메이커 활동 안에서 피지컬 AI를 도구로 사용 */
+#s-levels .concept-roles { top: 245px; bottom: 145px; }
+#s-levels .cr-making { padding: 32px 36px; border: 2px solid #BED3EE; border-top: 5px solid var(--blue); border-radius: 0 0 18px 18px; background: #fff; }
+#s-levels .cr-label { display: block; font-size: 21px; font-weight: 600; color: var(--muted); line-height: 1.4; }
+#s-levels .cr-making-head { display: grid; grid-template-columns: 410px 1fr; gap: 30px; align-items: center; margin-bottom: 30px; }
+#s-levels .cr-making-head h3 { margin-top: 12px; font-size: 44px; color: var(--navy); }
+#s-levels .cr-making-head p { font-size: 30px; line-height: 1.55; color: var(--navy); }
+#s-levels .cr-tool { display: grid; grid-template-columns: 360px 1fr; align-items: center; gap: 30px; padding: 28px 30px; background: var(--blue-soft); border-radius: 14px; }
+#s-levels .cr-tool .cr-label { color: var(--blue); }
+#s-levels .cr-tool h4 { margin-top: 14px; color: var(--blue); font-size: 40px; }
+#s-levels .cr-connection { display: flex; align-items: center; gap: 16px; color: var(--navy); font-size: 29px; }
+#s-levels .cr-connection .i { width: 28px; height: 28px; flex: none; color: var(--blue); }
+#s-levels .cr-tool-detail p { margin-top: 18px; font-size: 25px; line-height: 1.5; }
+#s-levels .cr-context { margin-top: 32px; }
+#s-levels .cr-context > .cr-label { margin-bottom: 14px; }
+#s-levels .cr-context > div { display: grid; grid-template-columns: 200px 1fr; align-items: baseline; gap: 25px; padding: 17px 8px; border-top: 1px solid var(--ref-line); }
+#s-levels .cr-context b { font-size: 25px; color: var(--navy); }
+#s-levels .cr-context p { font-size: 25px; line-height: 1.45; color: var(--muted); }
