@@ -92,12 +92,12 @@ MK.widgets = MK.widgets || {};
   function qcDone(S) { // 네 칸이 찼는지
     return [!!(S.title || '').trim(), !!S.model, !!(qcSig(S, 0) && qcAct(S, 0)), !!(qcSig(S, 1) && qcAct(S, 1))];
   }
-  /* 카드 한 줄 소개: 문장 틀 대신 서보 두 줄을 그대로 (움직임을 자유롭게 적으므로 활용형을 만들지 않음) */
+  /* 카드 한 줄 소개: 문장 틀 칸(인식·동작·누가)이 있으면 7~8차시 문장 그대로, 없으면(예전 네 칸 카드) 서보 두 줄 */
   var baseSentence = MK.cardSentence;
   MK.cardSentence = function (c) {
     c = c || {};
     var a = String(c.servo1 || '').trim().replace(/[.。]+$/, ''), b = String(c.servo2 || '').trim().replace(/[.。]+$/, '');
-    if (!a && !b) return baseSentence ? baseSentence(c) : '';
+    if ((!a && !b) || String(c.sense || c.act || c.who || '').trim()) return baseSentence ? baseSentence(c) : ''; // 7~8차시 문장 틀로 쓴 카드는 문장 그대로
     var sit = String(c.situation || '').trim();
     return (sit ? sit + (/(에서|에)$/.test(sit) ? '' : '에서') + ' 씁니다. ' : '') + [a, b].filter(Boolean).join('. ') + '.';
   };
@@ -105,6 +105,11 @@ MK.widgets = MK.widgets || {};
   /* 도전과제 예시 7가지: 다른 쪽으로 가지 않고 큰 창으로 봅니다.
      사진을 크게, 그 옆에 「무엇을 보면 → 어떻게 움직이나」 두 줄만. 아래 작은 사진이나 ← → 로 넘깁니다.
      두 줄의 글은 challenges.js 각 과제의 io 에서 고칩니다. 보기만 하고, 칸은 채우지 않습니다. */
+  MK.openIdeas = function (id) { openIdeas(id); };
+  document.addEventListener('click', function (e) { // 「내 도전과제 정하기」(my-card)의 보여 주고 싶은 작품 예시 보기
+    var b = e.target.closest('[data-ideas]');
+    if (b && !editing() && !b.closest('[data-widget="card-quick"]')) openIdeas();
+  });
   function openIdeas(startId) {
     var list = MK.challenges || []; if (!list.length) return;
     var cur = 0; list.forEach(function (c, i) { if (c.id === startId) cur = i; });
@@ -123,7 +128,7 @@ MK.widgets = MK.widgets || {};
     function show(i) {
       cur = (i + list.length) % list.length;
       var c = list[cur], cat = MK.catOf(c);
-      d.querySelector('[data-count]').textContent = '도전과제 예시 ' + (cur + 1) + ' / ' + list.length;
+      d.querySelector('[data-count]').textContent = '보여 주고 싶은 작품 예시 ' + (cur + 1) + ' / ' + list.length;
       d.querySelector('[data-title]').textContent = c.title;
       d.querySelector('[data-cat]').innerHTML = '<span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span>';
       var img = d.querySelector('[data-img]'); img.src = MK.challengeImage(c.id); img.alt = c.title + ' 예시 사진';
@@ -189,7 +194,7 @@ MK.widgets = MK.widgets || {};
           rowHtml(0) + rowHtml(1) +
           '<div class="fb-qc__opt"><span>더 적고 싶다면</span><input type="text" class="fb-qc__in" data-f="where" maxlength="40" placeholder="어디에서, 누구를 위해 쓰나요?" autocomplete="off" spellcheck="false">' +
             '<input type="text" class="fb-qc__in" data-f="team" maxlength="40" placeholder="함께 만드는 사람" autocomplete="off" spellcheck="false">' +
-            '<button type="button" class="btn btn--sm btn--ghost" data-ideas>' + ic('bulb') + ' 도전과제 예시 7가지 보기</button></div>' +
+            '<button type="button" class="btn btn--sm btn--ghost" data-ideas>' + ic('bulb') + ' 보여 주고 싶은 작품 예시 보기</button></div>' +
         '</div>' +
         '<div class="fb-qc__side">' +
           '<div class="fb-qc__card" data-card></div>' +

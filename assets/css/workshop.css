@@ -1,0 +1,66 @@
+/* 제작·시험·수정 안내: 큰 화살표 도형 대신 우선순위와 증상별 대응을 강조. */
+.workshop-make h3, .workshop-make p, .workshop-test h3, .workshop-test p, .workshop-fix h3, .workshop-fix p { margin: 0; }
+.workshop-make { display: flex; flex-direction: column; gap: 20px; }
+.wm-main { display: grid; grid-template-columns: 510px 1fr; gap: 44px; }
+.wm-first { padding: 28px 34px; border-radius: 24px; background: var(--navy); color: white; }
+.wm-eyebrow { display: flex; align-items: center; gap: 16px; font-size: 21px; font-weight: 600; color: var(--blue-mid); }
+.wm-eyebrow span { font-size: 24px; font-weight: 800; color: var(--navy); background: var(--yellow-tab); padding: 5px 13px; border-radius: 8px; }
+.wm-first h3 { margin-top: 20px; font-size: 41px; line-height: 1.25; letter-spacing: -.025em; color: white; }
+.wm-first p { margin-top: 16px; font-size: 24px; line-height: 1.5; color: #E0EAFD; }
+.wm-signals { display: flex; gap: 20px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #53678F; }
+.wm-signals > div { display: flex; align-items: center; gap: 10px; font-size: 22px; }
+.wm-signals span { color: var(--blue-mid); }
+.wm-signals b { font-weight: 700; }
+.wm-signals i { font-style: normal; color: var(--yellow-tab); }
+.wm-next { padding: 6px 0 0; }
+.wm-next-label { font-size: 20px; font-weight: 800; color: var(--blue); letter-spacing: .02em; margin-bottom: 8px; }
+.wm-row { display: flex; align-items: center; gap: 24px; padding: 22px 0; border-bottom: 2px solid var(--line); }
+.wm-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.wm-num { flex: none; font-size: 30px; font-weight: 800; color: #8292AF; }
+.wm-row h3 { font-size: 31px; line-height: 1.3; color: var(--navy); }
+.wm-row p { margin-top: 7px; font-size: 23px; line-height: 1.45; color: var(--ink); }
+.wm-bottom { display: grid; grid-template-columns: 1fr 400px; gap: 28px; align-items: stretch; }
+.wm-bottom:has(.wm-timer[hidden]) { grid-template-columns: 1fr; }
+.wm-notes { display: flex; flex-direction: column; gap: 12px; }
+.wm-shortcut { display: flex; gap: 20px; align-items: center; padding: 14px 22px; border-radius: 14px; background: var(--yellow-soft); color: var(--navy); }
+.wm-shortcut > b { flex: none; font-size: 22px; }
+.wm-shortcut p { font-size: 22px; line-height: 1.4; }
+.wm-safety { padding: 6px 22px; }
+.wm-safety > b { font-size: 20px; color: var(--blue); }
+.wm-safety p { margin-top: 6px; font-size: 21px; line-height: 1.5; }
+.wm-timer { min-width: 0; border-left: 2px solid var(--line); padding: 0 0 0 24px; }
+.wm-timer .timer { min-width: 0; width: 100%; }
+.wm-timer .timer__face { font-size: 67px; line-height: 1.1; }
+.wm-timer .timer__bar { width: 100%; margin: 10px 0 14px; height: 10px; }
+.wm-timer .timer__btns { gap: 8px; flex-wrap: wrap; }
+.wm-timer .timer__btns .btn { font-size: 17px; height: 38px; padding: 0 12px; min-width: 0; }
+.wm-timer .timer__note { margin-top: 9px; font-size: 16px; line-height: 1.4; }
+.wm-links { display: flex; align-items: center; gap: 16px; }
+.wm-links > span { font-size: 18px; color: var(--muted); font-weight: 600; }
+.wm-links .btn { font-size: 19px; height: 40px; }
+.wt-heading { font-size: 31px; color: var(--navy); line-height: 1.5; margin-bottom: 32px; }
+.wt-heading b { color: var(--blue); }
+.wt-stages { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 0; }
+.wt-stage { position: relative; padding: 30px 32px; min-height: 365px; border-top: 4px solid var(--line); }
+.wt-peer { border-top-color: var(--blue); background: var(--blue-soft); border-radius: 0 0 20px 20px; }
+.wt-number { font-size: 24px; font-weight: 800; color: var(--blue); }
+.wt-stage h3 { font-size: 36px; line-height: 1.3; color: var(--navy); margin-top: 20px; }
+.wt-action { font-size: 25px; font-weight: 800; color: var(--blue); margin-top: 20px; }
+.wt-stage p { margin-top: 16px; font-size: 25px; line-height: 1.6; }
+.wt-stage .btn { margin-top: 20px; font-size: 19px; }
+.workshop-help { display: flex; align-items: center; gap: 22px; margin-top: 30px; padding: 22px 26px; border-top: 2px solid var(--line); color: var(--navy); }
+.workshop-help > .i { flex: none; width: 40px; height: 40px; color: var(--blue); }
+.workshop-help > div { display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; }
+.workshop-help b { font-size: 28px; }
+.workshop-help span { font-size: 25px; color: var(--muted); }
+.wf-head { display: grid; grid-template-columns: 540px 1fr; padding: 0 26px 18px; font-size: 20px; font-weight: 700; color: var(--muted); }
+.wf-row { display: grid; grid-template-columns: 540px 1fr; padding: 22px 26px; border-top: 2px solid var(--line); }
+.wf-symptom { display: flex; align-items: center; gap: 20px; padding-right: 30px; }
+.wf-dot { flex: none; width: 14px; height: 48px; border-radius: 7px; background: var(--c-deep); }
+.wf-symptom h3 { font-size: 31px; line-height: 1.4; color: var(--navy); }
+.wf-answer h3 { font-size: 31px; line-height: 1.3; color: var(--c-deep); }
+.wf-answer p { margin-top: 8px; font-size: 24px; line-height: 1.5; }
+.workshop-fix .workshop-help { margin-top: 8px; background: var(--yellow-soft); border: 0; border-radius: 16px; }
+.wm-timer .timer { gap: 8px; }
+.wm-timer .timer__bar { margin: 0; }
+.wm-timer .timer__note:empty { display: none; }

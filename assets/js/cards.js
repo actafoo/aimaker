@@ -126,7 +126,7 @@ window.MK = window.MK || {};
       '<div class="mc">' +
         '<div class="mc-card">' +
           '<div class="mc-title"><span class="mc-k">작품 이름</span><input class="mc-title__in" data-k="title" maxlength="30" placeholder="예: 손 대신 들어 주는 도움 깃발" autocomplete="off" spellcheck="false"></div>' +
-          '<div class="mc-sec"><div class="mc-sec__h"><span class="mc-k">① 문장 틀</span><span class="mc-genres" role="group" aria-label="작품 종류"><button type="button" class="mc-genre" data-mc-genre="fix">문제 해결 작품</button><button type="button" class="mc-genre" data-mc-genre="show">표현·놀이 작품</button></span></div>' +
+          '<div class="mc-sec"><div class="mc-sec__h"><span class="mc-k">① 문장 틀</span><span class="mc-genres" role="group" aria-label="작품 종류"><button type="button" class="mc-genre" data-mc-genre="fix">불편을 줄이는 작품</button><button type="button" class="mc-genre" data-mc-genre="show">보여 주고 싶은 작품</button></span></div>' +
             '<p class="mc-frame">' + blankIn('situation', '○○한 상황', 'purple', 40) + '에서 <span class="mc-who">' + blankIn('who', '○○이', 'yellow', 20) + '<span class="mc-josa" data-josa="who">가</span> 겪는 불편을 줄이기 위해,</span> ' +
               'AI가 ' + blankIn('sense', '○', 'blue', 30) + '<span class="mc-josa" data-josa="sense">을</span> 인식하면 서보모터가 ' + blankIn('act', '○○하도록', 'green', 30) + ' 만든다.</p></div>' +
           '<div class="mc-sec mc-row"><span class="mc-k">② 쓸 AI 모델</span><span class="mc-models">' + (MK.cardModels || []).map(function (k) {
@@ -143,7 +143,7 @@ window.MK = window.MK || {};
           '<button type="button" class="btn btn--green mc-save" data-mc-save>' + ic('check') + ' 내 도전과제 등록</button>' +
           '<div class="mc-preview"><div class="mc-k">완성된 문장</div><p data-mc-preview></p></div>' +
           '<div class="mc-from" data-mc-from></div>' +
-          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-goto="s-draw">' + ic('spark') + ' 카드 뽑기</button><button type="button" class="btn btn--ghost btn--sm" data-mc-import>' + ic('bulb') + ' 도전과제 예시에서 가져오기</button>' +
+          '<div class="mc-links">' + (document.getElementById('s-draw') ? '<button type="button" class="btn btn--ghost btn--sm" data-goto="s-draw">' + ic('spark') + ' 카드 뽑기</button>' : MK.openIdeas ? '<button type="button" class="btn btn--ghost btn--sm" data-ideas>' + ic('bulb') + ' 보여 주고 싶은 작품 예시 보기</button>' : '') + '<button type="button" class="btn btn--ghost btn--sm" data-mc-import>' + ic('bulb') + ' 도전과제 예시에서 가져오기</button>' +
             '<button type="button" class="btn btn--ghost btn--sm" data-goto="s-cardboard">우리 반 도전과제 보기 ' + ic('right') + '</button></div>' +
         '</div>' +
       '</div>';
@@ -166,7 +166,7 @@ window.MK = window.MK || {};
     var v = {}; if (!form.el) return v;
     $$('[data-k]', form.el).forEach(function (i) { v[i.getAttribute('data-k')] = i.value.trim(); });
     var on = $('.mc-model.is-on', form.el); v.model = on ? on.getAttribute('data-mc-model') : '';
-    v.genre = form.genre || 'fix'; if (v.genre === 'show') v.who = ''; // 표현·놀이 작품: ‘누가 겪는 불편’ 없이
+    v.genre = form.genre || 'fix'; if (v.genre === 'show') v.who = ''; // 보여 주고 싶은 작품: ‘누가 겪는 불편’ 없이
     v.from = form.from || '';
     return v;
   }

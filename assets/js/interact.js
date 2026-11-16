@@ -460,6 +460,7 @@ window.MK = window.MK || {};
       }
     });
     document.addEventListener('deck:leave', function (e) { if (e.detail.slide.contains(el)) stopRun(); });
+    el.addEventListener('resource:leave', stopRun);
     renderList(); draw();
   };
   MK.widgets['servo-lab'].once = true;
@@ -614,8 +615,10 @@ window.MK = window.MK || {};
       } else { zero = 90; found = false; stopV = 90; zeroBtn.textContent = '멈추는 값이 어긋난 서보로 바꾸기'; }
       syncRun(); setCmd(90, true); paintTip();
     });
-    document.addEventListener('deck:enter', function (e) { onSlide = e.detail.slide.contains(el); if (onSlide) kick(); });
+    document.addEventListener('deck:enter', function (e) { onSlide = e.detail.slide.contains(el) || !!el.closest('.mw-dialog[open]'); if (onSlide) kick(); });
     document.addEventListener('deck:leave', function (e) { if (e.detail.slide.contains(el)) { onSlide = false; if (run) stopRun(true); } });
+    el.addEventListener('resource:enter', function () { onSlide = true; kick(); });
+    el.addEventListener('resource:leave', function () { onSlide = false; if (run) stopRun(true); });
     onSlide = !!(MK.deck && MK.deck.current && el.closest('.slide') === MK.deck.current());
     syncRun(); paint(); paintTip(); kick();
   };
@@ -887,11 +890,11 @@ window.MK = window.MK || {};
     { id: 'sim', name: '시뮬레이션 안내', slide: 's-servo', img: 'assets/img/910/vibe-servo.jpg', title: '서보 각도 감 잡기',
       why: '기기 없이도 값을 바꿔 보며 예상하고, 실제 서보로 확인할 때 덜 헤맵니다.',
       prompt: '초등 5학년용 서보모터 시뮬레이션을 HTML 파일 하나로 만들어 줘. 0~180 슬라이더를 움직이면 서보 팔이 그 각도로 돌아가고, 0·90·180 버튼도 넣어 줘. 아래에는 MakeCode 블록 「P0에 서보 값 ○ 출력」과 「일시중지」를 넣고 빼며 순서대로 돌려 볼 수 있게 해 줘. 설명은 짧게.',
-      more: [['s-servo360', '360° 서보'], ['s-levels', '수업 구상 예시']] },
+      more: [['s-servo360', '360° 서보'], ['s-starts', '단계별 지도']] },
     { id: 'links', name: '필요한 사이트 모아 두기', slide: 's-code', img: 'assets/img/910/vibe-links.jpg', title: '나의 모델 코드 확인하기',
       why: '주소를 하나씩 불러 주지 않아도 누르면 바로 들어가니, 수업이 끊기지 않고 이어집니다.',
-      prompt: '우리 반 피지컬 AI 수업의 바로가기 화면을 HTML 파일 하나로 만들어 줘. 아래 주소를 수업 순서대로 1·2·3 번호를 붙인 큰 버튼으로 모으고, 누르면 새 창으로 열리게 해 줘. 버튼마다 언제 쓰는지 한 줄 설명도 붙여 줘.\n① MakeCode 기본 코드: (주소)\n② 바운더리엑스 손동작 인식: (주소)\n③ 음성인식: (주소)',
-      more: [['s-voice', '음성인식 연결'], ['s-buy', '재료 구매처']] }
+      prompt: '우리 반 피지컬 AI 수업의 바로가기 화면을 HTML 파일 하나로 만들어 줘. 아래 주소를 수업 순서대로 번호를 붙인 큰 버튼으로 모으고, 누르면 새 창으로 열리게 해 줘. 버튼마다 언제 쓰는지 한 줄 설명도 붙여 줘.\n① 장치 이름 확인 코드: (주소)\n② 핸드포즈 웹앱: (주소)\n③ 이미지분류 웹앱: (주소)\n④ 음성인식 웹앱: (주소)',
+      more: [['s-buy', '재료 구매처']] }
   ];
   function pageOf(id) {
     var s = document.getElementById(id), all = MK.deck && MK.deck.slides ? MK.deck.slides() : [];

@@ -1,0 +1,49 @@
+/* PART 6: 현직 초등교사 대상. 기존 1920×1080 서식과 팔레트 사용. */
+.teacher-slide .slide__title { font-size: 53px; }
+.teacher-slide .slide__body { top: 242px; bottom: 134px; }
+.teacher-slide h3, .teacher-slide h4, .teacher-slide p { margin: 0; }
+.teacher-slide p { word-break: keep-all; }
+.tp-message { margin-top: 22px; padding: 18px 24px; border-radius: var(--r-md); background: var(--blue-soft); color: var(--navy); font-size: 25px; line-height: 1.5; font-weight: 500; }
+.tp-message b { color: var(--blue); font-weight: 800; }
+.teacher-slide .tp-source { margin-top: 15px; font-size: 16px; line-height: 1.5; color: var(--muted); }
+.tp-source a { color: var(--muted); text-underline-offset: 4px; }
+.tp-source a:hover { color: var(--blue); }
+.tp-competencies { display: grid; gap: 0; border-top: 3px solid var(--navy); }
+.tp-competency { display: grid; grid-template-columns: 340px 1fr; align-items: center; gap: 28px; min-height: 94px; border-bottom: 2px solid var(--line); }
+.tp-competency > div { padding: 10px 20px; background: var(--blue-soft); align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+.tp-competency:nth-child(2) > div, .tp-competency:nth-child(3) > div { background: var(--purple-soft); }
+.tp-competency small { font-size: 16px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+.tp-competency h3 { font-size: 28px; color: var(--navy); }
+.tp-competency p { font-size: 25px; line-height: 1.55; }
+.tp-competency p b { font-weight: 700; color: var(--navy); }
+.teacher-slide .tp-lead { margin-bottom: 26px; font-size: 29px; line-height: 1.5; color: var(--navy); }
+.tp-uses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.tp-uses article { padding: 25px 26px; border-top: 7px solid var(--c-deep); background: var(--c-soft); border-radius: 0 0 18px 18px; }
+.tp-label { font-size: 22px; color: var(--c-deep); font-weight: 700; }
+.tp-uses h3 { margin-top: 14px; font-size: 33px; color: var(--navy); }
+.tp-uses p { margin-top: 18px; font-size: 25px; line-height: 1.6; }
+.tp-use-note { margin-top: 24px; padding-top: 16px; border-top: 2px solid var(--c-mid); font-size: 21px; line-height: 1.45; font-weight: 700; color: var(--c-deep); }
+.tp-method { display: flex; gap: 26px; align-items: center; margin-top: 26px; padding: 16px 24px; border: 2px solid var(--navy); border-radius: 14px; font-size: 24px; color: var(--navy); }
+.tp-method b { flex: none; }
+.tp-path { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.tp-path article { position: relative; display: flex; flex-direction: column; padding: 24px; min-height: 460px; background: var(--c-soft); border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); }
+.tp-path article:not(:last-child)::after { content: '›'; position: absolute; right: -21px; top: 70px; z-index: 1; color: var(--navy); font-size: 35px; font-weight: 800; }
+.tp-step { align-self: flex-start; padding: 4px 16px; border-radius: 999px; background: var(--c-tab); color: var(--navy); font-size: 24px; font-weight: 800; }
+.tp-path h3 { margin-top: 18px; min-height: 80px; font-size: 29px; line-height: 1.35; color: var(--navy); }
+.tp-path ul { margin: 20px 0; padding-left: 22px; display: grid; gap: 14px; font-size: 22px; line-height: 1.5; word-break: keep-all; }
+.tp-path-goal { margin-top: auto; padding-top: 16px; border-top: 2px dashed var(--c-deep); font-size: 20px; line-height: 1.5; color: var(--navy); }
+.tp-path-goal b { font-size: 23px; color: var(--c-deep); }
+.teacher-slide .tp-path-note { margin-top: 14px; font-size: 23px; line-height: 1.5; color: var(--navy); }
+.tp-sustain { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.tp-sustain > div > h3 { font-size: 29px; color: var(--navy); padding-bottom: 15px; border-bottom: 3px solid var(--navy); }
+.tp-sustain > div > div { margin-top: 19px; }
+.tp-sustain h4 { font-size: 25px; color: var(--blue); }
+.tp-sustain p { margin-top: 6px; font-size: 24px; line-height: 1.5; }
+.tp-settings { background: var(--green-soft); padding: 22px 26px; border-radius: var(--r-lg); }
+.tp-value { padding: 22px 0; }
+.tp-settings h4 { color: var(--green-deep); }
+.tp-steam { display: flex; align-items: center; gap: 28px; margin-top: 22px; padding: 18px 24px; border: 2px solid var(--navy); border-radius: 16px; }
+.tp-steam > b { flex: none; font-size: 24px; color: var(--navy); }
+.tp-steam p { font-size: 23px; line-height: 1.6; }
+.tp-steam p span { font-size: 21px; color: var(--muted); }
+#s-end .show-cover__title { font-size: 65px; }
