@@ -890,12 +890,15 @@ window.MK = window.MK || {};
     { id: 'sim', name: '시뮬레이션 안내', slide: 's-servo', img: 'assets/img/910/vibe-servo.jpg', title: '서보 각도 감 잡기',
       why: '기기 없이도 값을 바꿔 보며 예상하고, 실제 서보로 확인할 때 덜 헤맵니다.',
       prompt: '초등 5학년용 서보모터 시뮬레이션을 HTML 파일 하나로 만들어 줘. 0~180 슬라이더를 움직이면 서보 팔이 그 각도로 돌아가고, 0·90·180 버튼도 넣어 줘. 아래에는 MakeCode 블록 「P0에 서보 값 ○ 출력」과 「일시중지」를 넣고 빼며 순서대로 돌려 볼 수 있게 해 줘. 설명은 짧게.',
-      more: [['s-servo360', '360° 서보'], ['s-starts', '단계별 지도']] },
+      more: [['s-servo360', '360° 서보'], ['s-starts', '단계별 지도']],
+      warn: ['시뮬레이션은 실제와 조금 다릅니다', '실제 서보로 꼭 확인하고, 학생 이름 같은 개인정보는 넣지 않습니다.'] },
     { id: 'links', name: '필요한 사이트 모아 두기', slide: 's-code', img: 'assets/img/910/vibe-links.jpg', title: '나의 모델 코드 확인하기',
       why: '주소를 하나씩 불러 주지 않아도 누르면 바로 들어가니, 수업이 끊기지 않고 이어집니다.',
       prompt: '우리 반 피지컬 AI 수업의 바로가기 화면을 HTML 파일 하나로 만들어 줘. 아래 주소를 수업 순서대로 번호를 붙인 큰 버튼으로 모으고, 누르면 새 창으로 열리게 해 줘. 버튼마다 언제 쓰는지 한 줄 설명도 붙여 줘.\n① 장치 이름 확인 코드: (주소)\n② 핸드포즈 웹앱: (주소)\n③ 이미지분류 웹앱: (주소)\n④ 음성인식 웹앱: (주소)',
       more: [['s-buy', '재료 구매처']] }
   ];
+  // 예시마다 다른 주의(warn)가 없으면 모든 예시에 맞는 개인정보 주의
+  var VIBE_WARN = ['개인정보는 넣지 않습니다', '요청문과 화면에 학생 이름 같은 개인정보를 적지 않습니다.'];
   function pageOf(id) {
     var s = document.getElementById(id), all = MK.deck && MK.deck.slides ? MK.deck.slides() : [];
     var n = all.indexOf(s); return n >= 0 ? n + 1 : '';
@@ -917,7 +920,7 @@ window.MK = window.MK || {};
           '<div class="tv__step"><b>2</b><div><strong>보고 고치기</strong><span>“버튼 더 크게”</span></div></div>' +
           '<div class="tv__step"><b>3</b><div><strong>기기로 확인</strong><span>주소로 나누기</span></div></div>' +
         '</div>' +
-        '<div class="warn tv__warn"><span class="circle">' + ic('alert') + '</span><div><div class="warn__h">시뮬레이션은 실제와 조금 다릅니다</div><div class="warn__t">실제 서보로 꼭 확인하고, 학생 이름 같은 개인정보는 넣지 않습니다.</div></div></div>' +
+        '<div class="warn tv__warn"><span class="circle">' + ic('alert') + '</span><div><div class="warn__h" data-warn-h></div><div class="warn__t" data-warn-t></div></div></div>' +
       '</div></div>';
     var why = $('[data-why]', el), img = $('[data-img]', el), cap = $('[data-cap]', el), q = $('[data-q]', el), more = $('[data-more]', el), go = $('[data-go]', el), copyBtn = $('[data-copy]', el);
     function paint() {
@@ -927,6 +930,7 @@ window.MK = window.MK || {};
       why.innerHTML = ic('check') + ' ' + esc(v.why);
       cap.innerHTML = '이 교안 <b>' + pageOf(v.slide) + '쪽 · ' + esc(v.title) + '</b> ' + ic('expand') + ' 눌러서 가 보기';
       q.textContent = '“' + v.prompt + '”';
+      var w = v.warn || VIBE_WARN; $('[data-warn-h]', el).textContent = w[0]; $('[data-warn-t]', el).textContent = w[1];
       more.innerHTML = '<span>다른 예</span>' + v.more.map(function (m) { return '<button type="button" class="tag" data-goto="' + m[0] + '">' + esc(m[1]) + ' <small>' + pageOf(m[0]) + '쪽</small></button>'; }).join('');
       $$('[data-goto]', more).forEach(function (b) { b.addEventListener('click', function () { MK.deck.goto(b.getAttribute('data-goto')); }); });
     }

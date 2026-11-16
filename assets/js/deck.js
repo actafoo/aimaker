@@ -67,6 +67,11 @@ MK.generators = MK.generators || {};
   }
 
   /* ---------- 이동 ---------- */
+  // 앞으로 넘기기. 마지막 쪽에서 넘기면 MK.page.next(다음 교안 주소)로 갑니다. 없으면 마지막 쪽에 머묾
+  function forward() {
+    if (PAGE.next && cur >= slides.length - 1) { location.href = PAGE.next; return; }
+    show(cur + 1);
+  }
   function show(i, opts) {
     if (!slides.length) return;
     i = Math.max(0, Math.min(slides.length - 1, i));
@@ -79,6 +84,7 @@ MK.generators = MK.generators || {};
     var sl = slides[i];
     sl.classList.add('is-active');
     $('#dock-count').textContent = (i + 1) + ' / ' + slides.length;
+    if (PAGE.next) $('#dock-next').title = i >= slides.length - 1 ? (PAGE.nextLabel || '다음 교안') + '으로 (→)' : '다음 (→)';
     var hash = '#' + (i + 1);
     if (!(opts && opts.noHash) && location.hash !== hash) history.replaceState(null, '', hash);
     try { localStorage.setItem(POS_KEY, String(i + 1)); } catch (e) {}
@@ -170,7 +176,7 @@ MK.generators = MK.generators || {};
     if (typing(e)) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     var k = e.key;
-    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); show(cur + 1); }
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); forward(); }
     else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); show(cur - 1); }
     else if (k === 'Home') { e.preventDefault(); show(0); }
     else if (k === 'End') { e.preventDefault(); show(slides.length - 1); }
@@ -211,7 +217,7 @@ MK.generators = MK.generators || {};
         '<div class="toc__keys"><kbd>←</kbd> <kbd>→</kbd> 넘기기 · <kbd>F</kbd> 전체화면 · <kbd>M</kbd> 목차</div>' +
       '</aside>');
     $('#dock-prev').onclick = function () { show(cur - 1); };
-    $('#dock-next').onclick = function () { show(cur + 1); };
+    $('#dock-next').onclick = forward;
     $('#dock-full').onclick = toggleFull;
     $('#dock-toc').onclick = function () { toggleToc(); };
     $('#toc-close').onclick = function () { toggleToc(false); };
@@ -268,7 +274,7 @@ MK.generators = MK.generators || {};
       show(i >= 0 ? i : Math.min(cur, slides.length - 1), { noHash: false });
     },
     goto: goto,
-    next: function () { show(cur + 1); },
+    next: forward,
     prev: function () { show(cur - 1); },
     current: function () { return slides[cur]; },
     slides: function () { return slides; },
