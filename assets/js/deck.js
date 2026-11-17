@@ -66,11 +66,34 @@ MK.generators = MK.generators || {};
     return h ? h.textContent.replace(/\s+/g, ' ').trim() : '슬라이드';
   }
 
+  /* ---------- 눌러서 보이기: data-reveal ----------
+     가린 채로 시작해, 누르거나 →(리모컨 다음)를 누르면 하나씩 보입니다.
+     ←는 마지막에 보인 것부터 다시 가립니다. 뒤로 돌아온 쪽은 모두 보인 채로 둡니다(파워포인트와 같음).
+     편집 모드에서는 가리지 않습니다. */
+  function editing() { return document.body.classList.contains('is-editing'); }
+  function covered(sl) { return $$('[data-reveal].is-covered', sl); }
+  function uncover(el) {
+    el.classList.remove('is-covered', 'is-popped');
+    void el.offsetWidth; // 애니메이션 다시 시작
+    el.classList.add('is-popped');
+  }
+  function resetReveal(sl, all) {
+    $$('[data-reveal]', sl).forEach(function (el) { el.classList.remove('is-popped'); el.classList.toggle('is-covered', !all); });
+  }
+
   /* ---------- 이동 ---------- */
-  // 앞으로 넘기기. 마지막 쪽에서 넘기면 MK.page.next(다음 교안 주소)로 갑니다. 없으면 마지막 쪽에 머묾
+  // 앞으로 넘기기. 가린 것이 남았으면 하나 보이기.
+  // 마지막 쪽에서 넘기면 MK.page.next(다음 교안 주소)로 갑니다. 없으면 마지막 쪽에 머묾
   function forward() {
+    var c = slides[cur] && !editing() ? covered(slides[cur]) : [];
+    if (c.length) { uncover(c[0]); return; }
     if (PAGE.next && cur >= slides.length - 1) { location.href = PAGE.next; return; }
     show(cur + 1);
+  }
+  function backward() {
+    var s = slides[cur] && !editing() ? $$('[data-reveal]:not(.is-covered)', slides[cur]) : [];
+    if (s.length) { var last = s[s.length - 1]; last.classList.remove('is-popped'); last.classList.add('is-covered'); return; }
+    show(cur - 1);
   }
   function show(i, opts) {
     if (!slides.length) return;
@@ -79,6 +102,7 @@ MK.generators = MK.generators || {};
     if (prev && prev !== slides[i]) {
       prev.classList.remove('is-active');
       document.dispatchEvent(new CustomEvent('deck:leave', { detail: { slide: prev } }));
+      resetReveal(slides[i], i < cur); // 뒤로 왔으면 모두 보이게, 앞으로 왔으면 다시 가리기
     }
     cur = i;
     var sl = slides[i];
@@ -177,7 +201,7 @@ MK.generators = MK.generators || {};
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     var k = e.key;
     if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); forward(); }
-    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); show(cur - 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); backward(); }
     else if (k === 'Home') { e.preventDefault(); show(0); }
     else if (k === 'End') { e.preventDefault(); show(slides.length - 1); }
     else if (k === 'f' || k === 'F') { toggleFull(); }
@@ -216,7 +240,7 @@ MK.generators = MK.generators || {};
         '<div class="toc__list" id="toc-list"></div>' +
         '<div class="toc__keys"><kbd>←</kbd> <kbd>→</kbd> 넘기기 · <kbd>F</kbd> 전체화면 · <kbd>M</kbd> 목차</div>' +
       '</aside>');
-    $('#dock-prev').onclick = function () { show(cur - 1); };
+    $('#dock-prev').onclick = backward;
     $('#dock-next').onclick = forward;
     $('#dock-full').onclick = toggleFull;
     $('#dock-toc').onclick = function () { toggleToc(); };
@@ -239,7 +263,9 @@ MK.generators = MK.generators || {};
   /* ---------- 슬라이드 안 링크: data-goto="슬라이드id" ---------- */
   function onClick(e) {
     var g = e.target.closest('[data-goto]');
-    if (g) { e.preventDefault(); goto(g.getAttribute('data-goto')); }
+    if (g) { e.preventDefault(); goto(g.getAttribute('data-goto')); return; }
+    var r = e.target.closest('[data-reveal].is-covered'); // 가린 카드를 누르면 그 카드만 보이기
+    if (r && !editing()) uncover(r);
   }
 
   /* ---------- 공개 함수 ---------- */
@@ -251,6 +277,7 @@ MK.generators = MK.generators || {};
       var state = MK.store.getStateSync();
       runGenerators(state, true);
       collect();
+      slides.forEach(function (sl) { resetReveal(sl, false); });
       fit();
       window.addEventListener('resize', fit);
       document.addEventListener('keydown', onKey);
@@ -275,7 +302,7 @@ MK.generators = MK.generators || {};
     },
     goto: goto,
     next: forward,
-    prev: function () { show(cur - 1); },
+    prev: backward,
     current: function () { return slides[cur]; },
     slides: function () { return slides; },
     titleOf: titleOf

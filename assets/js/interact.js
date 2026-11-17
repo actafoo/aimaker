@@ -951,4 +951,216 @@ window.MK = window.MK || {};
   };
   MK.widgets['teach-vibe'].once = true;
 
+  /* =========================================================
+     13. 내 장치(블루투스) 이름 — 7~8차시 「블루투스 준비」에서 적어 두면
+         두 교안의 [data-btname] 자리(연결할 때 고를 이름)에 보여 줍니다. 이 브라우저에만 저장
+     ========================================================= */
+  var BT_KEY = 'mk-btname';
+  function btName() { try { return localStorage.getItem(BT_KEY) || ''; } catch (e) { return ''; } }
+  function paintBtName() { var n = btName(); $$('[data-btname]').forEach(function (b) { b.textContent = n ? '「' + n + '」' : ''; }); }
+  MK.widgets['bt-name'] = function (el) {
+    el.innerHTML = '<label class="btname-in"><span>내 장치 이름</span><input type="text" maxlength="12" placeholder="예: tobiz" autocomplete="off" spellcheck="false" autocapitalize="off"></label>' +
+      '<div class="btname-msg" aria-live="polite"></div>';
+    var inp = $('input', el), msg = $('.btname-msg', el);
+    inp.value = btName();
+    function show() { msg.textContent = inp.value ? '이 노트북에 기억했어요. 연결할 때 이 이름을 고르세요.' : ''; }
+    inp.addEventListener('input', function () {
+      var v = inp.value.replace(/\s+/g, '').toLowerCase();
+      if (v !== inp.value) inp.value = v;
+      try { if (v) localStorage.setItem(BT_KEY, v); else localStorage.removeItem(BT_KEY); } catch (e) {}
+      show(); paintBtName();
+    });
+    show();
+  };
+  MK.widgets['bt-name'].once = true;
+  document.addEventListener('deck:enter', paintBtName);
+
+  /* =========================================================
+     14. KNN 체험 (7~8차시 「KNN: 가장 가까운 이웃의 다수결」)
+         그림을 누르거나 끌어 ★(새 손 모양)을 옮기면 가까운 K개를 잇고 다수결로 판단. K는 1·3·5
+         처음 모양은 원래 그림과 같음 (★ 200,200 · K=3 → 셋 중 둘이 ID1)
+     ========================================================= */
+  var KNN_PTS = [
+    [100, 120, 1], [140, 100, 1], [160, 150, 1], [120, 170, 1], [90, 160, 1], [150, 190, 1],
+    [250, 215, 2], [330, 250, 2], [300, 300, 2], [340, 290, 2], [270, 280, 2], [320, 320, 2]
+  ];
+  var KNN_NUM = ['', '하나', '둘', '셋', '넷', '다섯'];
+  function starPts(x, y) {
+    var p = [];
+    for (var i = 0; i < 10; i++) { var r = i % 2 ? 9 : 20, a = -Math.PI / 2 + i * Math.PI / 5; p.push((x + r * Math.cos(a)).toFixed(1) + ',' + (y + r * Math.sin(a)).toFixed(1)); }
+    return p.join(' ');
+  }
+  MK.widgets['knn-play'] = function (el) {
+    var K = 3, sx = 200, sy = 200, VB = [66, 76, 300, 270], drag = false;
+    var pts = KNN_PTS.map(function (p) {
+      return p[2] === 1 ? '<circle class="knn-pt" cx="' + p[0] + '" cy="' + p[1] + '" r="12" fill="#0B57D8"/>'
+        : '<rect class="knn-pt" x="' + (p[0] - 12) + '" y="' + (p[1] - 12) + '" width="24" height="24" rx="3" fill="#0B1A4E"/>';
+    }).join('');
+    el.innerHTML = '<div class="knn__fig"><svg viewBox="' + VB.join(' ') + '" role="img" aria-label="새 손 모양(별)을 옮기면 가까운 예시 K개의 다수결이 바뀌는 그림">' +
+        '<circle class="knn-ring" fill="none" stroke="#55628A" stroke-width="2" stroke-dasharray="8 8"/>' +
+        '<g class="knn-lines" stroke="#55628A" stroke-width="3" stroke-dasharray="6 6"></g>' + pts +
+        '<polygon class="knn-star" fill="#F8C000" stroke="#0B1A4E" stroke-width="2"/></svg></div>' +
+      '<div class="knn__legend"><span><i class="lg-dot"></i>ID1(주먹)</span><span><i class="lg-sq"></i>ID2(보)</span><span><i class="lg-star"></i>새 손 모양</span></div>' +
+      '<div class="knn-row"><span class="knn-ks">' + [1, 3, 5].map(function (k) { return '<button type="button" data-k="' + k + '">K=' + k + '</button>'; }).join('') + '</span>' +
+        '<span class="knn-res" aria-live="polite"></span></div>';
+    var svg = $('svg', el), ring = $('.knn-ring', el), lines = $('.knn-lines', el), star = $('.knn-star', el), res = $('.knn-res', el), marks = $$('.knn-pt', el);
+    function paint() {
+      var near = KNN_PTS.map(function (p, i) { return { i: i, c: p[2], d: Math.hypot(p[0] - sx, p[1] - sy) }; })
+        .sort(function (a, b) { return a.d - b.d; }).slice(0, K);
+      var n1 = near.filter(function (x) { return x.c === 1; }).length, win = n1 * 2 > K ? 1 : 2, cnt = win === 1 ? n1 : K - n1, id = 'ID' + win;
+      lines.innerHTML = near.map(function (x) { var p = KNN_PTS[x.i]; return '<line x1="' + sx + '" y1="' + sy + '" x2="' + p[0] + '" y2="' + p[1] + '"/>'; }).join('');
+      ring.setAttribute('cx', sx); ring.setAttribute('cy', sy); ring.setAttribute('r', (near[K - 1].d + 10).toFixed(1));
+      marks.forEach(function (m, i) { m.classList.toggle('is-near', near.some(function (x) { return x.i === i; })); });
+      star.setAttribute('points', starPts(sx, sy));
+      var say = K === 1 ? '가장 가까운 하나가 ' + id : '가까운 ' + KNN_NUM[K] + (cnt === K ? ' 모두 ' : ' 중 ' + KNN_NUM[cnt] + '이 ') + id;
+      res.innerHTML = 'K=' + K + ': ' + say + ' → <b class="' + (win === 1 ? 'is-id1' : 'is-id2') + '">‘' + id + '’로 판단</b>';
+      $$('[data-k]', el).forEach(function (b) { b.classList.toggle('is-on', +b.getAttribute('data-k') === K); });
+    }
+    function move(e) {
+      var m = svg.getScreenCTM(); if (!m) return;
+      var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; pt = pt.matrixTransform(m.inverse());
+      sx = Math.round(Math.max(VB[0] + 16, Math.min(VB[0] + VB[2] - 16, pt.x)));
+      sy = Math.round(Math.max(VB[1] + 16, Math.min(VB[1] + VB[3] - 16, pt.y)));
+      paint();
+    }
+    svg.addEventListener('pointerdown', function (e) { if (editing()) return; drag = true; try { svg.setPointerCapture(e.pointerId); } catch (x) {} move(e); e.preventDefault(); });
+    svg.addEventListener('pointermove', function (e) { if (drag) move(e); });
+    svg.addEventListener('pointerup', function () { drag = false; });
+    svg.addEventListener('pointercancel', function () { drag = false; });
+    el.addEventListener('click', function (e) { var b = e.target.closest('[data-k]'); if (b) { K = +b.getAttribute('data-k'); paint(); } });
+    paint();
+  };
+  MK.widgets['knn-play'].once = true;
+
+  /* =========================================================
+     15. AI만 바꿔 끼우기 (7~8차시 「코드는 그대로, AI만 바꿔 끼운다」)
+         버튼을 누르면 ① 인식 카드만 뒤집혀 바뀌고 ②③은 「그대로」 반짝임.
+         카드 글자는 HTML의 .swap-face(모델마다 하나, 처음 보일 것에 is-on)에 있어 편집기로 고칠 수 있음
+     ========================================================= */
+  MK.widgets['ai-swap'] = function (el) {
+    var sl = el.closest('.slide'), card = sl && $('[data-swap-card]', sl); if (!card) return;
+    var faces = $$('.swap-face', card), def = 0, timer = null;
+    faces.forEach(function (f, k) { if (f.classList.contains('is-on')) def = k; });
+    el.innerHTML = '<span class="swap-pick__k">① 인식만 바꿔 끼워 보기</span>' + faces.map(function (f, i) {
+      return '<button type="button" class="swap-pick__b" data-i="' + i + '">' + esc(f.getAttribute('data-face')) + '</button>';
+    }).join('');
+    function face(i) {
+      faces.forEach(function (f, k) { f.classList.toggle('is-on', k === i); });
+      $$('.swap-pick__b', el).forEach(function (b) { b.classList.toggle('is-on', +b.getAttribute('data-i') === i); });
+    }
+    function swap(i) {
+      clearTimeout(timer);
+      $$('.chain__node', sl).forEach(function (n) {
+        var cls = n === card ? 'is-swapped' : 'is-same';
+        n.classList.remove(cls); void n.offsetWidth; n.classList.add(cls);
+      });
+      timer = setTimeout(function () { face(i); }, 220); // 반쯤 뒤집혔을 때 바꿈
+    }
+    el.addEventListener('click', function (e) { var b = e.target.closest('.swap-pick__b'); if (b) swap(+b.getAttribute('data-i')); });
+    document.addEventListener('deck:enter', function (e) { if (e.detail.slide === sl) face(def); });
+    face(def);
+  };
+  MK.widgets['ai-swap'].once = true;
+
+  /* =========================================================
+     16. 모션인식 손 높이 체험 (7~8차시 「고르기 대신 따라 하기」)
+         L·R 막대의 손을 위아래로 끌면 웹앱이 보내는 값과 서보 각도가 바뀜.
+         값은 웹앱(ai_handpose_rc_controller, 2026-11-02판)과 같음: 위 40% 전진 F · 가운데 20% 정지 · 아래 40% 후진 B,
+         위·아래 20% 지점부터 최대 180, 정지는 F000.
+         각도는 180° 서보 예제 코드와 같이 F는 0~255를 90~180°, B는 90~0°로 바꿈(data-max로 255 대신 다른 값)
+     ========================================================= */
+  function motionValue(y) { // y: 0(맨 위) ~ 1(맨 아래)
+    if (y < 0.4) return { dir: 'F', speed: Math.min(180, Math.round((0.4 - y) / 0.2 * 180)) };
+    if (y > 0.6) return { dir: 'B', speed: Math.min(180, Math.round((y - 0.6) / 0.2 * 180)) };
+    return { dir: 'F', speed: 0 };
+  }
+  function gaugeSvg() {
+    var t = [0, 45, 90, 135, 180].map(function (a) {
+      var r = a * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+      return '<line x1="' + (100 + 74 * c).toFixed(1) + '" y1="' + (100 - 74 * s).toFixed(1) + '" x2="' + (100 + 84 * c).toFixed(1) + '" y2="' + (100 - 84 * s).toFixed(1) + '"/>';
+    }).join('');
+    return '<svg viewBox="0 0 200 116" aria-hidden="true"><path d="M16 100 A84 84 0 0 1 184 100" fill="none" stroke="#CBD6EA" stroke-width="3"/>' +
+      '<g stroke="#55628A" stroke-width="3">' + t + '</g>' +
+      '<text x="190" y="114" text-anchor="end">0°</text><text x="100" y="12" text-anchor="middle">90°</text><text x="10" y="114">180°</text>' +
+      '<g class="msim__horn"><rect x="96" y="94" width="72" height="12" rx="6"/></g><circle cx="100" cy="100" r="11" fill="#0B1A4E"/></svg>';
+  }
+  MK.widgets['motion-sim'] = function (el) {
+    var MAX = parseFloat(el.getAttribute('data-max')) || 255;
+    var ys = { L: 0.15, R: 0.6 + 0.2 * 150 / 180 }; // 처음: LF180RB150
+    var PIN = { L: 'P0', R: 'P1' }, SIDE = { L: '왼쪽', R: '오른쪽' };
+    el.innerHTML = '<div class="msim">' +
+      '<div class="msim__tracks">' + ['L', 'R'].map(function (k) {
+        return '<div class="msim__col"><div class="msim__track" data-side="' + k + '"><i class="msim__z msim__z--up"></i><i class="msim__z msim__z--mid"></i><i class="msim__z msim__z--down"></i>' +
+          '<span class="msim__hand">' + k + '</span></div><div class="msim__cap">' + (k === 'L' ? '왼손' : '오른손') + '</div></div>';
+      }).join('') + '</div>' +
+      '<div class="msim__out"><div class="kk">보내는 값</div><div class="msim__val mono"><b data-v="L"></b><b data-v="R"></b></div><div class="msim__say"></div>' +
+      '<div class="msim__servos">' + ['L', 'R'].map(function (k) {
+        return '<div class="msim__servo" data-s="' + k + '">' + gaugeSvg() + '<div class="msim__deg"></div></div>';
+      }).join('') + '</div></div></div>';
+    function paint() {
+      var say = [];
+      ['L', 'R'].forEach(function (k) {
+        var v = motionValue(ys[k]), state = v.speed === 0 ? 'is-s' : v.dir === 'F' ? 'is-f' : 'is-b';
+        var ang = Math.round(v.dir === 'F' ? 90 + v.speed / MAX * 90 : 90 - v.speed / MAX * 90);
+        var b = $('[data-v="' + k + '"]', el); b.textContent = k + v.dir + ('00' + v.speed).slice(-3); b.className = state;
+        $('.msim__track[data-side="' + k + '"] .msim__hand', el).style.top = 'clamp(30px, ' + (ys[k] * 100).toFixed(1) + '%, calc(100% - 30px))'; // 손 동그라미는 막대 안에
+        $('.msim__track[data-side="' + k + '"]', el).className = 'msim__track ' + state;
+        var s = $('[data-s="' + k + '"]', el);
+        $('.msim__horn', s).style.transform = 'rotate(' + (-ang) + 'deg)';
+        $('.msim__deg', s).textContent = PIN[k] + ' 서보 ' + ang + '°';
+        say.push(SIDE[k] + ' ' + (v.speed === 0 ? '정지' : (v.dir === 'F' ? '앞으로 ' : '뒤로 ') + v.speed));
+      });
+      $('.msim__say', el).textContent = say.join(' · ');
+    }
+    var drag = null;
+    function setY(track, e) {
+      var r = track.getBoundingClientRect();
+      ys[track.getAttribute('data-side')] = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+      paint();
+    }
+    el.addEventListener('pointerdown', function (e) {
+      var t = e.target.closest('.msim__track'); if (!t || editing()) return;
+      drag = t; try { t.setPointerCapture(e.pointerId); } catch (x) {} setY(t, e); e.preventDefault();
+    });
+    el.addEventListener('pointermove', function (e) { if (drag) setY(drag, e); });
+    el.addEventListener('pointerup', function () { drag = null; });
+    el.addEventListener('pointercancel', function () { drag = null; });
+    paint();
+  };
+  MK.widgets['motion-sim'].once = true;
+
+  /* =========================================================
+     17. 코드 캡처 크게 보기 — data-zoom-shot이 붙은 창 안쪽(.window__body)을 누르면
+         큰 창에 그대로(번호·표시 포함) 보여 줌. 편집 모드에서는 열지 않음
+     ========================================================= */
+  function addZoomChips() {
+    $$('[data-zoom-shot]').forEach(function (b) {
+      if ($('.zoom-chip', b)) return;
+      var c = document.createElement('span'); c.className = 'zoom-chip ui'; c.innerHTML = ic('expand') + ' 크게 보기'; b.appendChild(c);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', addZoomChips);
+  document.addEventListener('deck:enter', addZoomChips);
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-zoom-shot]'); if (!b || editing()) return;
+    var img = $('img', b); if (!img) return;
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    var bar = b.closest('.window') && $('.window__bar', b.closest('.window'));
+    var width = Math.round(Math.min(window.innerWidth * 0.92 - 56, (window.innerHeight * 0.9 - 110) * w / h));
+    var pic = b.cloneNode(true);
+    pic.removeAttribute('data-zoom-shot');
+    $$('.zoom-chip', pic).forEach(function (x) { x.remove(); });
+    [pic].concat($$('[data-ek], [contenteditable], [data-edit-host]', pic)).forEach(function (x) { ['data-ek', 'contenteditable', 'data-edit-host'].forEach(function (a) { x.removeAttribute(a); }); });
+    pic.classList.add('zoom-pic'); pic.style.width = width + 'px';
+    var d = document.createElement('dialog'); d.className = 'modal ui';
+    d.innerHTML = '<div class="modal__box zoom-box"><button type="button" class="icon-btn modal__close" aria-label="닫기">' + ic('x') + '</button>' +
+      '<h3 class="modal__title">' + esc(bar ? bar.textContent.trim() : '') + '</h3></div>';
+    $('.zoom-box', d).appendChild(pic);
+    document.body.appendChild(d);
+    $('.modal__close', d).onclick = function () { d.close(); };
+    d.addEventListener('click', function (ev) { if (ev.target === d) d.close(); });
+    d.addEventListener('close', function () { d.remove(); });
+    d.showModal();
+  });
+
 })();

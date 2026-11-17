@@ -27,7 +27,7 @@ MK.categories = {
     color: 'purple', icon: 'move',
     model: '모션인식 (양손 높이)',
     app: 'https://boundary-x.github.io/ai_handpose_rc_controller/',
-    sends: '양손의 높이를 계속 보냅니다 (예: LF255RB150)',
+    sends: '양손의 높이를 계속 보냅니다 (예: LF180RB150)',
     code: '180° 서보용 예제 코드 · 왼손 P0, 오른손 P1'
   },
   '음성인식': {

@@ -20,7 +20,7 @@ body.deck-page { overflow: hidden; background: #E6ECF7; font-family: var(--font)
 
 .slide--cover   { background-image: url('../img/bg-cover.jpg'); }
 .slide--body    { background-image: url('../img/bg-body.jpg'); }
-.slide--pixel   { background-image: url('../img/bg-pixel.jpg'); }
+.slide--pixel   { background-image: url('../img/bg-pixel.jpg?v=20261117'); }
 .slide--pastel  { background-image: url('../img/bg-pastel.jpg'); }
 
 /* 본문 슬라이드 안전 영역: 물결·그림 장식을 피해서 배치 */
@@ -1408,3 +1408,95 @@ a.buy-shop:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11,
 .cmp4 th:nth-child(5) { background: var(--yellow-mid); }
 .cmp4 td:first-child { width: 190px; }
 .cmp4 .mono { font-size: 18px; }
+
+/* 내 장치 이름 입력 (7~8차시 「블루투스 준비」) · 적어 둔 이름 표시 */
+.btname-in { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.btname-in span { font-size: 18px; font-weight: 800; color: var(--navy); white-space: nowrap; }
+.btname-in input { flex: 1; min-width: 0; height: 56px; padding: 0 16px; border: var(--stroke) solid var(--navy); border-radius: 12px; background: #fff; font: 700 30px/1 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--navy); }
+.btname-in input:focus { outline: 4px solid var(--blue-tab); outline-offset: 2px; }
+.btname-msg { min-height: 24px; margin-top: 8px; font-size: 17px; font-weight: 700; color: var(--green-deep); }
+[data-btname] { color: var(--blue); font-weight: 800; white-space: nowrap; }
+/* 누르면 열리는 버튼을 버튼처럼 (아래 그림자) */
+.btn--raised { box-shadow: 0 4px 0 var(--navy); transition: transform .1s, box-shadow .1s; }
+.btn--raised:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--navy); }
+.btn--raised:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--navy); }
+/* 눌러서 보이기 (data-reveal): 가린 동안은 점선 테두리와 물음표만. 누르거나 →로 하나씩 보임 (deck.js)
+   data-reveal="fade"는 물음표 상자 없이 숨겼다가 나타남(되돌아오는 선처럼 상자가 아닌 것) */
+body:not(.is-editing) [data-reveal].is-covered { cursor: pointer; }
+body:not(.is-editing) [data-reveal]:not([data-reveal="fade"]).is-covered { position: relative; color: transparent; background: var(--paper); border-style: dashed; box-shadow: none; transition: transform .15s, background-color .15s; }
+body:not(.is-editing) [data-reveal]:not([data-reveal="fade"]).is-covered > * { visibility: hidden; }
+body:not(.is-editing) [data-reveal]:not([data-reveal="fade"]).is-covered::after { content: '?'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 52px; font-weight: 800; color: var(--c, var(--navy)); }
+body:not(.is-editing) [data-reveal]:not([data-reveal="fade"]).is-covered:hover { transform: translateY(-3px); background: var(--c-soft, var(--sky)); }
+body:not(.is-editing) [data-reveal="fade"].is-covered { opacity: 0; }
+body:not(.is-editing) .cmp [data-reveal]:not([data-reveal="fade"]).is-covered::after,
+body:not(.is-editing) .chain [data-reveal]:not([data-reveal="fade"]).is-covered::after { font-size: 96px; }
+body:not(.is-editing) .pai [data-reveal]:not([data-reveal="fade"]).is-covered::after { font-size: 40px; }
+body:not(.is-editing) .pai [data-reveal]:not([data-reveal="fade"]).is-covered:hover { transform: none; }
+[data-reveal].is-popped { animation: reveal-pop .45s cubic-bezier(.2, 1.4, .4, 1); }
+@keyframes reveal-pop { from { opacity: 0; transform: scale(.9); } }
+@media (prefers-reduced-motion: reduce) { [data-reveal].is-popped { animation: none; } }
+
+/* KNN 체험 (knn-play, interact.js 14) */
+.knn-play { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+.knn-play .knn__fig svg { height: 214px; cursor: crosshair; touch-action: none; user-select: none; }
+.knn-pt { transition: stroke-width .15s; }
+.knn-pt.is-near { stroke: #F8C000; stroke-width: 6; }
+.knn-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.knn-ks { display: inline-flex; gap: 2px; padding: 3px; border: 2px solid var(--navy); border-radius: 999px; background: var(--paper); }
+.knn-ks button { border: 0; background: none; padding: 2px 12px; border-radius: 999px; font: inherit; font-size: 17px; font-weight: 800; color: var(--muted); cursor: pointer; }
+.knn-ks button.is-on { background: var(--navy); color: #fff; }
+.knn-res { font-size: 21px; font-weight: 800; color: var(--navy); }
+.knn-res .is-id1 { color: var(--blue); }
+.knn-res .is-id2 { color: var(--green-deep); }
+
+/* AI만 바꿔 끼우기 (ai-swap, interact.js 15) */
+.swap-pick { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.swap-pick__k { margin-right: 6px; font-size: 22px; font-weight: 800; color: var(--muted); }
+.swap-pick__b { padding: 8px 24px; border: 2px solid var(--navy); border-radius: 999px; background: var(--paper); font: inherit; font-size: 22px; font-weight: 800; color: var(--navy); cursor: pointer; box-shadow: 0 3px 0 var(--navy); transition: transform .1s, box-shadow .1s; }
+.swap-pick__b:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--navy); }
+.swap-pick__b:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--navy); }
+.swap-pick__b.is-on { background: var(--yellow-mid); }
+.swap-face { display: none; }
+.swap-face.is-on { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.chain__node.is-swapped { animation: swap-flip .45s ease-in-out; }
+@keyframes swap-flip { 50% { transform: perspective(900px) rotateY(90deg); } }
+.chain__node.is-same { animation: same-pulse 1s ease .2s; }
+@keyframes same-pulse { 35% { box-shadow: 0 0 0 10px rgba(44, 176, 84, .4); } }
+@media (prefers-reduced-motion: reduce) { .chain__node.is-swapped, .chain__node.is-same { animation: none; } }
+
+/* 모션인식 손 높이 체험 (motion-sim, interact.js 16) */
+.msim { display: grid; grid-template-columns: auto 1fr; gap: 34px; padding: 16px 26px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--paper); }
+.msim__tracks { display: flex; gap: 20px; }
+.msim__col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.msim__track { position: relative; width: 78px; height: 272px; display: grid; grid-template-rows: 4fr 2fr 4fr; border: var(--stroke) solid var(--navy); border-radius: 14px; cursor: ns-resize; touch-action: none; user-select: none; }
+.msim__z--up { background: var(--yellow-mid); border-radius: 12px 12px 0 0; }
+.msim__z--mid { background: #E3E8F2; border-top: 2px solid var(--navy); border-bottom: 2px solid var(--navy); }
+.msim__z--down { background: var(--paper); border-radius: 0 0 12px 12px; }
+.msim__hand { position: absolute; left: 50%; width: 60px; height: 60px; margin: -30px 0 0 -30px; display: grid; place-items: center; border: 3px solid var(--navy); border-radius: 50%; background: var(--purple); color: #fff; font-size: 26px; font-weight: 800; box-shadow: 0 3px 0 var(--navy); pointer-events: none; transition: background-color .15s; }
+.msim__track.is-f .msim__hand { background: var(--green); }
+.msim__track.is-b .msim__hand { background: var(--red); }
+.msim__track.is-s .msim__hand { background: #8A94AE; }
+.msim__cap { font-size: 18px; font-weight: 800; color: var(--muted); }
+.msim__out { display: flex; flex-direction: column; justify-content: center; gap: 4px; min-width: 0; }
+.msim__val { font-size: 54px; font-weight: 800; letter-spacing: .04em; line-height: 1.15; }
+.msim__val .is-f { color: var(--green-deep); }
+.msim__val .is-b { color: #C0392B; }
+.msim__val .is-s { color: var(--muted); }
+.msim__say { font-size: 21px; font-weight: 700; color: var(--ink); }
+.msim__servos { display: flex; gap: 28px; margin-top: 8px; }
+.msim__servo { text-align: center; }
+.msim__servo svg { display: block; width: 190px; height: auto; }
+.msim__servo text { font-size: 15px; font-weight: 700; fill: var(--muted); font-family: var(--font); }
+.msim__horn { transform-origin: 100px 100px; transition: transform .25s ease; fill: var(--navy); }
+.msim__deg { font-size: 22px; font-weight: 800; color: var(--navy); }
+
+/* 코드 캡처 크게 보기 (data-zoom-shot, interact.js 17) */
+[data-zoom-shot] { position: relative; cursor: zoom-in; }
+.zoom-chip { position: absolute; right: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: rgba(11, 26, 78, .84); color: #fff; font-size: 18px; font-weight: 800; line-height: 1; pointer-events: none; }
+.zoom-chip .i { width: 18px; height: 18px; }
+.is-editing [data-zoom-shot] { cursor: auto; }
+.is-editing .zoom-chip { display: none; }
+.modal__box.zoom-box { width: auto; max-width: 96vw; max-height: 96vh; }
+.zoom-pic { margin-top: 10px; border: 2px solid var(--line); border-radius: 12px; overflow: hidden; }
+.zoom-pic img { width: 100%; height: auto; }
+.zoom-pic.shot { padding: 20px; }
