@@ -28,6 +28,11 @@ MK.generators = MK.generators || {};
     var x = (w - 1920 * s) / 2, y = (h - 1080 * s) / 2;
     stage.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + s + ')';
     MK.deck.scale = s;
+    // 슬라이드 밖 UI(아래 바·오른쪽 위 칩·알림·타이머 칩)도 슬라이드와 같은 비율로 줄고 커지게.
+    // 데스크톱 브라우저(배율 약 0.9)에서 원래 크기. 작은 노트북에서도 글자가 읽히도록 0.82배 아래로는 줄이지 않음
+    var ui = Math.max(0.82, Math.min(1.6, s / 0.9));
+    document.documentElement.style.setProperty('--ui-scale', ui.toFixed(3));
+    MK.deck.uiScale = ui;
   }
 
   /* ---------- 동적 슬라이드 ---------- */

@@ -280,3 +280,5 @@
 .timer-chip { height: 48px; padding: 0 20px; gap: 10px; font-size: 16px; }
 .timer-chip b { font-size: 24px; }
 .timer-chip .i { font-size: 20px; }
+/* 슬라이드 밖 UI를 슬라이드 배율에 맞춰 (deck.js fit()이 --ui-scale을 정함). 노트북·데스크톱에서 슬라이드와의 비율이 같게 */
+.dock.sbar, #me, .demo-flag, #timer-chip, .toast { zoom: var(--ui-scale, 1); }

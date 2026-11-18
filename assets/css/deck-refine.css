@@ -332,8 +332,8 @@
 #s-levels .cr-context p { font-size: 25px; line-height: 1.45; color: var(--muted); }
 
 /* 만들기: 연결 목록에서 찾을 장치 이름을 눈에 잘 보이는 이름표로 표시 */
-#s-make .mw-status { grid-template-columns: minmax(0, 1fr) 370px 300px; gap: 26px; align-items: center; }
-#s-make .mw-status:has(.mw-timer[hidden]) { grid-template-columns: minmax(0, 1fr) 410px; }
+#s-make .mw-status { grid-template-columns: minmax(0, 1fr) 360px; gap: 30px; align-items: center; }
+#s-make .mw-status:has(.mw-timer[hidden]) { grid-template-columns: minmax(0, 1fr); }
 #s-make .mw-reminder > b { font-size: 29px; }
 #s-make .mw-reminder p { margin: 10px 0; font-size: 22px; }
 #s-make .device-badge { padding: 22px 24px; background: var(--paper); border: 3px solid var(--navy); border-radius: 20px; box-shadow: 0 4px 0 var(--navy); }
@@ -352,3 +352,24 @@
 #s-make .device-badge__input-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 #s-make .device-badge__form input { width: 100%; height: 48px; border: 1px solid var(--blue); border-radius: 8px; padding: 0 12px; background: white; color: var(--navy); font: 700 26px/1 'SFMono-Regular', Menlo, Consolas, monospace; }
 #s-make .device-badge__form input:focus { outline: 3px solid #A4D4F8; outline-offset: 2px; }
+/* 연결할 장치 이름: AI 웹앱 버튼 바로 옆에 한 줄로 (웹앱에서 블루투스로 연결할 때 고르는 이름) */
+#s-make .mw-apps .mw-bt { flex: none; transform: translateY(2px); } /* 옆 버튼은 아래 그림자(4px)가 있어 가운데를 맞추려고 2px 내림 */
+#s-make .mw-apps .device-badge { display: flex; align-items: center; gap: 12px; padding: 6px 8px 6px 16px; border: 1px solid var(--blue-mid); border-radius: 12px; background: var(--blue-soft); box-shadow: none; }
+#s-make .mw-apps .device-badge__head { font-size: 18px; white-space: nowrap; }
+#s-make .mw-apps .device-badge__head .i { width: 20px; height: 20px; }
+#s-make .mw-apps .device-badge__view { margin-top: 0; min-height: 0; gap: 10px; }
+#s-make .mw-apps .device-badge__value { font-size: 26px; }
+#s-make .mw-apps .device-badge.is-empty .device-badge__value { font-size: 18px; }
+#s-make .mw-apps .device-badge button { padding: 5px 10px; font-size: 16px; }
+#s-make .mw-apps .device-badge__hint { display: none; }
+#s-make .mw-apps .device-badge__form { margin-top: 0; flex-wrap: nowrap; align-items: center; }
+#s-make .mw-apps .device-badge__form label { width: auto; }
+#s-make .mw-apps .device-badge__form input { width: 170px; height: 38px; font-size: 21px; }
+/* 링비트 전원: 보낼 때 OFF, 움직일 때 ON을 눈에 띄게 */
+/* 만들기 안내 두 가지를 같은 모양의 상자로 나란히: 왼쪽 파랑(움직임 먼저), 오른쪽 노랑(전원) — 높이·폭을 맞춤 */
+#s-make .mw-reminder { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
+#s-make .mw-reminder > b { display: flex; align-items: center; padding: 12px 24px; border-left: 5px solid var(--blue); border-radius: 0 12px 12px 0; background: var(--blue-soft); color: var(--navy); font-size: 27px; line-height: 1.35; }
+#s-make .mw-reminder .mw-power { display: block; width: auto; margin: 0; padding: 12px 24px; font-size: 23px; border-left: 5px solid var(--yellow); border-radius: 0 12px 12px 0; background: var(--yellow-soft); color: var(--navy); font-weight: 600; line-height: 1.7; }
+#s-make .mw-reminder .pw { display: inline-block; margin-left: 10px; padding: 0 16px; border-radius: 999px; color: #fff; font-size: 23px; font-weight: 800; letter-spacing: .04em; line-height: 1.55; }
+#s-make .mw-reminder .pw--off { background: var(--red); }
+#s-make .mw-reminder .pw--on { background: var(--green-deep); }
