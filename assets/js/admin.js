@@ -170,7 +170,7 @@ window.MK = window.MK || {};
     }
 
     if (tab === 'data') {
-      h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">도전과제·제출 기록을 파일로 저장합니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
+      h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">분류기 카드·제출 기록을 파일로 저장합니다. CSV는 공통과제 결과표(AI 모델·알아보는 것·분류 방법·서보)입니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
       h += '<div class="acard"><div class="acard__title">가져오기</div><div class="acard__meta">이 교안에서 내보낸 JSON을 불러옵니다. 지금 데이터는 덮어씁니다.</div><div class="acard__row"><input type="file" accept="application/json,.json" data-import style="font-size:13px"></div></div>';
       h += '<div class="acard"><div class="acard__title">샘플 결과물</div><div class="acard__meta">샘플 아이디어 카드와 결과물 6개를 넣어 보드와 발표 슬라이드를 미리 봅니다. "샘플" 표시가 붙습니다.</div><div class="acard__row"><button class="ubtn ubtn--sm" data-seed>샘플 넣기</button><button class="ubtn ubtn--sm ubtn--ghost" data-unseed>샘플 지우기</button></div></div>';
       h += '<div class="acard"><div class="acard__title">전체 초기화</div><div class="acard__meta">내 도전과제(카드)·제출·신청 기록, 도움 요청·하트·수업 아이디어·타이머를 모두 지웁니다. 되돌릴 수 없으니 먼저 내보내기를 하세요.</div><div class="acard__row"><button class="ubtn ubtn--sm ubtn--danger" data-reset>' + ic('trash') + ' 초기화</button></div></div>';
@@ -243,14 +243,16 @@ window.MK = window.MK || {};
   function toCsv(d) {
     var q = function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var subBy = {}; d.submissions.forEach(function (s) { subBy[s.name] = s; });
-    var rows = [['이름', '내 도전과제(카드)', 'AI 모델', '문장', '서보 1', '서보 2', '함께', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
+    // 공통과제(바둑돌 분류기) 결과표: 카드(AI 모델·알아보는 것·분류 방법·서보) + 제출을 이름으로 이어 한 줄씩
+    var rows = [['이름', '함께', '분류기 이름', 'AI 모델', '알아보는 것', '분류 방법', '서보 1 (P0)', '서보 2 (P1)', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
     var names = {}, cardBy = {};
     (d.cards || []).forEach(function (c) { cardBy[c.name] = c; names[c.name] = names[c.name] || { name: c.name }; });
     d.enrollments.forEach(function (e) { names[e.name] = e; });
     d.submissions.forEach(function (s) { if (!names[s.name]) names[s.name] = { name: s.name, challengeId: s.challengeId }; });
     Object.keys(names).forEach(function (n) {
-      var e = names[n], s = subBy[n] || {}, cd = cardBy[n], c = cd ? { title: cd.title, category: cd.model } : (MK.challengeById(s.challengeId || e.challengeId) || {});
-      rows.push([n, c.title, c.category, cd && MK.cardSentence ? MK.cardSentence(cd) : '', cd ? cd.servo1 : '', cd ? cd.servo2 : '', cd ? cd.team : '', s.title, s.desc, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
+      var s = subBy[n] || {}, cd = cardBy[n] || {}, L = {};
+      (MK.sorterLines ? MK.sorterLines(cd) : []).forEach(function (r) { L[r[0]] = r[1]; });
+      rows.push([n, cd.team, cd.title, cd.model, L['알아보는 것'], L['분류 방법'], cd.servo1, cd.servo2, s.title, s.desc, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
     });
     return rows.map(function (r) { return r.map(q).join(','); }).join('\r\n');
   }

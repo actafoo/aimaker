@@ -1,8 +1,8 @@
 /* =========================================================
-   내 도전과제 = 7~8차시 아이디어 카드 (9~10차시)
-   - card-check   : 아이디어 카드 다듬기 (눌러서 체크, 이 브라우저에만)
-   - my-card      : 슬라이드 위에서 카드 빈칸을 바로 채우고 등록 (문장이 저절로 완성)
-   - card-board   : 우리 반 도전과제 보드 (모델별 거르기, 누르면 크게)
+   내 분류기 카드 (9~10차시 공통과제: 섞인 바둑돌을 검은돌·흰돌끼리 나누기)
+   - tick-list    : 눌러서 체크하는 목록 (이 브라우저에만)
+   - my-card      : 슬라이드 위에서 인식 설정·분류 방법·서보 동작을 채우고 등록
+   - card-board   : 우리 반 분류기 보드 (분류 방법·시험 기록, 누르면 크게)
    - idea-gallery : 도전과제 예시 7가지 = 원래 오늘 하려다 접은 도전과제 (PART 5 덤. 누르면 자세히, 내 도전과제로 가져오기)
    데이터: 서버의 카드 탭(한 사람에 한 장). 제출물은 카드와 이름으로 이어집니다.
    ========================================================= */
@@ -37,22 +37,45 @@ window.MK = window.MK || {};
     if (/기$/.test(a)) return a.slice(0, -1) + '도록';  // 깃발 올리기 → 깃발 올리도록
     return a + '하도록';
   }
+  /* ---------- 공통과제(바둑돌 분류기) 카드 ----------
+     AI 모델은 연수생이 고릅니다(MK.cardModels). 돌을 직접 보거나(이미지분류), 사람이 돌을 보고 손 모양(핸드포즈)·말(음성인식)로 알려 줍니다.
+     ID1 → 검은돌 쪽, ID2 → 흰돌 쪽, ID3(선택) → 가만히. 서버 카드 탭의 칸을 그대로 씁니다(서버 코드는 바꾸지 않음):
+       title=분류기 이름 · model=AI 모델 · sense=ID별로 알아볼 것(「검은돌·흰돌·빈 판」, 「주먹·보」) · act=분류 방법 · servo1·servo2 · team */
+  var ROWS = [{ id: 1, s: 's1', to: '검은돌 쪽으로' }, { id: 2, s: 's2', to: '흰돌 쪽으로' }, { id: 3, s: 's3', to: '가만히 · 선택' }];
+  var MODEL_GUIDE = {
+    '이미지분류': { hint: 'AI가 카메라로 돌을 직접 봅니다', ph: ['검은돌', '흰돌', '빈 판'], rows: 3 },
+    '핸드포즈': { hint: '사람이 돌을 보고 손 모양으로 알려 줍니다', ph: ['예: 주먹', '예: 보', '예: 손 내리기'], rows: 3 },
+    '음성인식': { hint: '사람이 돌을 보고 말로 알려 줍니다', ph: ['예: 검은돌', '예: 흰돌', ''], rows: 2 }
+  };
+  function guideOf(model) { return MODEL_GUIDE[model] || { hint: '먼저 AI 모델을 고르세요', ph: ['', '', ''], rows: 3 }; }
+  function unpack(c) {
+    var n = {}, sig = String(c.sense || '').split('·');
+    ROWS.forEach(function (r, i) { n[r.s] = (sig[i] || '').trim(); });
+    return n;
+  }
+  function pack(n, model) { // 화면 칸 → sense 한 줄
+    var sig = ROWS.slice(0, guideOf(model).rows).map(function (r) { return String(n[r.s] || '').replace(/·/g, ' ').trim(); });
+    while (sig.length && !sig[sig.length - 1]) sig.pop(); // 뒤쪽 빈칸(ID3)은 빼기
+    return { sense: sig.join('·') };
+  }
+  // 한눈에 보기 줄: [이름, 내용]. 보드·제출·내려받기에서 같이 씀
+  MK.sorterLines = function (c) {
+    c = c || {}; var n = unpack(c);
+    var sees = ROWS.filter(function (r) { return n[r.s]; }).map(function (r) { return 'ID' + r.id + ' ' + n[r.s] + ' → ' + r.to.replace(' · 선택', '').replace('으로', ''); }).join(' · ');
+    return [['AI 모델', c.model || ''], ['알아보는 것', sees], ['분류 방법', c.act || ''], ['서보 1 (P0)', c.servo1 || ''], ['서보 2 (P1)', c.servo2 || '']];
+  };
   MK.cardSentence = function (c) {
-    c = c || {};
-    var sit = String(c.situation || '').trim(), who = String(c.who || '').trim(), sense = String(c.sense || '').trim();
-    var h = '';
-    if (sit) h += sit + (/(에서|에)$/.test(sit) ? '' : '에서') + ' ';
-    if (who) h += who + iGa(who) + ' 겪는 불편을 줄이기 위해, ';
-    h += 'AI가 ' + (sense ? sense + eulReul(sense) : '○을') + ' 인식하면 서보모터가 ' + actPhrase(c.act) + ' 만든다.';
-    return h;
+    c = c || {}; var n = unpack(c);
+    var sig = n.s1 && n.s2 ? ' · ID1 ' + n.s1 + ' / ID2 ' + n.s2 : '';
+    return (c.model ? c.model + ' · ' : '') + (c.act ? String(c.act).trim() : '분류 방법을 아직 적지 않았어요') + sig;
   };
 
   /* 이름이 필요할 때: 등록돼 있으면 바로, 아니면 이름 등록 창을 먼저 */
   function withMe(then, why) {
     var m = me();
     if (m) return then(m);
-    MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: why || '내 도전과제와 제출에 쓰는 이름입니다.',
-      fields: MK.ui.personFields(null), note: MK.ui.PIN_NOTE, submitText: '등록',
+    MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: why || '내 분류기와 제출에 쓰는 이름입니다.',
+      fields: MK.ui.personFields(null), note: MK.ui.PERSON_NOTE, submitText: '등록',
       onSubmit: function (v) { return MK.store.identify(v).then(function () { setTimeout(function () { var n = me(); if (n) then(n); }, 80); }); } });
   }
 
@@ -111,40 +134,41 @@ window.MK = window.MK || {};
   document.addEventListener('click', function (e) { if (e.target.closest('[data-act="submit"]')) setTimeout(paintReady, 120); }); // 제출 창이 열리면 미리 채워진 칸도 바로 체크
 
   /* =========================================================
-     2. 내 도전과제 카드 — 빈칸을 바로 채우고 등록
+     2. 내 분류기 카드 (공통과제: 섞인 바둑돌을 검은돌·흰돌끼리 나누기) — 칸을 채우고 등록
+        ① 인식: AI 모델 고르기 + ID마다 알아볼 것 (모델에 따라 칸이 바뀜) ② 분류 방법 ③ 서보가 하는 일·각도
      ========================================================= */
   var DRAFT_KEY = MK.config.storageKey + '-carddraft';
-  var FIELDS = ['title', 'situation', 'who', 'sense', 'act', 'servo1', 'servo2', 'team'];
-  var form = { el: null, dirty: false, owner: null, from: '' };
+  var FIELDS = ['title', 'sense', 'act', 'servo1', 'servo2', 'team'];
+  var form = { el: null, dirty: false, owner: null, from: '', model: '' };
 
-  function blankIn(k, ph, color, max) {
-    return '<input class="mc-blank c-' + color + '" data-k="' + k + '" maxlength="' + max + '" placeholder="' + esc(ph) + '" autocomplete="off" spellcheck="false">';
-  }
   MK.widgets['my-card'] = function (el) {
     form.el = el;
+    var ids = ROWS.map(function (r) {
+      return '<div class="mc-id' + (r.id < 3 ? '' : ' is-opt') + '" data-row="' + r.id + '"><span class="mc-id__tag">ID' + r.id + '</span>' +
+        '<input class="mc-sig" data-k="' + r.s + '" maxlength="9" autocomplete="off" spellcheck="false" aria-label="ID' + r.id + '에서 AI가 알아볼 것">' +
+        '<span class="mc-id__to">→ ' + esc(r.to) + '</span></div>';
+    }).join('');
     el.innerHTML =
-      '<div class="mc">' +
+      '<div class="mc mc--sort">' +
         '<div class="mc-card">' +
-          '<div class="mc-title"><span class="mc-k">작품 이름</span><input class="mc-title__in" data-k="title" maxlength="30" placeholder="예: 손 대신 들어 주는 도움 깃발" autocomplete="off" spellcheck="false"></div>' +
-          '<div class="mc-sec"><div class="mc-sec__h"><span class="mc-k">① 문장 틀</span><span class="mc-genres" role="group" aria-label="작품 종류"><button type="button" class="mc-genre" data-mc-genre="fix">불편을 줄이는 작품</button><button type="button" class="mc-genre" data-mc-genre="show">보여 주고 싶은 작품</button></span></div>' +
-            '<p class="mc-frame">' + blankIn('situation', '○○한 상황', 'purple', 40) + '에서 <span class="mc-who">' + blankIn('who', '○○이', 'yellow', 20) + '<span class="mc-josa" data-josa="who">가</span> 겪는 불편을 줄이기 위해,</span> ' +
-              'AI가 ' + blankIn('sense', '○', 'blue', 30) + '<span class="mc-josa" data-josa="sense">을</span> 인식하면 서보모터가 ' + blankIn('act', '○○하도록', 'green', 30) + ' 만든다.</p></div>' +
-          '<div class="mc-sec mc-row"><span class="mc-k">② 쓸 AI 모델</span><span class="mc-models">' + (MK.cardModels || []).map(function (k) {
-            var cat = MK.categories[k];
-            return '<button type="button" class="tag mc-model c-' + cat.color + '" data-mc-model="' + esc(k) + '" aria-pressed="false">' + ic(cat.icon) + ' ' + esc(k) + '</button>';
-          }).join('') + '</span></div>' +
-          '<div class="mc-sec"><span class="mc-k">③ 서보가 하는 일</span>' +
-            '<div class="mc-servo"><span class="pin">P0</span><b>서보 1</b><input data-k="servo1" maxlength="40" placeholder="예: 주먹이면 깃발을 든다" autocomplete="off" spellcheck="false"></div>' +
-            '<div class="mc-servo"><span class="pin">P1</span><b>서보 2</b><input data-k="servo2" maxlength="40" placeholder="예: 보면 깃발을 내린다" autocomplete="off" spellcheck="false"></div></div>' +
+          '<div class="mc-title"><span class="mc-k">분류기 이름</span><input class="mc-title__in" data-k="title" maxlength="30" placeholder="예: 기우뚱 시소 분류기" autocomplete="off" spellcheck="false"></div>' +
+          '<div class="mc-sec"><div class="mc-sec__h"><span class="mc-k">① 인식 · AI 모델</span><span class="mc-models">' + (MK.cardModels || []).map(function (k) {
+              var cat = MK.categories[k];
+              return '<button type="button" class="tag mc-model c-' + cat.color + '" data-mc-model="' + esc(k) + '" aria-pressed="false">' + ic(cat.icon) + ' ' + esc(k) + '</button>';
+            }).join('') + '</span></div>' +
+            '<div class="mc-hint" data-mc-hint></div>' +
+            '<div class="mc-ids">' + ids + '</div></div>' +
+          '<div class="mc-sec mc-row mc-line"><span class="mc-k">② 분류 방법</span><input data-k="act" maxlength="30" placeholder="예: 판을 기울여 왼쪽·오른쪽 통으로" autocomplete="off" spellcheck="false"></div>' +
+          '<div class="mc-sec"><span class="mc-k">③ 서보가 하는 일 · 각도</span>' +
+            '<div class="mc-servo"><span class="pin">P0</span><b>서보 1</b><input data-k="servo1" maxlength="40" placeholder="예: ID1이면 90°→30°, 판을 왼쪽으로" autocomplete="off" spellcheck="false"></div>' +
+            '<div class="mc-servo"><span class="pin">P1</span><b>서보 2</b><input data-k="servo2" maxlength="40" placeholder="예: ID2이면 90°→150°, 판을 오른쪽으로" autocomplete="off" spellcheck="false"></div></div>' +
           '<div class="mc-sec mc-row mc-team"><span class="mc-k">함께 만드는 사람</span><input data-k="team" maxlength="40" placeholder="혼자면 비워 두세요" autocomplete="off" spellcheck="false"></div>' +
         '</div>' +
         '<div class="mc-side">' +
           '<div class="mc-status" data-mc-status></div>' +
-          '<button type="button" class="btn btn--green mc-save" data-mc-save>' + ic('check') + ' 내 도전과제 등록</button>' +
-          '<div class="mc-preview"><div class="mc-k">완성된 문장</div><p data-mc-preview></p></div>' +
-          '<div class="mc-from" data-mc-from></div>' +
-          '<div class="mc-links">' + (document.getElementById('s-draw') ? '<button type="button" class="btn btn--ghost btn--sm" data-goto="s-draw">' + ic('spark') + ' 카드 뽑기</button>' : MK.openIdeas ? '<button type="button" class="btn btn--ghost btn--sm" data-ideas>' + ic('bulb') + ' 보여 주고 싶은 작품 예시 보기</button>' : '') + '<button type="button" class="btn btn--ghost btn--sm" data-mc-import>' + ic('bulb') + ' 도전과제 예시에서 가져오기</button>' +
-            '<button type="button" class="btn btn--ghost btn--sm" data-goto="s-cardboard">우리 반 도전과제 보기 ' + ic('right') + '</button></div>' +
+          '<button type="button" class="btn btn--green mc-save" data-mc-save>' + ic('check') + ' 내 분류기 등록</button>' +
+          '<div class="mc-preview"><div class="mc-k">한눈에 보기</div><dl class="mc-sum" data-mc-preview></dl></div>' +
+          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-goto="s-cardboard">우리 반 분류기 보기 ' + ic('right') + '</button></div>' +
         '</div>' +
       '</div>';
     var iv = initialValues(); fill(iv.v, iv.dirty);
@@ -162,50 +186,43 @@ window.MK = window.MK || {};
     return { v: c ? Object.assign({}, c) : {}, dirty: false };
   }
   function hasText(v) { return FIELDS.some(function (k) { return v[k]; }) || !!v.model; }
+  // 화면 칸 → 서버 카드 모양 (ID별 칸을 sense 한 줄로 묶음)
   function values() {
-    var v = {}; if (!form.el) return v;
-    $$('[data-k]', form.el).forEach(function (i) { v[i.getAttribute('data-k')] = i.value.trim(); });
-    var on = $('.mc-model.is-on', form.el); v.model = on ? on.getAttribute('data-mc-model') : '';
-    v.genre = form.genre || 'fix'; if (v.genre === 'show') v.who = ''; // 보여 주고 싶은 작품: ‘누가 겪는 불편’ 없이
-    v.from = form.from || '';
+    var v = {}, n = {}; if (!form.el) return v;
+    $$('[data-k]', form.el).forEach(function (i) { var k = i.getAttribute('data-k'); (/^s\d$/.test(k) ? n : v)[k] = i.value.trim(); });
+    Object.assign(v, pack(n, form.model));
+    v.model = form.model || ''; v.from = '';
     return v;
+  }
+  // 모델에 맞게 칸 바꾸기: 알아볼 것의 예시 글자, ID3 줄(음성인식은 없음)
+  function paintModel() {
+    if (!form.el) return;
+    var g = guideOf(form.model);
+    $$('.mc-model', form.el).forEach(function (b) { var on = b.getAttribute('data-mc-model') === form.model; b.classList.toggle('is-on', on); b.classList.toggle('tag--solid', on); b.setAttribute('aria-pressed', on); });
+    var h = $('[data-mc-hint]', form.el); if (h) h.textContent = g.hint;
+    ROWS.forEach(function (r, i) {
+      var row = $('[data-row="' + r.id + '"]', form.el); if (!row) return;
+      row.hidden = i >= g.rows;
+      $('.mc-sig', row).placeholder = g.ph[i] || '';
+    });
   }
   function fill(v, dirty) {
     if (!form.el) return;
     v = v || {};
-    $$('[data-k]', form.el).forEach(function (i) { i.value = v[i.getAttribute('data-k')] || ''; });
-    $$('.mc-model', form.el).forEach(function (b) { var on = b.getAttribute('data-mc-model') === v.model; b.classList.toggle('is-on', on); b.classList.toggle('tag--solid', on); b.setAttribute('aria-pressed', on); });
-    form.from = v.from || '';
-    form.genre = v.genre || (v.who || !(v.title || v.sense || v.act) ? 'fix' : 'show');
-    paintGenre();
+    var n = unpack(v);
+    $$('[data-k]', form.el).forEach(function (i) { var k = i.getAttribute('data-k'); i.value = (/^s\d$/.test(k) ? n[k] : v[k]) || ''; });
+    form.model = (MK.cardModels || []).indexOf(v.model) >= 0 ? v.model : '';
+    paintModel();
     form.dirty = !!dirty;
     form.owner = me() ? me().name : null;
     live();
   }
-  function paintGenre() {
-    var root = form.el && $('.mc', form.el); if (!root) return;
-    root.classList.toggle('is-show', form.genre === 'show');
-    $$('.mc-genre', form.el).forEach(function (b) { var on = b.getAttribute('data-mc-genre') === form.genre; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
-  }
-  // 빈칸 너비를 글자에 맞추고, 조사와 완성 문장을 바로 바꿈
-  var measurer = null;
-  function textWidth(input, text) {
-    if (!measurer) { measurer = document.createElement('span'); measurer.className = 'mc-measure'; document.body.appendChild(measurer); }
-    var cs = getComputedStyle(input);
-    measurer.style.font = cs.font; measurer.style.letterSpacing = cs.letterSpacing;
-    measurer.textContent = text;
-    return measurer.getBoundingClientRect().width / (MK.deck && MK.deck.scale ? MK.deck.scale : 1);
+  function sumHtml(c) {
+    return MK.sorterLines(c).map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd' + (r[1] ? '' : ' class="is-empty"') + '>' + esc(r[1] || '아직 비어 있음') + '</dd></div>'; }).join('');
   }
   function live() {
     if (!form.el) return;
-    var v = values();
-    $$('.mc-blank', form.el).forEach(function (i) { i.style.width = Math.ceil(textWidth(i, i.value || i.placeholder) + 30) + 'px'; });
-    var jw = $('[data-josa="who"]', form.el), js = $('[data-josa="sense"]', form.el);
-    if (jw) jw.textContent = v.who ? iGa(v.who) : '가';
-    if (js) js.textContent = v.sense ? eulReul(v.sense) : '을';
-    var p = $('[data-mc-preview]', form.el); if (p) p.textContent = MK.cardSentence(v);
-    var fr = $('[data-mc-from]', form.el), ch = v.from && MK.challengeById(v.from);
-    if (fr) fr.innerHTML = ch ? '<span class="mc-k">가져온 도전과제 예시</span> ' + esc(ch.title) + ' · <span class="t-muted">' + esc(ch.question) + '</span> <button type="button" class="linkish" data-mc-unfrom>빼기</button>' : '';
+    var p = $('[data-mc-preview]', form.el); if (p) p.innerHTML = sumHtml(values());
   }
   function paintStatus() {
     if (!form.el) return;
@@ -218,47 +235,45 @@ window.MK = window.MK || {};
     if (!m) box.innerHTML = '<div class="mc-st">' + ic('user') + '<span>등록하려면 먼저 이름이 필요해요.<br><button type="button" class="linkish" data-act="identify">이름 등록하기</button></span></div>';
     else if (!c) box.innerHTML = '<div class="mc-st">' + ic('doc') + '<span><b>' + esc(m.name) + '</b> 선생님 · 아직 등록 전<br>빈칸을 채우고 등록하세요.</span></div>';
     else box.innerHTML = '<div class="mc-st mc-st--ok">' + ic('check') + '<span><b>등록됨</b> · 보드에 올라갔어요' + (form.dirty ? '<br><b class="t-blue">고친 내용이 있어요. 다시 저장하세요.</b>' : '<br>고치면 다시 저장하면 됩니다.') + '</span></div>';
-    btn.innerHTML = ic('check') + (c ? ' 고친 내용 저장' : ' 내 도전과제 등록');
+    btn.innerHTML = ic('check') + (c ? ' 고친 내용 저장' : ' 내 분류기 등록');
     btn.classList.toggle('btn--ghost', !!c && !form.dirty);
   }
   function save() {
     var v = values();
+    if (!v.title) { MK.ui.toast('분류기 이름을 적어 주세요.', true); return; }
+    if (!v.model) { MK.ui.toast('① 쓸 AI 모델을 골라 주세요.', true); return; }
+    var n = unpack(v);
+    if (v.model === '이미지분류' && (!n.s1 || !n.s2)) { // 돌을 직접 보는 경우 기본값
+      n.s1 = n.s1 || '검은돌'; n.s2 = n.s2 || '흰돌'; v.sense = pack(n, v.model).sense;
+    }
+    n = unpack(v);
+    if (!n.s1 || !n.s2) { MK.ui.toast('① ID1·ID2에서 AI가 알아볼 것을 적어 주세요.', true); return; }
+    if (!v.act) { MK.ui.toast('② 분류 방법을 한 줄로 적어 주세요.', true); return; }
     try { MK.cleanCard(v); } catch (e) { MK.ui.toast(e.message, true); return; }
     withMe(function (m) {
       var btn = $('[data-mc-save]', form.el); if (btn) btn.disabled = true;
       MK.store.saveCard({ name: m.name, pin: m.pin, card: v }).then(function (r) {
         form.dirty = false; writeDraft(null);
-        MK.ui.toast(r && r.updated ? '내 도전과제를 고쳤어요.' : '내 도전과제를 등록했어요! 우리 반 보드에 올라갔어요.');
+        MK.ui.toast(r && r.updated ? '내 분류기를 고쳤어요.' : '내 분류기를 등록했어요! 우리 반 보드에 올라갔어요.');
         paintStatus();
       }, bad).then(function () { if (btn) btn.disabled = false; });
-    }, '내 도전과제를 등록할 이름과 비밀번호 4자리를 적어 주세요.');
+    }, '내 분류기를 등록할 이름과 비밀번호 4자리를 적어 주세요.');
   }
+  function touched() { form.dirty = true; live(); paintStatus(); var v = values(); v.at = Date.now(); v.owner = me() ? me().name : ''; writeDraft(v); }
 
   document.addEventListener('input', function (e) {
-    if (!form.el || !form.el.contains(e.target) || !e.target.hasAttribute('data-k')) return;
-    form.dirty = true; live(); paintStatus();
-    var v = values(); v.at = Date.now(); v.owner = me() ? me().name : ''; writeDraft(v);
+    if (!form.el || !form.el.contains(e.target)) return;
+    var t = e.target;
+    if (!t.hasAttribute('data-k')) return;
+    touched();
   });
   document.addEventListener('keydown', function (e) {
     if (form.el && form.el.contains(e.target) && e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); save(); }
   });
   document.addEventListener('click', function (e) {
-    var t = e.target;
-    var gb = t.closest('.mc-genre');
-    if (gb && form.el && form.el.contains(gb)) {
-      form.genre = gb.getAttribute('data-mc-genre'); paintGenre();
-      form.dirty = true; live(); paintStatus(); var gv = values(); gv.at = Date.now(); gv.owner = me() ? me().name : ''; writeDraft(gv);
-      return;
-    }
-    var mb = t.closest('.mc-model');
-    if (mb && form.el && form.el.contains(mb)) {
-      $$('.mc-model', form.el).forEach(function (b) { var on = b === mb; b.classList.toggle('is-on', on); b.classList.toggle('tag--solid', on); b.setAttribute('aria-pressed', on); });
-      form.dirty = true; live(); paintStatus(); var v = values(); v.at = Date.now(); v.owner = me() ? me().name : ''; writeDraft(v);
-      return;
-    }
-    if (t.closest('[data-mc-save]')) { save(); return; }
-    if (t.closest('[data-mc-import]')) { pickIdea(); return; }
-    if (t.closest('[data-mc-unfrom]')) { form.from = ''; form.dirty = true; live(); paintStatus(); return; }
+    var mb = e.target.closest('.mc-model');
+    if (mb && form.el && form.el.contains(mb)) { form.model = mb.getAttribute('data-mc-model'); paintModel(); touched(); return; }
+    if (e.target.closest('[data-mc-save]')) save();
   });
   // 서버에서 내 카드가 오거나 사람이 바뀌면: 고치는 중이 아니면 다시 채움
   MK.store.subscribe(function () {
@@ -323,46 +338,41 @@ window.MK = window.MK || {};
   }
 
   /* =========================================================
-     3. 우리 반 도전과제 보드
+     3. 우리 반 분류기 보드 — 분류 방법과 시험 기록을 한눈에 (공통과제라 모델 거르기는 없음)
      ========================================================= */
-  var boardFilter = null;
   MK.widgets['card-board'] = function (el, s) {
-    if (!has('cards')) { el.innerHTML = '<div class="dashed t-md">서버 코드가 예전 버전이라 도전과제 보드를 볼 수 없어요. 강사에게 알려 주세요.</div>'; return; }
+    if (!has('cards')) { el.innerHTML = '<div class="dashed t-md">서버 코드가 예전 버전이라 분류기 보드를 볼 수 없어요. 강사에게 알려 주세요.</div>'; return; }
     var all = cardsOf(s), m = me(), subBy = {};
     (s.submissions || []).forEach(function (x) { subBy[x.name] = x; });
+    var list = all.slice().sort(function (a, b) { var am = m && a.name === m.name ? -1 : 0, bm = m && b.name === m.name ? -1 : 0; return am - bm || (a.at || 0) - (b.at || 0); });
     var counts = {}; all.forEach(function (c) { counts[c.model] = (counts[c.model] || 0) + 1; });
-    var list = all.filter(function (c) { return !boardFilter || c.model === boardFilter; })
-      .sort(function (a, b) { var am = m && a.name === m.name ? -1 : 0, bm = m && b.name === m.name ? -1 : 0; return am - bm || (a.at || 0) - (b.at || 0); });
-    var h = '<div class="cb"><div class="cb-bar"><button type="button" class="tag cb-f' + (!boardFilter ? ' tag--solid is-on' : '') + '" data-cb-f="">전체 <b>' + all.length + '</b></button>' +
-      (MK.cardModels || []).map(function (k) {
-        var cat = MK.categories[k], on = boardFilter === k;
-        return '<button type="button" class="tag cb-f c-' + cat.color + (on ? ' tag--solid is-on' : '') + '" data-cb-f="' + esc(k) + '"><span class="dot"></span>' + esc(k) + ' <b>' + (counts[k] || 0) + '</b></button>';
-      }).join('') +
+    var h = '<div class="cb"><div class="cb-bar"><span class="tag tag--solid c-green">' + ic('binoculars') + ' 공통과제 · 바둑돌 분류기</span>' +
+      (MK.cardModels || []).map(function (k) { var cat = MK.categories[k]; return '<span class="tag c-' + cat.color + '"><span class="dot"></span>' + esc(k) + ' <b>' + (counts[k] || 0) + '</b></span>'; }).join('') +
       '<span class="cb-bar__sp"></span><span class="cb-bar__n">' + ic('users') + ' 등록 ' + all.filter(function (c) { return !c.hidden; }).length + '명 · 제출 ' + all.filter(function (c) { return subBy[c.name]; }).length + '명</span></div>';
     if (!list.length) {
-      h += '<div class="cb-empty dashed"><div class="t-lg">' + (all.length ? '이 모델로 등록한 도전과제가 없어요.' : '아직 등록한 도전과제가 없어요.') + '</div>' +
-        '<div class="t-sm t-muted">앞 쪽 「내 도전과제 정하기」에서 네 칸을 채워 등록하면 여기에 바로 나타납니다.</div><button class="btn btn--sm" data-goto="s-mycard">' + ic('edit') + ' 내 도전과제 등록하러 가기</button></div>';
+      h += '<div class="cb-empty dashed"><div class="t-lg">아직 등록한 분류기가 없어요.</div>' +
+        '<div class="t-sm t-muted">앞 쪽 「내 분류기 등록」에서 칸을 채워 등록하면 여기에 바로 나타납니다.</div><button class="btn btn--sm" data-goto="s-mycard">' + ic('edit') + ' 내 분류기 등록하러 가기</button></div>';
     } else {
       h += '<div class="cb-grid">' + list.map(function (c) {
-        var cat = catOf(c.model), mine = m && c.name === m.name, sub = subBy[c.name];
+        var mine = m && c.name === m.name, sub = subBy[c.name];
+        var cat = catOf(c.model);
         return '<button type="button" class="cb-tile c-' + cat.color + (mine ? ' is-mine' : '') + (c.hidden ? ' is-hidden' : '') + '" data-cb-open="' + esc(c.id) + '">' +
-          '<span class="cb-tile__top"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.model) + '</span>' +
+          '<span class="cb-tile__top"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.model) + '</span>' + (sub ? '' : '<span class="tag">만드는 중</span>') +
             (sub ? '<span class="cb-tile__ok" title="제출 완료">' + ic('check') + '</span>' : '') + (mine ? '<span class="cb-tile__me">내 카드</span>' : '') + (c.hidden ? '<span class="cb-tile__me">숨김</span>' : '') + '</span>' +
           '<span class="cb-tile__t">' + esc(c.title) + '</span>' +
-          '<span class="cb-tile__s">AI가 ' + esc(c.sense) + ' → ' + esc(c.act) + '</span>' +
+          '<span class="cb-tile__s">' + esc(c.act || '') + '</span>' +
           '<span class="cb-tile__who">' + esc(c.name) + (c.team ? ' · ' + esc(c.team) : '') + '</span></button>';
       }).join('') + '</div>';
     }
     el.innerHTML = h + '</div>';
   };
   function cardHtml(c, s) {
-    var cat = catOf(c.model), sub = (s.submissions || []).filter(function (x) { return x.name === c.name; })[0], from = c.from && MK.challengeById(c.from);
-    return '<div class="modal__kicker">' + esc(c.name) + (c.team ? ' · 함께: ' + esc(c.team) : '') + ' 선생님의 도전과제</div>' +
+    var sub = (s.submissions || []).filter(function (x) { return x.name === c.name; })[0];
+    var rows = MK.sorterLines(c);
+    return '<div class="modal__kicker">' + esc(c.name) + (c.team ? ' · 함께: ' + esc(c.team) : '') + ' 선생님의 분류기</div>' +
       '<h3 class="modal__title">' + esc(c.title) + '</h3>' +
-      '<div class="cd-tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.model) + '</span>' + (sub ? '<span class="tag c-green">' + ic('check') + ' 제출 완료</span>' : '<span class="tag">만드는 중</span>') + (from ? '<span class="tag c-yellow">수업 아이디어: ' + esc(from.title) + '</span>' : '') + '</div>' +
-      '<div class="cd-sentence">' + esc(MK.cardIntro ? MK.cardIntro(c) : MK.cardSentence(c)) + '</div>' +
-      '<dl class="cd-servo"><div><dt><span class="pin">P0</span> 서보 1</dt><dd>' + (c.servo1 ? esc(c.servo1) : '<span class="t-muted">비어 있음</span>') + '</dd></div>' +
-        '<div><dt><span class="pin">P1</span> 서보 2</dt><dd>' + (c.servo2 ? esc(c.servo2) : '<span class="t-muted">비어 있음</span>') + '</dd></div></dl>' +
+      '<div class="cd-tags">' + (c.model ? '<span class="tag tag--solid c-' + catOf(c.model).color + '">' + ic(catOf(c.model).icon) + ' ' + esc(c.model) + '</span>' : '') + (sub ? '<span class="tag c-green">' + ic('check') + ' 제출 완료</span>' : '<span class="tag">만드는 중</span>') + '</div>' +
+      '<dl class="cd-servo cd-sort">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + (r[1] ? esc(r[1]) : '<span class="t-muted">비어 있음</span>') + '</dd></div>'; }).join('') + '</dl>' +
       (sub ? '<div class="cd-sub"><b>제출한 결과물</b> · ' + esc(sub.title) + (MK.isHttpUrl(sub.videoUrl) ? ' · <a class="link" href="' + esc(sub.videoUrl) + '" target="_blank" rel="noopener">영상 ↗</a>' : '') + (sub.makecodeUrl ? ' · <a class="link" href="' + esc(sub.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode ↗</a>' : '') + '</div>' : '');
   }
   function openCard(id) {
@@ -379,14 +389,12 @@ window.MK = window.MK || {};
       else if (e.target.closest('[data-cd-hide]')) { d.close(); MK.store.hideCard(c.id, !c.hidden).then(function () { MK.ui.toast(c.hidden ? '다시 보이게 했어요.' : '숨겼어요. 관리자에게만 흐리게 보입니다.'); }, bad); }
       else if (e.target.closest('[data-cd-del]')) {
         d.close();
-        MK.ui.confirm({ title: '이 도전과제를 지울까요?', desc: '「' + esc(c.title) + '」 · ' + esc(c.name) + '<br>되돌릴 수 없습니다. 제출한 결과물은 남습니다.', okText: '지우기', danger: true })
+        MK.ui.confirm({ title: '이 분류기 카드를 지울까요?', desc: '「' + esc(c.title) + '」 · ' + esc(c.name) + '<br>되돌릴 수 없습니다. 제출한 결과물은 남습니다.', okText: '지우기', danger: true })
           .then(function (y) { if (y) MK.store.deleteCard(c.id).then(function () { MK.ui.toast('지웠어요.'); }, bad); });
       }
     });
   }
   document.addEventListener('click', function (e) {
-    var f = e.target.closest('[data-cb-f]');
-    if (f) { var k = f.getAttribute('data-cb-f') || null; boardFilter = boardFilter === k ? null : k; MK.renderWidgets(f.closest('.slide')); return; }
     var o = e.target.closest('[data-cb-open]');
     if (o && !editing()) openCard(o.getAttribute('data-cb-open'));
   });

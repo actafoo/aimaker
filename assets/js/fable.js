@@ -238,7 +238,7 @@ MK.widgets = MK.widgets || {};
     function withMe(then) {
       var m = MK.store.getMe(); if (m) return then(m);
       MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: '내 도전과제를 등록할 이름과 비밀번호 4자리를 적어 주세요.',
-        fields: MK.ui.personFields(null), note: MK.ui.PIN_NOTE, submitText: '등록',
+        fields: MK.ui.personFields(null), note: MK.ui.PERSON_NOTE, submitText: '등록',
         onSubmit: function (v) { return MK.store.identify(v).then(function () { setTimeout(function () { var n = MK.store.getMe(); if (n) then(n); }, 80); }); } });
     }
     function submit() {

@@ -32,7 +32,7 @@ window.MK = window.MK || {};
     var card = MK.state && MK.state.cardOf ? MK.state.cardOf(st || MK.store.getStateSync(), s.name) : null;
     if (card) {
       var cat = MK.categories[card.model] || MK.catOf(null);
-      return { cat: cat, label: card.model, sub: card.team ? s.name + ' · ' + card.team : s.name, sentence: MK.cardSentence ? MK.cardSentence(card) : '', img: card.from ? MK.challengeImage(card.from) : '' };
+      return { cat: cat, label: card.model, sub: card.team ? s.name + ' · ' + card.team : s.name, sentence: (MK.cardSentence ? MK.cardSentence(card) : ''), img: card.from ? MK.challengeImage(card.from) : '' };
     }
     var ch = MK.challengeById(s.challengeId) || MK.challenges[0];
     return { cat: MK.catOf(ch), label: ch.category, sub: s.name + ' · ' + ch.title, sentence: '', img: MK.challengeImage(ch.id) };

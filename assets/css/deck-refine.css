@@ -330,3 +330,25 @@
 #s-levels .cr-context > div { display: grid; grid-template-columns: 200px 1fr; align-items: baseline; gap: 25px; padding: 17px 8px; border-top: 1px solid var(--ref-line); }
 #s-levels .cr-context b { font-size: 25px; color: var(--navy); }
 #s-levels .cr-context p { font-size: 25px; line-height: 1.45; color: var(--muted); }
+
+/* 만들기: 연결 목록에서 찾을 장치 이름을 눈에 잘 보이는 이름표로 표시 */
+#s-make .mw-status { grid-template-columns: minmax(0, 1fr) 370px 300px; gap: 26px; align-items: center; }
+#s-make .mw-status:has(.mw-timer[hidden]) { grid-template-columns: minmax(0, 1fr) 410px; }
+#s-make .mw-reminder > b { font-size: 29px; }
+#s-make .mw-reminder p { margin: 10px 0; font-size: 22px; }
+#s-make .device-badge { padding: 22px 24px; background: var(--paper); border: 3px solid var(--navy); border-radius: 20px; box-shadow: 0 4px 0 var(--navy); }
+#s-make .device-badge__head { display: flex; gap: 10px; align-items: center; color: var(--blue); font-size: 20px; font-weight: 700; }
+#s-make .device-badge__head .i { width: 24px; height: 24px; }
+#s-make .device-badge__view { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 15px; min-height: 48px; }
+#s-make .device-badge__value { font: 700 40px/1.15 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--navy); letter-spacing: .02em; overflow-wrap: anywhere; min-width: 0; }
+#s-make .device-badge.is-empty .device-badge__value { font: 600 23px/1.4 var(--font); color: var(--muted); letter-spacing: -.02em; }
+#s-make .device-badge button { flex: none; padding: 7px 10px; border: 1px solid #BED0EB; border-radius: 7px; background: white; color: var(--blue); font: 600 18px var(--font); cursor: pointer; }
+#s-make .device-badge button:hover { background: var(--blue-soft); }
+#s-make .device-badge button:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+#s-make .device-badge__hint { margin: 13px 0 0; font-size: 16px; line-height: 1.5; color: var(--muted); }
+#s-make .device-badge__form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+#s-make .device-badge__form[hidden], #s-make .device-badge__view[hidden] { display: none; }
+#s-make .device-badge__form label { width: 100%; }
+#s-make .device-badge__input-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+#s-make .device-badge__form input { width: 100%; height: 48px; border: 1px solid var(--blue); border-radius: 8px; padding: 0 12px; background: white; color: var(--navy); font: 700 26px/1 'SFMono-Regular', Menlo, Consolas, monospace; }
+#s-make .device-badge__form input:focus { outline: 3px solid #A4D4F8; outline-offset: 2px; }

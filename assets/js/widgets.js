@@ -116,7 +116,7 @@ window.MK = window.MK || {};
   function enrolledIn(state, id) { return state.enrollments.filter(function (e) { return e.challengeId === id; }).sort(function (a, b) { return a.at - b.at; }); }
   function capOf(state, id) { return state.settings.capacity[id] != null ? state.settings.capacity[id] : MK.config.defaultCapacity; }
   function isClosed(state, id) { return !state.settings.open || !!state.settings.closed[id]; }
-  /* 내 도전과제(아이디어 카드) */
+  /* 내 분류기 카드 (공통과제) */
   function cardOf(state, name) { return (state.cards || []).filter(function (c) { return c.name === name; })[0] || null; }
   function myCard(state) { var m = me(); return m ? cardOf(state, m.name) : null; }
   MK.state = { me: me, myEnrollment: myEnrollment, mySubmission: mySubmission, enrolledIn: enrolledIn, capOf: capOf, isClosed: isClosed, cardOf: cardOf, myCard: myCard };
@@ -127,20 +127,21 @@ window.MK = window.MK || {};
       { name: 'pin', label: '비밀번호', small: '숫자 4자리', type: 'password', value: m ? m.pin : '', placeholder: '0000', maxlength: 4, inputmode: 'numeric' }
     ] }];
   }
-  var PIN_NOTE = '비밀번호는 내 도전과제나 결과물을 고칠 때만 씁니다. 쉬운 숫자 4자리면 됩니다.';
+  // 이름·비밀번호를 처음 묻는 창 아래 안내: 이름을 어디에 쓰고 언제 지우는지, 비밀번호는 어디에 쓰는지
+  var PERSON_NOTE = '이름은 연수 중 작품 공유에만 쓰고, 연수가 끝나면 지웁니다.<br>비밀번호는 내 분류기나 결과물을 고칠 때만 씁니다. 쉬운 숫자 4자리면 됩니다.';
   MK.ui.personFields = personFields;
-  MK.ui.PIN_NOTE = PIN_NOTE;
+  MK.ui.PERSON_NOTE = PERSON_NOTE;
 
   MK.actions = {
     identify: function () {
       var m = me();
-      MK.ui.form({ kicker: '이름 등록', title: '이 노트북을 쓰는 사람', desc: '내 도전과제 등록과 제출에 쓸 이름을 적어 주세요. 이름이 겹치면 뒤에 학교 이름을 붙여 주세요.', fields: personFields(m), note: PIN_NOTE, submitText: '등록',
+      MK.ui.form({ kicker: '이름 등록', title: '이 노트북을 쓰는 사람', desc: '내 분류기 등록과 제출에 쓸 이름을 적어 주세요. 이름이 겹치면 뒤에 학교 이름을 붙여 주세요.', fields: personFields(m), note: PERSON_NOTE, submitText: '등록',
         onSubmit: function (v) { return MK.store.identify(v).then(function () { MK.ui.toast(v.name.trim() + ' 선생님, 반갑습니다!'); }); } });
     },
     apply: function (challengeId) {
       var ch = MK.challengeById(challengeId), st = MK.store.getStateSync(), mine = myEnrollment(st);
-      var note = PIN_NOTE;
-      if (mine && mine.challengeId !== challengeId) note = '<b>지금 신청한 「' + esc(MK.challengeById(mine.challengeId).title) + '」은 자동으로 취소됩니다.</b><br>' + PIN_NOTE;
+      var note = PERSON_NOTE;
+      if (mine && mine.challengeId !== challengeId) note = '<b>지금 신청한 「' + esc(MK.challengeById(mine.challengeId).title) + '」은 자동으로 취소됩니다.</b><br>' + PERSON_NOTE;
       MK.ui.form({ kicker: ch.category, title: ch.title + ' 신청', desc: '도전과제는 한 사람이 하나만 신청합니다. 정원 ' + capOf(st, challengeId) + '명.', fields: personFields(me()), note: note, submitText: '이 도전 신청하기',
         onSubmit: function (v) {
           return MK.store.apply({ name: v.name, pin: v.pin, challengeId: challengeId }).then(function (r) {
@@ -156,16 +157,14 @@ window.MK = window.MK || {};
     },
     submit: function () {
       var st = MK.store.getStateSync(), m = me(), card = myCard(st), sub = mySubmission(st), dr = subDraft();
-      if (!card) { MK.ui.toast('먼저 내 도전과제(아이디어 카드)를 등록해 주세요.', true); if (MK.deck) MK.deck.goto('s-mycard'); return; }
+      if (!card) { MK.ui.toast('먼저 내 분류기를 등록해 주세요.', true); if (MK.deck) MK.deck.goto('s-mycard'); return; }
       var ch = { title: card.title };
-      var descDraft = card ? [card.servo1, card.servo2].filter(Boolean).join('. ') : '';
-      if (descDraft && !/[.!?。]$/.test(descDraft)) descDraft += '.';
-      var peerLine = MK.peerSentence ? MK.peerSentence() : ''; // 옆 사람 시험 기록 (fable.js)
-      if (peerLine) descDraft = (descDraft ? descDraft + ' ' : '') + peerLine;
-      MK.ui.form({ wide: true, kicker: '내 도전과제 · ' + ch.title, title: sub ? '내 결과물 수정' : '내 결과물 제출', desc: '30초 이내 영상으로 서로 다른 행동 두 가지 이상을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
+      // 설명 초안: 분류 방법 + 서보 두 줄 (내 분류기 카드에서)
+      var descDraft = [card.act, card.servo1, card.servo2].filter(Boolean).map(function (x) { x = String(x).trim(); return /[.!?。]$/.test(x) ? x : x + '.'; }).join(' ');
+      MK.ui.form({ wide: true, kicker: '내 분류기 · ' + ch.title, title: sub ? '내 결과물 수정' : '내 결과물 제출', desc: '30초 이내 영상으로 검은돌과 흰돌이 각각 제자리로 가는 모습을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
         fields: personFields(m).concat([
-          { name: 'title', label: '작품 제목', value: dr ? dr.title : sub ? sub.title : (card ? card.title : ''), placeholder: '예: 손끝으로 지휘하는 작은 무대', maxlength: 40 },
-          { name: 'desc', label: '간단한 설명', small: '무엇을 인식하면 어떻게 움직이는지 2~3문장', type: 'textarea', value: dr ? dr.desc : sub ? sub.desc : descDraft, maxlength: MK.config.descMax, placeholder: '예: 주먹을 쥐면 서보가 북을 치고, 손바닥을 펴면 탬버린을 흔듭니다.' },
+          { name: 'title', label: '작품 제목', value: dr ? dr.title : sub ? sub.title : (card ? card.title : ''), placeholder: '예: 기우뚱 시소 분류기', maxlength: 40 },
+          { name: 'desc', label: '간단한 설명', small: '어떻게 나누는지 2~3문장', type: 'textarea', value: dr ? dr.desc : sub ? sub.desc : descDraft, maxlength: MK.config.descMax, placeholder: '예: 검은돌이면 판이 왼쪽으로, 흰돌이면 오른쪽으로 기울어 통에 떨어집니다.' },
           { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: dr ? dr.makecodeUrl : sub ? sub.makecodeUrl : '', placeholder: 'https://makecode.microbit.org/_…', help: 'MakeCode 오른쪽 위 <b>공유</b> → 공유 링크 만들기 → 주소 복사' },
           { name: 'videoUrl', label: '작동 영상 주소', value: dr ? dr.videoUrl : sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '구글 드라이브 영상은 <b>링크가 있는 모든 사용자</b>로 공유해야 발표 때 재생됩니다.' }
         ]), submitText: sub ? '수정한 내용 제출' : '결과물 제출하기', cancelText: '닫기',
@@ -281,16 +280,17 @@ window.MK = window.MK || {};
     };
     var h = '<div class="window fill"><div class="window__bar">내 결과물' + (dr ? ' · 쓰는 중 (아직 제출 전)' : sub ? ' · 제출 완료' : '') + '</div><div class="window__body" style="display:flex;flex-direction:column;gap:22px">';
     if (!m) {
-      h += '<div class="t-lg">먼저 이름을 등록하고 내 도전과제를 등록해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 이름 등록</button><button class="btn btn--ghost" data-goto="s-mycard">내 도전과제 등록하러 가기</button></div>';
+      h += '<div class="t-lg">먼저 이름을 등록하고 내 분류기를 등록해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 이름 등록</button><button class="btn btn--ghost" data-goto="s-mycard">내 분류기 등록하러 가기</button></div>';
     } else if (!card) {
-      h += '<div class="t-lg">' + esc(m.name) + ' 선생님, 아직 등록한 도전과제가 없어요.</div><div class="t-sm t-muted">결과물은 내 도전과제(아이디어 카드)에 이어서 제출합니다.</div><div class="row"><button class="btn" data-goto="s-mycard">내 도전과제 등록하러 가기</button></div>';
+      h += '<div class="t-lg">' + esc(m.name) + ' 선생님, 아직 등록한 분류기가 없어요.</div><div class="t-sm t-muted">결과물은 내 분류기 카드에 이어서 제출합니다.</div><div class="row"><button class="btn" data-goto="s-mycard">내 분류기 등록하러 가기</button></div>';
     } else {
-      // 내 도전과제(카드)를 위에 보여 주고, 결과물은 이 카드에 이어서 제출
+      // 내 분류기(카드)를 위에 보여 주고, 결과물은 이 카드에 이어서 제출
+      var cur = dr || sub || {};
       var cat = MK.categories[card.model] || MK.catOf(null);
-      h += '<div class="mine-card c-' + cat.color + '"><div class="mine-card__top"><span class="kk">내 도전과제</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(card.model) + '</span>' +
-        '<button class="btn btn--ghost btn--sm" data-goto="s-mycard">' + ic('edit') + ' 도전과제 수정</button></div>' +
+      h += '<div class="mine-card c-' + cat.color + '"><div class="mine-card__top"><span class="kk">내 분류기</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(card.model) + '</span>' +
+        '<button class="btn btn--ghost btn--sm" data-goto="s-mycard">' + ic('edit') + ' 분류기 수정</button></div>' +
         '<div class="mine-card__t">' + esc(card.title) + '</div>' + (MK.cardSentence ? '<div class="mine-card__s">' + esc(MK.cardSentence(card)) + '</div>' : '') + '</div>';
-      h += '<dl class="mine" style="margin:0">' + rows('작품 제목', (dr || sub || {}).title) + rows('간단한 설명', (dr || sub || {}).desc) + rows('MakeCode', (dr || sub || {}).makecodeUrl, !dr) + rows('작동 영상', (dr || sub || {}).videoUrl, !dr) + '</dl>' +
+      h += '<dl class="mine" style="margin:0">' + rows('작품 제목', cur.title) + rows('간단한 설명', cur.desc) + rows('MakeCode', cur.makecodeUrl, !dr) + rows('작동 영상', cur.videoUrl, !dr) + '</dl>' +
         '<div class="row" style="margin-top:auto;align-items:center;gap:18px"><button class="btn ' + (sub && !dr ? 'btn--ghost' : 'btn--green') + '" data-act="submit">' + ic(dr || sub ? 'edit' : 'send') + (dr ? ' 이어서 쓰기' : sub ? ' 수정' : ' 결과물 제출하기') + '</button>' +
           (dr ? '<span class="t-sm" style="font-size:20px;font-weight:700;color:#9A7400">쓰던 내용이 저장돼 있어요. 아직 ' + (sub ? '다시 ' : '') + '제출 전입니다.</span>' : '') + '</div>';
     }
@@ -301,17 +301,14 @@ window.MK = window.MK || {};
   MK.widgets['submit-board'] = function (el, st) {
     var subBy = {}; st.submissions.forEach(function (s) { subBy[s.name] = s; });
     var cards = (st.cards || []).filter(function (c) { return !c.hidden; });
-    if (cards.length || !st.enrollments.length) { // 내 도전과제(카드) 기준: AI 모델별로
+    if (cards.length || !st.enrollments.length) { // 공통과제(바둑돌 분류기) 카드 기준: 한 칸에 이름(✓는 제출 완료)
       var doneN = cards.filter(function (c) { return subBy[c.name]; }).length, hh = '<div class="board board--cards">';
-      (MK.cardModels || []).forEach(function (k) {
-        var cat = MK.categories[k], list = cards.filter(function (c) { return c.model === k; }).sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
-        var dn = list.filter(function (c) { return subBy[c.name]; }).length, mm = me();
-        hh += '<div class="board__card c-' + cat.color + '"><div class="board__top"><span class="tag c-' + cat.color + '"><span class="dot"></span>' + esc(k) + '</span><span class="board__count">' + dn + '<small> / ' + list.length + '</small></span></div>' +
-          '<div class="board__names board__names--cards">' + (list.length ? list.map(function (c) {
-            var ok = !!subBy[c.name], isMe = mm && c.name === mm.name;
-            return '<span class="name-chip' + (isMe ? ' is-me' : '') + (ok ? '' : ' is-pending') + '" title="' + esc(c.name + ' · ' + c.title) + '">' + (ok ? '<span class="sub-mark">' + ic('check') + '</span>' : '') + esc(c.name) + '</span>';
-          }).join('') : '<span class="apply__empty">아직 없어요</span>') + '</div></div>';
-      });
+      var list = cards.slice().sort(function (a, b) { return (a.at || 0) - (b.at || 0); }), mm = me();
+      hh += '<div class="board__card c-green" style="grid-column:span 3"><div class="board__top"><span class="tag c-green"><span class="dot"></span>공통과제 · 바둑돌 분류기</span><span class="board__count">' + doneN + '<small> / ' + list.length + '</small></span></div>' +
+        '<div class="board__names board__names--cards">' + (list.length ? list.map(function (c) {
+          var s = subBy[c.name], ok = !!s, isMe = mm && c.name === mm.name;
+          return '<span class="name-chip' + (isMe ? ' is-me' : '') + (ok ? '' : ' is-pending') + '" title="' + esc(c.name + ' · ' + c.title) + '">' + (ok ? '<span class="sub-mark">' + ic('check') + '</span>' : '') + esc(c.name) + '</span>';
+        }).join('') : '<span class="apply__empty">아직 없어요</span>') + '</div></div>';
       hh += '<div class="board__summary"><div class="t-sm t-muted" style="font-size:21px;font-weight:800">제출</div><div class="big">' + doneN + '<small style="font-size:28px;color:var(--muted)"> / ' + cards.length + '명</small></div><div class="t-sm" style="font-size:20px">' + ic('check') + ' 표시는 제출 완료</div></div>';
       el.innerHTML = hh + '</div>';
       return;
@@ -436,9 +433,9 @@ window.MK = window.MK || {};
     var noEnroll = MK.page && MK.page.enroll === false; // 신청이 없는 교안(7~8차시): 관리자 버튼만
     var card = myCard(st), mineTitle = card ? card.title : '';
     if (noEnroll) { /* 이름 칩 없음 */ }
-    else if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mineTitle ? ' · ' + esc(mineTitle) : ' · 도전과제 등록 전') + '</span>' +
+    else if (m) h += '<span class="me__text">' + ic('user') + ' <b>' + esc(m.name) + '</b>' + (mineTitle ? ' · ' + esc(mineTitle) : ' · 분류기 등록 전') + '</span>' +
       '<button class="ghost" data-act="switch">바꾸기</button>';
-    else h += '<span class="me__text">도전과제를 등록하려면 이름부터</span><button data-act="identify">이름 등록</button>';
+    else h += '<span class="me__text">분류기를 등록하려면 이름부터</span><button data-act="identify">이름 등록</button>';
     var helpN = 0; // 도움 요청 기능은 뺐음 (2026-11-12)
     if (admin) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff">' + ic('lock') + ' 관리자' + (helpN ? ' <span class="me__badge" title="대기 중인 도움 요청">도움 ' + helpN + '</span>' : '') + '</button>';
     else if (editorOnly) h += '<button data-act="edit" style="background:var(--green-tab)">' + ic('edit') + (MK.editor && MK.editor.isOn() ? ' 편집 끝' : ' 편집') + '</button><button data-act="admin" style="background:var(--navy);color:#fff" title="편집자: 글자 고쳐 보내기·메모">' + ic('lock') + ' 편집자</button>';

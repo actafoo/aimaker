@@ -6,14 +6,15 @@
 <title>9~10차시 · 피지컬 AI 작품 제작과 수업 적용</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=2f4fbbdc23">
-<link rel="stylesheet" href="assets/css/components.css?v=2f4fbbdc23">
-<link rel="stylesheet" href="assets/css/deck.css?v=2f4fbbdc23">
-<link rel="stylesheet" href="assets/css/ui.css?v=2f4fbbdc23">
-<link rel="stylesheet" href="assets/css/fable.css?v=2f4fbbdc23">
-<link rel="stylesheet" href="assets/css/part6.css?v=2f4fbbdc23">
-<link rel="stylesheet" href="assets/css/workshop.css?v=2f4fbbdc23">
-<link rel="stylesheet" href="assets/css/deck-refine.css?v=2f4fbbdc23">
+<link rel="stylesheet" href="assets/css/tokens.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/components.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/deck.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/ui.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/fable.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/part6.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/workshop.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/deck-refine.css?v=ed4954dd4a">
+<link rel="stylesheet" href="assets/css/idea-bridge.css?v=ed4954dd4a">
 </head>
 <body class="deck-page deck-fable deck-refined">
 
@@ -48,12 +49,12 @@
   <div class="slide__body">
     <div class="fb-mission">
       <span class="circle c-yellow"><svg class="i"><use href="#i-target"></use></svg></span>
-      <div><div class="fb-mission__k">한 문장으로</div><div class="fb-mission__v">내 아이디어 카드를&nbsp;<b>움직이는 작품</b>으로 만듭니다.</div></div>
+      <div><div class="fb-mission__k">공통과제</div><div class="fb-mission__v">섞인 바둑돌을 AI가 보고,&nbsp;<b>검은돌은 검은돌끼리, 흰돌은 흰돌끼리</b>&nbsp;나눕니다.</div></div>
     </div>
     <div class="fb-crit">
-      <div class="fb-crit__c c-blue"><span class="circle">1</span><span><b>신호 2가지 → 움직임 2가지</b><span>서보는 2개까지, 재료는 골판지와 테이프</span></span></div>
-      <div class="fb-crit__c c-green"><span class="circle">2</span><span><b>옆 사람이 테스트 해보기</b><span>시험해보고, 안 되면 고칩니다</span></span></div>
-      <div class="fb-crit__c c-purple"><span class="circle">3</span><span><b>30초 영상으로 발표하기</b><span>두 가지 움직임이 모두 나오게</span></span></div>
+      <div class="fb-crit__c c-blue"><span class="circle">1</span><span><b>돌만 올리면, 손 대지 않고 분류</b><span>AI 모델 하나 · 서보 2개 · 골판지와 테이프</span></span></div>
+      <div class="fb-crit__c c-green"><span class="circle">2</span><span><b>될 때까지 올려 보고 고치기</b><span>만들면서 몇 번이고 시험합니다</span></span></div>
+      <div class="fb-crit__c c-purple"><span class="circle">3</span><span><b>30초 영상으로 발표하기</b><span>검은돌·흰돌이 각각 제자리로 가는 모습</span></span></div>
     </div>
     <div class="tl-wrap fb-flow">
       <div class="timeline">
@@ -61,7 +62,7 @@
         <div style="flex:10;background:var(--blue-mid)">설계</div>
         <div style="flex:35;background:var(--green-mid)">만들기</div>
         <div style="flex:10" class="tl-break">쉬는 시간</div>
-        <div style="flex:12;background:var(--green-tab)">시험·고치기</div>
+        <div style="flex:12;background:var(--green-mid)">만들기</div>
         <div style="flex:10;background:var(--purple-mid)">찍고 제출</div>
         <div style="flex:18;background:var(--yellow-mid)">작품 발표회</div>
         <div style="flex:10;background:var(--sky)">수업으로</div>
@@ -95,7 +96,7 @@
     <div class="steps mt-l">
       <div class="step c-blue"><span class="step__num">1</span><div class="step__title">주소 열기</div><div class="step__text">내 노트북 크롬에서</div></div>
       <div class="step c-green"><span class="step__num">2</span><div class="step__title">이름 등록</div><div class="step__text">오른쪽 위 버튼 · 비밀번호 4자리</div></div>
-      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">내 도전과제</div><div class="step__text">아이디어 카드를 바탕으로 등록</div></div>
+      <div class="step c-purple"><span class="step__num">3</span><div class="step__title">내 분류기</div><div class="step__text">인식 설정·서보 동작 등록</div></div>
       <div class="step c-yellow"><span class="step__num">4</span><div class="step__title">제출하기</div><div class="step__text">영상 주소, 코드 주소, 짧은 설명</div></div>
     </div>
     <div class="row mt-l" style="align-items:center;gap:30px">
@@ -107,43 +108,64 @@
 
 <!-- ============ 1. 설계 (16:05 ~ 16:15) ============ -->
 
-<section class="slide slide--pixel" id="s-part1" data-section="1. 설계" data-title="PART 1 · 만들 작품 정하기">
+<section class="slide slide--pixel" id="s-part1" data-section="1. 설계" data-title="PART 1 · 분류기 설계하기">
   <div class="divider">
     <span class="divider__part">PART 1</span>
-    <h2 class="divider__title">만들 작품 정하기</h2>
-    <p class="divider__text">작품의 목적과 사용할 AI 모델을 정하고,<br>무엇을 인식하면 서보가 어떻게 움직일지 정리합니다.</p>
+    <h2 class="divider__title">분류기 설계하기</h2>
+    <p class="divider__text">어떤 AI로 알아보고, 서보 2개로 어떻게 나눌지 정해<br>내 분류기로 등록합니다.</p>
     <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 16:05 ~ 16:15</div>
   </div>
 </section>
 
-<section class="slide slide--body" id="s-mycard" data-section="1. 설계" data-title="내 도전과제 정하기">
+<section class="slide slide--body" id="s-mission" data-section="1. 설계" data-title="공통과제 · 바둑돌 분류기">
   <div class="slide__head">
-    <div class="slide__kicker">작품 이름·AI 모델·서보 동작을 정해 등록합니다</div>
-    <h2 class="slide__title">내 도전과제 정하기</h2>
+    <div class="slide__kicker">7~8차시에 쓴 아이디어 문장, 이제 실제로 만듭니다</div>
+    <h2 class="slide__title">섞인 바둑돌을 손 대지 않고 나누기</h2>
+  </div>
+  <div class="slide__body sentence-mission">
+    <div class="frame sentence-frame sentence-frame--example">
+      <div class="sentence-frame__label">공통 문제 <span>강사가 제시한 부분</span></div>
+      <div class="sentence-problem"><span class="blank c-purple">바둑돌을 정리하는 상황</span>에서 <span class="blank c-yellow">정리하는 사람</span>이<br><strong class="sentence-need">섞인 검은돌과 흰돌을 일일이 골라야 하는 불편</strong>을 줄이기 위해,</div>
+      <div class="sentence-solution">
+        <div class="sentence-frame__label">나의 해결 방법 <span>각자 설계할 부분</span></div>
+        AI가 <span class="blank c-blue">○</span>을 인식하면 서보모터가 <span class="blank c-green">○○</span>하도록 만든다.
+      </div>
+    </div>
+    <div class="mission-bottom">
+      <div class="mission-design"><span class="tag tag--solid c-blue">각자 정할 부분</span><p><b>어떤 AI로 무엇을 인식할지,</b><br><b>서보 두 개로 어떻게 나눌지</b> 정합니다.</p></div>
+      <div class="note mission-rule"><div class="kk">함께 지킬 조건</div><p>돌은 사람이 하나씩 올립니다.<br>그다음은 <b>손을 대지 않고</b> 검은돌과 흰돌을 나눕니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide--body" id="s-mycard" data-section="1. 설계" data-title="내 분류기 등록">
+  <div class="slide__head">
+    <div class="slide__kicker">AI 모델·인식 설정·분류 방법·서보 동작을 적어 등록합니다</div>
+    <h2 class="slide__title">내 분류기 등록</h2>
   </div>
   <div class="slide__body slide__body--tall">
     <div data-widget="my-card"></div>
   </div>
 </section>
 
-<section class="slide slide--body" id="s-cardboard" data-section="1. 설계" data-title="우리 반 도전과제">
+<section class="slide slide--body" id="s-cardboard" data-section="1. 설계" data-title="우리 반 분류기">
   <div class="slide__head">
     <div class="slide__kicker">실시간 · 누르면 크게</div>
-    <h2 class="slide__title">도전과제 모음</h2>
+    <h2 class="slide__title">우리 반 분류기</h2>
   </div>
   <div class="slide__body slide__body--tall" style="bottom:150px">
     <div data-widget="card-board" class="fill"></div>
   </div>
 </section>
 
-<!-- ============ 2. 만들기 (16:15 ~ 16:50) ============ -->
+<!-- ============ 2. 만들기 (16:15 ~ 17:12 · 쉬는 시간 포함) ============ -->
 
 <section class="slide slide--pixel" id="s-part2" data-section="2. 만들기" data-title="PART 2 · 만들기">
   <div class="divider">
     <span class="divider__part">PART 2</span>
     <h2 class="divider__title">만들기</h2>
-    <p class="divider__text">내 도전과제를 작품으로 구현합니다.<br>다음 화면에서 필요한 자료를 열어 보며 각자 제작합니다.</p>
-    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 16:15 ~ 16:50</div>
+    <p class="divider__text">내 분류기를 만들고, 돌을 올려 보며 될 때까지 고칩니다.<br>막히면 다음 화면의 자료를 열어 봅니다.</p>
+    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 16:15 ~ 17:12 · 쉬는 시간 포함</div>
   </div>
 </section>
 
@@ -155,7 +177,8 @@
   <div class="slide__head"><div class="slide__kicker">필요한 자료를 눌러 확인하세요</div><h2 class="slide__title">만들기 · 필요한 자료 모음</h2></div>
   <div class="slide__body making-workspace">
     <div class="mw-status">
-      <div class="mw-reminder"><b>움직임 먼저, 골판지는 나중에</b><p>코드 전송할 때는 링비트 전원을 꼭&nbsp;<strong>OFF !</strong> · 연결을 해제하고 작동할 때 <strong>ON !</strong></p><button type="button" class="linkish" data-goto="s-mycard">내 도전과제 확인 <svg class="i"><use href="#i-right"></use></svg></button></div>
+      <div class="mw-reminder"><b>움직임 먼저, 골판지는 나중에</b><p>코드 전송할 때는 링비트 전원 <strong>OFF</strong><br>연결을 해제하고 작동할 때 <strong>ON</strong></p><button type="button" class="linkish" data-goto="s-mycard">내 분류기 확인 <svg class="i"><use href="#i-right"></use></svg></button></div>
+      <div class="mw-bt" data-widget="bt-name" data-variant="badge"></div>
       <div class="timer-card wm-timer mw-timer"><div data-widget="timer" data-minutes="35" data-id="make" data-label="만들기"></div></div>
     </div>
     <div class="mw-cards">
@@ -172,47 +195,18 @@
 
 
 
-<!-- ============ 3. 시험하고 고치기 (17:00 ~ 17:12) ============ -->
+<!-- ============ 3. 찍고 제출하기 (17:12 ~ 17:22) ============ -->
 
-<section class="slide slide--pixel" id="s-part3" data-section="3. 시험하고 고치기" data-title="PART 3 · 해 보고 고치기">
+<section class="slide slide--pixel" id="s-part4" data-section="3. 찍고 제출" data-title="PART 3 · 찍고 제출하기">
   <div class="divider">
     <span class="divider__part">PART 3</span>
-    <h2 class="divider__title">시험해보고 고치기</h2>
-    <p class="divider__text">내가 해 본 뒤, 옆 사람에게 사용 방법을 알려 주고 맡겨 봅니다.<br>달라진 곳을 고쳤다면, 같은 조건에서 다시 확인합니다.</p>
-    <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 17:00 ~ 17:12</div>
-  </div>
-</section>
-
-<section class="slide slide--body" id="s-test" data-section="3. 시험하고 고치기" data-title="다른 사람이 써도 잘 될까?">
-  <div class="slide__head"><div class="slide__kicker">시험하고 고치기</div><h2 class="slide__title">다른 사람이 써도 잘 될까?</h2></div>
-  <div class="slide__body workshop-test peer-test">
-    <div class="wt-heading">사용 방법을 짧게 알려 주고, <b>직접 도와주지 않은 채</b> 지켜봅니다.</div>
-    <div class="wt-stages">
-      <div class="wt-stage"><span class="wt-number">01</span><h3>내가 먼저 해 보기</h3><div class="wt-action">두 신호를 번갈아 보내기</div><p>한 번 성공한 뒤에도<br>원하는 움직임이 반복되나요?</p></div>
-      <div class="wt-stage wt-peer"><span class="wt-number">02</span><h3>옆 사람이 써 보기</h3><div class="wt-action">작품은 그대로, 사람만 바꾸기</div><p>AI가 알아본 결과와<br>작품의 움직임을 함께 봅니다.</p></div>
-      <div class="wt-stage"><span class="wt-number">03</span><h3>하나 고치고 다시 보기</h3><div class="wt-action">방금 안 됐던 조건으로 재시험</div><p>한 가지를 바꾼 뒤<br>같은 사람이 같은 신호를 보냅니다.</p></div>
-    </div>
-    <div class="wt-diagnose"><b>어디에서 막혔나요?</b><div class="wt-problems">
-      <button type="button" class="c-blue" data-resource-open="fix-ai"><span>다르게 인식해요</span><svg class="i"><use href="#i-expand"></use></svg></button>
-      <button type="button" class="c-purple" data-resource-open="s-check5"><span>인식은 맞는데 안 움직여요</span><svg class="i"><use href="#i-expand"></use></svg></button>
-      <button type="button" class="c-green" data-resource-open="fix-structure"><span>움직이다 걸려요</span><svg class="i"><use href="#i-expand"></use></svg></button>
-    </div></div>
-    <div class="wt-finish"><b>잘된다면 그대로 두어도 됩니다.</b><span>막힌 곳은 위 버튼에서 확인하고, 혼자 해결하기 어려우면 손을 들어 주세요.</span></div>
-  </div>
-</section>
-
-<!-- ============ 4. 찍고 제출하기 (17:12 ~ 17:22) ============ -->
-
-<section class="slide slide--pixel" id="s-part4" data-section="4. 찍고 제출" data-title="PART 4 · 찍고 제출하기">
-  <div class="divider">
-    <span class="divider__part">PART 4</span>
     <h2 class="divider__title">결과 제출하기</h2>
     <p class="divider__text">30초 영상, MakeCode 주소, 두세 문장 설명을 기록해주세요.</p>
     <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 17:12 ~ 17:22</div>
   </div>
 </section>
 
-<section class="slide slide--body" id="s-video" data-section="4. 찍고 제출" data-title="30초 시연 영상 찍기">
+<section class="slide slide--body" id="s-video" data-section="3. 찍고 제출" data-title="30초 시연 영상 찍기">
   <div class="slide__head">
     <div class="slide__kicker">작동 영상 · 눌러서 하나씩 체크</div>
     <h2 class="slide__title">제출용 동영상 찍기</h2>
@@ -221,7 +215,7 @@
     <ul class="checklist fill-rows cc-list" data-widget="tick-list" data-tick="video">
       <li><span class="box"></span><span class="bar"><b>가로로</b>&nbsp;찍어주세요.</span></li>
       <li><span class="box"></span><span class="bar">모니터 화면과 작품이&nbsp;<b>함께</b>&nbsp;나오게</span></li>
-      <li><span class="box"></span><span class="bar">신호 1 → 움직임 1, 신호 2 → 움직임 2</span></li>
+      <li><span class="box"></span><span class="bar">검은돌 → 검은돌 쪽, 흰돌 → 흰돌 쪽</span></li>
       <li><span class="box"></span><span class="bar"><b>30초</b>&nbsp;이내의 길이</span></li>
     </ul>
     <div class="col" style="gap:22px">
@@ -239,16 +233,16 @@
       <div class="t-lg" style="font-size:27px;margin-bottom:14px">30초는 이렇게 나눠 보세요</div>
       <div class="timeline" style="height:76px">
         <div style="flex:5;background:var(--sky)">작품 보여 주기</div>
-        <div style="flex:10;background:var(--blue-mid)">신호 1 → 움직임 1</div>
-        <div style="flex:10;background:var(--green-mid)">신호 2 → 움직임 2</div>
-        <div style="flex:5;background:var(--yellow-mid)">한 번 더</div>
+        <div style="flex:10;background:var(--blue-mid)">검은돌 올리기 → 검은돌 쪽</div>
+        <div style="flex:10;background:var(--green-mid)">흰돌 올리기 → 흰돌 쪽</div>
+        <div style="flex:5;background:var(--yellow-mid)">섞어서 한 번 더</div>
       </div>
       <div class="timeline-labels"><span style="flex:5">0초</span><span style="flex:10">5초</span><span style="flex:10">15초</span><span style="flex:5">25 ~ 30초</span></div>
     </div>
   </div>
 </section>
 
-<section class="slide slide--body" id="s-makecode" data-section="4. 찍고 제출" data-title="MakeCode 공유 주소 만들기">
+<section class="slide slide--body" id="s-makecode" data-section="3. 찍고 제출" data-title="MakeCode 공유 주소 만들기">
   <div class="slide__head">
     <div class="slide__kicker">코드 공유 · 순서대로 따라 하세요</div>
     <h2 class="slide__title">MakeCode 공유 주소 만들기</h2>
@@ -287,7 +281,7 @@
   </div>
 </section>
 
-<section class="slide slide--body" id="s-submit" data-section="4. 찍고 제출" data-title="내 결과물 제출">
+<section class="slide slide--body" id="s-submit" data-section="3. 찍고 제출" data-title="내 결과물 제출">
   <div class="slide__head">
     <div class="slide__kicker">제출</div>
     <h2 class="slide__title">내 결과물 제출</h2>
@@ -303,13 +297,12 @@
           <li data-need="video"><span class="box"></span><span class="bar">동영상 주소</span></li>
         </ul>
       </div>
-      <div data-widget="peer-result"></div>
     </div>
     <div data-widget="my-submission"></div>
   </div>
 </section>
 
-<section class="slide slide--body" id="s-subboard" data-section="4. 찍고 제출" data-title="제출 현황">
+<section class="slide slide--body" id="s-subboard" data-section="3. 찍고 제출" data-title="제출 현황">
   <div class="slide__head">
     <div class="slide__kicker">실시간</div>
     <h2 class="slide__title">제출 현황</h2>
@@ -319,20 +312,20 @@
   </div>
 </section>
 
-<!-- ============ 5. 작품 발표회 (17:22 ~ 17:40 · 제출물로 자동 생성) ============ -->
+<!-- ============ 4. 작품 발표회 (17:22 ~ 17:40 · 제출물로 자동 생성) ============ -->
 
 <div data-generate="showcase" style="display:contents"></div>
 
-<!-- ============ 6. 수업으로 (17:40 ~ 17:50) ============ -->
+<!-- ============ 5. 수업으로 (17:40 ~ 17:50) ============ -->
 
-<section class="slide slide--pixel" id="s-part6" data-section="6. 수업으로" data-title="PART 6 · 학교 수업으로">
-  <div class="divider"><span class="divider__part">PART 6</span><h2 class="divider__title">학교 수업으로</h2>
+<section class="slide slide--pixel" id="s-part6" data-section="5. 수업으로" data-title="PART 5 · 학교 수업으로">
+  <div class="divider"><span class="divider__part">PART 5</span><h2 class="divider__title">학교 수업으로</h2>
     <p class="divider__text">피지컬 AI 메이킹의 교육적 가치와<br>기초 학습에서 프로젝트로 이어지는 지도 방향</p>
     <div class="divider__time"><svg class="i"><use href="#i-clock"></use></svg> 17:40 ~ 17:50</div>
   </div>
 </section>
 
-<section class="slide slide--body teacher-slide" id="s-levels" data-section="6. 수업으로" data-title="메이커 활동에서 피지컬 AI의 역할">
+<section class="slide slide--body teacher-slide" id="s-levels" data-section="5. 수업으로" data-title="메이커 활동에서 피지컬 AI의 역할">
   <div class="slide__head"><div class="slide__kicker">7~10차시 활동에서 사용한 개념 정리</div><h2 class="slide__title">메이커 활동에서 피지컬 AI의 역할</h2></div>
   <div class="slide__body concept-roles">
     <div class="cr-making">
@@ -349,7 +342,7 @@
   </div>
 </section>
 
-<section class="slide slide--body teacher-slide" id="s-skeleton" data-section="6. 수업으로" data-title="피지컬 AI 메이킹으로 기를 수 있는 역량">
+<section class="slide slide--body teacher-slide" id="s-skeleton" data-section="5. 수업으로" data-title="피지컬 AI 메이킹으로 기를 수 있는 역량">
   <div class="slide__head"><div class="slide__kicker">교육적 가치</div><h2 class="slide__title">피지컬 AI 메이킹으로 기를 수 있는 역량</h2></div>
   <div class="slide__body">
     <div class="tp-competencies">
@@ -364,7 +357,7 @@
   </div>
 </section>
 
-<section class="slide slide--body teacher-slide" id="s-starts" data-section="6. 수업으로" data-title="기초 코딩에서 피지컬 AI 프로젝트까지">
+<section class="slide slide--body teacher-slide" id="s-starts" data-section="5. 수업으로" data-title="기초 코딩에서 피지컬 AI 프로젝트까지">
   <div class="slide__head"><div class="slide__kicker">학생 지도 흐름과 이번 연수의 중점</div><h2 class="slide__title">기초 코딩에서 피지컬 AI 프로젝트까지</h2></div>
   <div class="slide__body">
     <div class="tp-scope"><div class="tp-scope__focus">이번 연수의 중점 · 서보모터와 AI 모델</div></div>
@@ -380,7 +373,7 @@
   </div>
 </section>
 
-<section class="slide slide--body teacher-slide" id="s-lesson-plan" data-section="6. 수업으로" data-title="학교 여건에 맞게 운영하기">
+<section class="slide slide--body teacher-slide" id="s-lesson-plan" data-section="5. 수업으로" data-title="학교 여건에 맞게 운영하기">
   <div class="slide__head"><div class="slide__kicker">학교에서의 운영</div><h2 class="slide__title">학교 여건에 맞게 운영하기</h2></div>
   <div class="slide__body">
     <div class="tp-operation">
@@ -393,7 +386,7 @@
   </div>
 </section>
 
-<section class="slide slide--pastel" id="s-end" data-section="6. 수업으로" data-title="마무리 · 수업 준비 자료">
+<section class="slide slide--pastel" id="s-end" data-section="5. 수업으로" data-title="마무리 · 수업 준비 자료">
   <div class="show-cover" style="top:250px"><span class="divider__part">기초에서 시작해, 학생의 프로젝트로</span><h2 class="show-cover__title">아이디어를 구현하는 도구, 피지컬 AI</h2>
     <p class="show-cover__text">기초 기능을 익히고, 작은 제작을 경험하며,<br>스스로 설계하고 개선하는 프로젝트로 이어 갑니다.</p>
     <div class="teach-end-links"><button class="btn btn--yellow" type="button" data-goto="s-starts">단계별 지도 다시 보기</button><button class="btn" type="button" data-goto="s-res">수업 준비 자료 열기</button></div>
@@ -722,25 +715,25 @@
 
 <div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
 
-<script src="assets/js/config.js?v=2f4fbbdc23"></script>
+<script src="assets/js/config.js?v=ed4954dd4a"></script>
 <script>
 /* 이 교안만의 값: 발표회 묶음 이름과 발표 때 물을 한 문장 (showcase.js) */
 window.MK = window.MK || {};
-MK.page = { showSection: '5. 작품 발표회', showPart: 'PART 5', showAsk: '발표 끝에 한 문장 · <b>누구를 위한 작품인가요? 써 본 뒤 무엇을 고쳤나요?</b>' };
+MK.page = { showSection: '4. 작품 발표회', showPart: 'PART 4', showAsk: '발표 끝에 한 문장 · <b>어떤 방법으로 나누나요? 왜 그 AI 모델을 골랐나요?</b>' };
 </script>
-<script src="assets/js/icons.js?v=2f4fbbdc23"></script>
-<script src="assets/js/challenges.js?v=2f4fbbdc23"></script>
-<script src="assets/js/store.js?v=2f4fbbdc23"></script>
-<script src="assets/js/deck.js?v=2f4fbbdc23"></script>
-<script src="assets/js/widgets.js?v=2f4fbbdc23"></script>
-<script src="assets/js/showcase.js?v=2f4fbbdc23"></script>
-<script src="assets/js/interact.js?v=2f4fbbdc23"></script>
-<script src="assets/js/cards.js?v=2f4fbbdc23"></script>
-<script src="assets/js/fable.js?v=2f4fbbdc23"></script>
-<script src="assets/js/admin.js?v=2f4fbbdc23"></script>
-<script src="assets/js/editor.js?v=2f4fbbdc23"></script>
-<script src="assets/js/review.js?v=2f4fbbdc23"></script>
-<script src="assets/js/app.js?v=2f4fbbdc23"></script>
-<script src="assets/js/making-resources.js?v=2f4fbbdc23"></script>
+<script src="assets/js/icons.js?v=ed4954dd4a"></script>
+<script src="assets/js/challenges.js?v=ed4954dd4a"></script>
+<script src="assets/js/store.js?v=ed4954dd4a"></script>
+<script src="assets/js/deck.js?v=ed4954dd4a"></script>
+<script src="assets/js/widgets.js?v=ed4954dd4a"></script>
+<script src="assets/js/showcase.js?v=ed4954dd4a"></script>
+<script src="assets/js/interact.js?v=ed4954dd4a"></script>
+<script src="assets/js/cards.js?v=ed4954dd4a"></script>
+<script src="assets/js/fable.js?v=ed4954dd4a"></script>
+<script src="assets/js/admin.js?v=ed4954dd4a"></script>
+<script src="assets/js/editor.js?v=ed4954dd4a"></script>
+<script src="assets/js/review.js?v=ed4954dd4a"></script>
+<script src="assets/js/app.js?v=ed4954dd4a"></script>
+<script src="assets/js/making-resources.js?v=ed4954dd4a"></script>
 </body>
 </html>

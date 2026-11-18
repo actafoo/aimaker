@@ -83,6 +83,7 @@ window.MK = window.MK || {};
       el.remove();
     });
     $$('[contenteditable]', box).forEach(function (el) { el.removeAttribute('contenteditable'); });
+    $$('[data-btname]', box).forEach(function (el) { el.textContent = ''; }); // 화면에서 채운 내 장치 이름은 파일에 넣지 않음
     // 맨 끝에 혼자 남은 <br>은 화면에 안 보이니 지움 (Enter를 누르고 아무것도 안 쓴 경우)
     var last = box.lastChild;
     while (last && last.nodeType === 3 && !/\S/.test(last.nodeValue)) last = last.previousSibling;

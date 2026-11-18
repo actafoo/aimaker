@@ -192,7 +192,7 @@ window.MK = window.MK || {};
       try { p = this._checkPerson(d, o.name, o.pin); } catch (e) { return fail(e.message); }
       var card = d.cards.filter(function (c) { return c.name === p.name; })[0];
       var en = d.enrollments.filter(function (e) { return e.name === p.name; })[0];
-      if (!card && !en) return fail('먼저 내 도전과제(아이디어 카드)를 등록해 주세요.');
+      if (!card && !en) return fail('먼저 내 분류기를 등록해 주세요.');
       var chId = card ? 'card' : en.challengeId;
       var title = clean(o.title), desc = String(o.desc || '').trim(), mc = clean(o.makecodeUrl), video = clean(o.videoUrl);
       if (!title) return fail('작품 제목을 적어 주세요.');

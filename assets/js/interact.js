@@ -28,7 +28,7 @@ window.MK = window.MK || {};
     var m = me();
     if (m) return then(m);
     MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: why || '도전과제 등록과 제출에 쓰는 이름과 같은 이름을 적어 주세요.',
-      fields: MK.ui.personFields(null), note: MK.ui.PIN_NOTE, submitText: '등록',
+      fields: MK.ui.personFields(null), note: MK.ui.PERSON_NOTE, submitText: '등록',
       onSubmit: function (v) {
         return MK.store.identify(v).then(function () { setTimeout(function () { var n = me(); if (n) then(n); }, 80); });
       } });
@@ -957,8 +957,43 @@ window.MK = window.MK || {};
      ========================================================= */
   var BT_KEY = 'mk-btname';
   function btName() { try { return localStorage.getItem(BT_KEY) || ''; } catch (e) { return ''; } }
-  function paintBtName() { var n = btName(); $$('[data-btname]').forEach(function (b) { b.textContent = n ? '「' + n + '」' : ''; }); }
+  function paintBtName() { var n = btName(); $$('[data-btname]').forEach(function (b) { b.textContent = n ? '「' + n + '」' : (b.getAttribute('data-btname-empty') || ''); }); }
+  // 이름 저장(공백 빼고 소문자). 9~10차시 오른쪽 위 칩(widgets.js)도 다시 그리게 알림
+  function setBtName(v) {
+    v = String(v || '').replace(/\s+/g, '').toLowerCase().slice(0, 12);
+    try { if (v) localStorage.setItem(BT_KEY, v); else localStorage.removeItem(BT_KEY); } catch (e) {}
+    paintBtName(); document.dispatchEvent(new CustomEvent('mk:btname'));
+    return v;
+  }
+  MK.btName = btName; MK.setBtName = setBtName;
   MK.widgets['bt-name'] = function (el) {
+    if (el.dataset.variant === 'badge') {
+      el.innerHTML = '<div class="device-badge"><div class="device-badge__head">' + ic('bt') + '<span>연결할 장치 이름</span></div>' +
+        '<div class="device-badge__view"><b class="device-badge__value"></b><button type="button" class="device-badge__edit">수정</button></div>' +
+        '<div class="device-badge__form" hidden><label><span class="device-badge__input-label">마이크로비트에 표시된 이름</span><input type="text" maxlength="12" placeholder="다섯 글자 이름" autocomplete="off" spellcheck="false" autocapitalize="off"></label><button type="button" class="device-badge__save">저장</button><button type="button" class="device-badge__cancel">취소</button></div>' +
+        '<p class="device-badge__hint" aria-live="polite"></p></div>';
+      var badge = $('.device-badge', el), view = $('.device-badge__view', el), field = $('.device-badge__form', el), input = $('input', el), edit = $('.device-badge__edit', el), hint = $('.device-badge__hint', el);
+      function paintBadge() {
+        var name = btName();
+        $('.device-badge__value', el).textContent = name || '이름을 적어 두세요';
+        badge.classList.toggle('is-empty', !name);
+        edit.textContent = name ? '수정' : '입력';
+        hint.textContent = name ? '블루투스 목록에서 이 이름을 선택하세요' : '7~8차시에 적은 이름이 여기에 이어집니다';
+        if (field.hidden) input.value = name;
+      }
+      function closeBadge() { field.hidden = true; view.hidden = false; paintBadge(); edit.focus({ preventScroll: true }); }
+      edit.onclick = function () { input.value = btName(); field.hidden = false; view.hidden = true; hint.textContent = '이름은 이 브라우저에 저장됩니다'; input.focus(); input.select(); };
+      $('.device-badge__save', el).onclick = function () { MK.setBtName(input.value); closeBadge(); };
+      $('.device-badge__cancel', el).onclick = closeBadge;
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); MK.setBtName(input.value); closeBadge(); }
+        if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeBadge(); }
+      });
+      document.addEventListener('mk:btname', paintBadge);
+      document.addEventListener('deck:enter', function (e) { if (e.detail.slide.contains(el)) paintBadge(); });
+      window.addEventListener('storage', function (e) { if (e.key === BT_KEY) paintBadge(); });
+      paintBadge(); return;
+    }
     el.innerHTML = '<label class="btname-in"><span>내 장치 이름</span><input type="text" maxlength="12" placeholder="예: tobiz" autocomplete="off" spellcheck="false" autocapitalize="off"></label>' +
       '<div class="btname-msg" aria-live="polite"></div>';
     var inp = $('input', el), msg = $('.btname-msg', el);
@@ -967,10 +1002,11 @@ window.MK = window.MK || {};
     inp.addEventListener('input', function () {
       var v = inp.value.replace(/\s+/g, '').toLowerCase();
       if (v !== inp.value) inp.value = v;
-      try { if (v) localStorage.setItem(BT_KEY, v); else localStorage.removeItem(BT_KEY); } catch (e) {}
-      show(); paintBtName();
+      setBtName(v); show();
     });
     show();
+    // 쪽에 들어올 때마다 저장된 이름으로 (다른 탭·교안에서 바꿨을 수 있음)
+    document.addEventListener('deck:enter', function (e) { if (e.detail.slide.contains(el) && document.activeElement !== inp) { inp.value = btName(); show(); } });
   };
   MK.widgets['bt-name'].once = true;
   document.addEventListener('deck:enter', paintBtName);

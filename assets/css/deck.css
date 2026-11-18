@@ -1500,3 +1500,31 @@ body:not(.is-editing) .pai [data-reveal]:not([data-reveal="fade"]).is-covered:ho
 .zoom-pic { margin-top: 10px; border: 2px solid var(--line); border-radius: 12px; overflow: hidden; }
 .zoom-pic img { width: 100%; height: auto; }
 .zoom-pic.shot { padding: 20px; }
+
+/* 내 분류기 카드 (공통과제: 바둑돌 분류기, cards.js my-card) */
+.mc-hint { font-size: 17px; font-weight: 700; color: var(--muted); }
+.mc-ids { display: grid; gap: 8px; }
+.mc-id { display: flex; align-items: center; gap: 16px; padding: 6px 14px; border-radius: 12px; background: var(--sky); color: var(--navy); }
+.mc-id.is-opt { background: #F4F6FA; }
+.mc-id__tag { flex: none; display: grid; place-items: center; min-width: 54px; height: 32px; border-radius: 8px; background: var(--navy); color: #fff; font-size: 16px; font-weight: 800; }
+.mc-id__name { flex: none; width: 84px; font-size: 23px; font-weight: 800; }
+.mc-id__f { display: inline-flex; align-items: center; gap: 8px; }
+.mc-id__k { font-size: 17px; font-weight: 700; color: var(--muted); }
+.mc-id__opt { font-size: 16px; font-weight: 600; color: var(--muted); }
+.mc-num { display: inline-flex; align-items: center; gap: 4px; font-size: 19px; font-weight: 700; color: var(--muted); }
+.mc .mc-num input { width: 68px; height: 40px; padding: 0 4px; border: 2px solid #B7C7DC; border-radius: 8px; background: #fff; text-align: center; font-size: 22px; font-weight: 800; }
+.mc .mc-num input:focus { border-color: var(--blue); }
+.mc-line input { flex: 1; min-width: 0; height: 44px; padding: 0 4px; border: 0; border-bottom: 2px solid #9AA6C4; background: transparent; font-size: 23px; font-weight: 700; }
+.mc-line input:focus { border-bottom-color: var(--blue); }
+.mc-sum { margin: 8px 0 0; display: grid; gap: 8px; }
+.mc-sum > div { display: grid; grid-template-columns: 116px 1fr; gap: 10px; font-size: 19px; line-height: 1.4; }
+.mc-sum dt { font-weight: 800; color: var(--muted); }
+.mc-sum dd { margin: 0; font-weight: 700; color: var(--navy); overflow-wrap: anywhere; }
+.mc-sum dd.is-empty { color: #9AA6C4; font-weight: 600; }
+.cd-sort dt { min-width: 92px; }
+.cb-tile__rec { font-variant-numeric: tabular-nums; }
+.mc .mc-sig { flex: none; width: 150px; height: 40px; padding: 0 10px; border: 2px solid #B7C7DC; border-radius: 8px; background: #fff; font-size: 21px; font-weight: 800; }
+.mc .mc-sig:focus { border-color: var(--blue); }
+.mc-id__to { flex: none; width: 150px; font-size: 18px; font-weight: 700; color: var(--muted); }
+.mc-id[hidden], .mc-id__f[hidden] { display: none !important; }
+.mc-models .mc-model { height: 44px; padding: 0 16px; font-size: 20px; }
