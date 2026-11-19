@@ -80,6 +80,8 @@ body.deck-page { overflow: hidden; background: #E6ECF7; font-family: var(--font)
    섹션 구분 (픽셀 배경)
    ========================================================= */
 .divider { position: absolute; left: 460px; right: 460px; top: 300px; text-align: center; }
+/* 7~8차시 표지(9~10차시는 deck-refined가 따로 정함): 시간 줄을 지운 뒤 글이 위로 쏠리지 않게, 묶음의 가운데를 480px에 맞춤 */
+body:not(.deck-refined) .divider { top: 480px; transform: translateY(-50%); }
 .divider__part { --shape: polygon(0 0, 100% 0, calc(100% - 22px) 50%, 100% 100%, 0 100%, 22px 50%); --fill: var(--blue-mid); display: inline-flex; align-items: center; min-height: 54px; padding: 6px 56px; font-size: 25px; font-weight: 800; color: var(--navy); letter-spacing: .12em; }
 .divider__title { margin: 30px 0 0; font-size: 84px; font-weight: 800; letter-spacing: -0.04em; color: var(--navy); line-height: 1.15; }
 .divider__text { margin: 24px auto 0; max-width: 1040px; font-size: 30px; font-weight: 500; color: var(--muted); line-height: 1.5; }
