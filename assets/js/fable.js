@@ -233,11 +233,11 @@ MK.widgets = MK.widgets || {};
       box.className = 'fb-qc__st' + (c && !d ? ' is-ok' : '');
       box.innerHTML = c && !d ? '<b>우리 반 보드에 올라갔어요.</b> 다음 쪽(→)에서 볼 수 있습니다. 고치면 다시 저장하세요.'
         : c ? '<b>고친 내용이 있어요.</b> 저장을 눌러야 보드에 반영됩니다.'
-        : left ? '왼쪽의 노란 칸부터 채워 주세요.' : (m ? '<b>' + esc(m.name) + '</b> 선생님 이름으로 등록합니다.' : '누르면 이름과 비밀번호 4자리를 먼저 묻습니다.');
+        : left ? '왼쪽의 노란 칸부터 채워 주세요.' : (m ? '<b>' + esc(m.name) + '</b> 별명으로 등록합니다.' : '누르면 별명과 비밀번호 4자리를 먼저 묻습니다.');
     }
     function withMe(then) {
       var m = MK.store.getMe(); if (m) return then(m);
-      MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: '내 도전과제를 등록할 이름과 비밀번호 4자리를 적어 주세요.',
+      MK.ui.form({ kicker: '별명 등록', title: '먼저 별명을 등록해 주세요', desc: '내 도전과제를 등록할 별명과 비밀번호 4자리를 적어 주세요.',
         fields: MK.ui.personFields(null), note: MK.ui.PERSON_NOTE, submitText: '등록',
         onSubmit: function (v) { return MK.store.identify(v).then(function () { setTimeout(function () { var n = MK.store.getMe(); if (n) then(n); }, 80); }); } });
     }

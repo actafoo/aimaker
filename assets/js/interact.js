@@ -27,7 +27,7 @@ window.MK = window.MK || {};
   function withMe(then, why) {
     var m = me();
     if (m) return then(m);
-    MK.ui.form({ kicker: '이름 등록', title: '먼저 이름을 등록해 주세요', desc: why || '도전과제 등록과 제출에 쓰는 이름과 같은 이름을 적어 주세요.',
+    MK.ui.form({ kicker: '별명 등록', title: '먼저 별명을 등록해 주세요', desc: why || '도전과제 등록과 제출에 쓰는 별명과 같은 별명을 적어 주세요.',
       fields: MK.ui.personFields(null), note: MK.ui.PERSON_NOTE, submitText: '등록',
       onSubmit: function (v) {
         return MK.store.identify(v).then(function () { setTimeout(function () { var n = me(); if (n) then(n); }, 80); });
@@ -93,7 +93,7 @@ window.MK = window.MK || {};
   }
   MK.widgets['my-model'] = function (el, s) {
     var m = me(), c = myChallenge(s);
-    if (!m) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-act="identify">' + ic('user') + ' 이름을 등록하면 내 모델이 강조돼요</button>'; return; }
+    if (!m) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-act="identify">' + ic('user') + ' 별명을 등록하면 내 모델이 강조돼요</button>'; return; }
     if (!c) { el.innerHTML = '<button type="button" class="my-model my-model--empty" data-goto="s-mycard">' + ic('hand') + ' 내 도전과제를 등록하면 내 모델이 강조돼요</button>'; return; }
     var cat = MK.categories[c.category] || MK.catOf(c);
     el.innerHTML = '<div class="my-model c-' + cat.color + '"><span class="my-model__k">내 도전과제</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(c.category) + '</span>' +
@@ -169,7 +169,7 @@ window.MK = window.MK || {};
           return MK.store.requestHelp({ name: m.name, pin: m.pin, step: v.step, note: v.note, checked: done.join(',') })
             .then(function (r) { MK.ui.toast(r.updated ? '도움 요청을 고쳤어요.' : '도움 요청을 보냈어요. 분임강사가 갑니다.'); });
         } });
-    }, '도움 요청에 이름이 필요해요. 신청할 때 쓴 이름과 같은 이름을 적어 주세요.');
+    }, '도움 요청에 별명이 필요해요. 신청할 때 쓴 별명과 같은 별명을 적어 주세요.');
   }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-help]');
@@ -653,7 +653,7 @@ window.MK = window.MK || {};
         if (on) { x.classList.remove('is-pop'); void x.offsetWidth; x.classList.add('is-pop'); }
       });
       MK.store.setHeart({ name: m.name, pin: m.pin, submissionId: id, on: on }).catch(function (err) { bad(err); MK.renderWidgets(); });
-    }, '하트를 누르려면 이름이 필요해요.');
+    }, '하트를 누르려면 별명이 필요해요.');
   });
 
   var dealtAt = 0;
@@ -701,7 +701,7 @@ window.MK = window.MK || {};
             return MK.store.postIdea({ name: m.name, pin: m.pin, grade: v.grade, text: v.text })
               .then(function (r) { MK.ui.toast(r.already ? '이미 올린 아이디어예요.' : '아이디어를 올렸어요!'); });
           } });
-      }, '아이디어에 이름이 함께 보여요.');
+      }, '아이디어에 별명이 함께 보여요.');
       return;
     }
     var d = e.target.closest('[data-idea-del]');

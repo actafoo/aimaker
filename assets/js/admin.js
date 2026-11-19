@@ -125,7 +125,7 @@ window.MK = window.MK || {};
 
     if (tab === 'roster') {
       var opts = MK.challenges.map(function (c) { return '<option value="' + c.id + '">' + esc(c.title) + '</option>'; }).join('');
-      h += '<div class="acard"><div class="acard__title">직접 추가</div><div class="acard__row"><input id="add-name" class="mini-select" style="max-width:130px;padding:0 8px" placeholder="이름"><select id="add-ch" class="mini-select">' + opts + '</select><button class="ubtn ubtn--sm" data-add>추가</button></div><div class="acard__meta">직접 추가한 사람의 비밀번호는 0000입니다 (이미 있던 이름이면 원래 비밀번호).</div></div>';
+      h += '<div class="acard"><div class="acard__title">직접 추가</div><div class="acard__row"><input id="add-name" class="mini-select" style="max-width:130px;padding:0 8px" placeholder="별명"><select id="add-ch" class="mini-select">' + opts + '</select><button class="ubtn ubtn--sm" data-add>추가</button></div><div class="acard__meta">직접 추가한 사람의 비밀번호는 0000입니다 (이미 있던 이름이면 원래 비밀번호).</div></div>';
       MK.challenges.forEach(function (c) {
         var cat = MK.catOf(c), list = S.enrolledIn(st, c.id);
         h += '<h4 class="c-' + cat.color + '" style="display:flex;align-items:center;gap:8px"><span class="cat-dot"></span>' + esc(c.title) + ' · ' + list.length + ' / ' + S.capOf(st, c.id) + '</h4>';
@@ -244,7 +244,7 @@ window.MK = window.MK || {};
     var q = function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var subBy = {}; d.submissions.forEach(function (s) { subBy[s.name] = s; });
     // 공통과제(바둑돌 분류기) 결과표: 카드(AI 모델·알아보는 것·분류 방법·서보) + 제출을 이름으로 이어 한 줄씩
-    var rows = [['이름', '함께', '분류기 이름', 'AI 모델', '알아보는 것', '분류 방법', '서보 1 (P0)', '서보 2 (P1)', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
+    var rows = [['별명', '함께', '분류기 이름', 'AI 모델', '알아보는 것', '분류 방법', '서보 1 (P0)', '서보 2 (P1)', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
     var names = {}, cardBy = {};
     (d.cards || []).forEach(function (c) { cardBy[c.name] = c; names[c.name] = names[c.name] || { name: c.name }; });
     d.enrollments.forEach(function (e) { names[e.name] = e; });

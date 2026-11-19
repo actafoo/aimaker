@@ -24,7 +24,7 @@ MK.categories = {
     code: '7차시 기본 코드 그대로 · 8차시에 저장한 모델 가져오기'
   },
   '모션인식': {
-    color: 'purple', icon: 'move',
+    color: 'yellow', icon: 'move', // 9~10차시에서 음성인식(보라)과 나란히 고르므로 노랑
     model: '모션인식 (양손 높이)',
     app: 'https://boundary-x.github.io/ai_handpose_rc_controller/',
     sends: '양손의 높이를 계속 보냅니다 (예: LF180RB150)',
@@ -48,13 +48,13 @@ MK.categories = {
     color: 'yellow', icon: 'bulb',
     model: '모델 자유',
     app: '',
-    sends: '핸드포즈·이미지분류·음성인식 중 하나를 고릅니다',
+    sends: '핸드포즈·이미지분류·음성인식·모션인식 중 하나를 고릅니다',
     code: '고른 모델에 맞는 코드'
   }
 };
 MK.categoryOrder = ['핸드포즈', '이미지분류', '얼굴인식', '자유발명'];
-/* 내 도전과제(아이디어 카드)에서 고르는 모델 — 7~8차시에 익힌 세 가지 */
-MK.cardModels = ['핸드포즈', '이미지분류', '음성인식']; // Fable 구성판: 모션인식 대신 음성인식
+/* 9~10차시 공통과제(바둑돌 분류기)에서 고르는 모델 — 7~8차시에 익힌 네 가지 (2026-11-19 모션인식 추가) */
+MK.cardModels = ['핸드포즈', '이미지분류', '음성인식', '모션인식'];
 
 MK.activityTitle = '링비트와 AI모델을 활용한 문제해결 작품 제작 및 적용';
 

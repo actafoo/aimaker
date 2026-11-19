@@ -137,12 +137,12 @@ window.MK = window.MK || {};
     /* 이름+비밀번호 확인. 처음 쓰는 이름이면 등록 */
     _checkPerson: function (d, name, pin) {
       name = clean(name); pin = clean(pin);
-      if (!name) throw new Error('이름을 적어 주세요.');
-      if (name.length > 20) throw new Error('이름은 20자 이내로 적어 주세요.');
+      if (!name) throw new Error('별명을 적어 주세요.');
+      if (name.length > 20) throw new Error('별명은 20자 이내로 적어 주세요.');
       if (!/^\d{4}$/.test(pin)) throw new Error('비밀번호는 숫자 4자리입니다.');
       var h = hashPin(pin);
       var known = d.enrollments.concat(d.submissions, d.help, d.ideas, d.cards || []).filter(function (r) { return r.name === name && r.pin; });
-      if (known.length && known[0].pin !== h) throw new Error('같은 이름이 이미 있는데 비밀번호가 다릅니다. 내 이름이 맞다면 비밀번호를 확인하고, 다른 사람이라면 이름 뒤에 학교 이름을 붙여 주세요.');
+      if (known.length && known[0].pin !== h) throw new Error('같은 별명이 이미 있는데 비밀번호가 다릅니다. 내 별명이 맞다면 비밀번호를 확인하고, 다른 사람이라면 다른 별명을 써 주세요.');
       return { name: name, pin: h };
     },
 
@@ -351,7 +351,7 @@ window.MK = window.MK || {};
       var self = this;
       return this._admin(function (d) {
         name = clean(name);
-        if (!name) throw new Error('이름을 적어 주세요.');
+        if (!name) throw new Error('별명을 적어 주세요.');
         var known = d.enrollments.concat(d.submissions).filter(function (r) { return r.name === name; })[0];
         d.enrollments = d.enrollments.filter(function (e) { return e.name !== name; });
         d.enrollments.push({ id: uid('e'), name: name, pin: known ? known.pin : hashPin(pin || '0000'), challengeId: challengeId, at: Date.now() });
