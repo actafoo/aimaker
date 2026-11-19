@@ -101,7 +101,7 @@ window.MK = window.MK || {};
         list.forEach(function (c) {
           h += '<div class="acard c-' + cat.color + (c.hidden ? ' is-hidden' : '') + '"><div class="acard__top"><div class="acard__title">' + esc(c.title) + ' <small style="color:var(--muted);font-weight:600">· ' + esc(c.name) + (c.sample ? ' · 샘플' : '') + '</small></div>' +
             (subBy[c.name] ? '<span class="tab-badge" style="background:var(--green-deep)">제출</span>' : '') + '</div>' +
-            '<div class="acard__meta">' + esc(MK.cardSentence ? MK.cardSentence(c) : '') + (c.servo1 || c.servo2 ? '<br>서보 1: ' + esc(c.servo1 || '-') + ' · 서보 2: ' + esc(c.servo2 || '-') : '') + (c.team ? '<br>함께: ' + esc(c.team) : '') + '</div>' +
+            '<div class="acard__meta">' + esc(c.model || '') + (c.act ? ' · ' + esc(c.act) : '') + (MK.planRows ? MK.planRows(c).map(function (x) { return '<br>' + esc(x.tag + ' ' + MK.planLine(x)); }).join('') : '') + (c.team ? '<br>함께: ' + esc(c.team) : '') + '</div>' +
             '<div class="acard__row"><label class="switch"><input type="checkbox" data-card-hide="' + esc(c.id) + '" ' + (c.hidden ? 'checked' : '') + '>숨기기</label><span style="flex:1"></span>' +
             '<button class="icon-btn" data-card-del="' + esc(c.id) + '" title="지우기">' + ic('trash') + '</button></div></div>';
         });
@@ -170,7 +170,7 @@ window.MK = window.MK || {};
     }
 
     if (tab === 'data') {
-      h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">분류기 카드·제출 기록을 파일로 저장합니다. CSV는 공통과제 결과표(AI 모델·알아보는 것·분류 방법·서보)입니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
+      h += '<div class="acard"><div class="acard__title">내보내기</div><div class="acard__meta">계획 카드·제출 기록을 파일로 저장합니다. CSV는 공통과제 결과표(AI 모델·나누는 방법·받는 값마다 할 일)입니다.</div><div class="acard__row"><button class="ubtn ubtn--ghost ubtn--sm" data-export-json>' + ic('download') + ' JSON</button><button class="ubtn ubtn--ghost ubtn--sm" data-export-csv>' + ic('download') + ' CSV (엑셀)</button></div></div>';
       h += '<div class="acard"><div class="acard__title">가져오기</div><div class="acard__meta">이 교안에서 내보낸 JSON을 불러옵니다. 지금 데이터는 덮어씁니다.</div><div class="acard__row"><input type="file" accept="application/json,.json" data-import style="font-size:13px"></div></div>';
       h += '<div class="acard"><div class="acard__title">샘플 결과물</div><div class="acard__meta">샘플 아이디어 카드와 결과물 6개를 넣어 보드와 발표 슬라이드를 미리 봅니다. "샘플" 표시가 붙습니다.</div><div class="acard__row"><button class="ubtn ubtn--sm" data-seed>샘플 넣기</button><button class="ubtn ubtn--sm ubtn--ghost" data-unseed>샘플 지우기</button></div></div>';
       h += '<div class="acard"><div class="acard__title">전체 초기화</div><div class="acard__meta">내 도전과제(카드)·제출·신청 기록, 도움 요청·하트·수업 아이디어·타이머를 모두 지웁니다. 되돌릴 수 없으니 먼저 내보내기를 하세요.</div><div class="acard__row"><button class="ubtn ubtn--sm ubtn--danger" data-reset>' + ic('trash') + ' 초기화</button></div></div>';
@@ -243,16 +243,16 @@ window.MK = window.MK || {};
   function toCsv(d) {
     var q = function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var subBy = {}; d.submissions.forEach(function (s) { subBy[s.name] = s; });
-    // 공통과제(바둑돌 분류기) 결과표: 카드(AI 모델·알아보는 것·분류 방법·서보) + 제출을 이름으로 이어 한 줄씩
-    var rows = [['별명', '함께', '분류기 이름', 'AI 모델', '알아보는 것', '분류 방법', '서보 1 (P0)', '서보 2 (P1)', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
+    // 공통과제(바둑돌 나누기) 결과표: 계획(AI 모델·나누는 방법·줄마다 「받는 값 알아볼 것 → 할 일」) + 제출을 별명으로 이어 한 줄씩
+    var rows = [['별명', '함께', 'AI 모델', '나누는 방법', '1번 줄', '2번 줄', '3번 줄', '작품 제목', '간단한 설명', 'MakeCode', '작동 영상', '발표 포함']];
     var names = {}, cardBy = {};
     (d.cards || []).forEach(function (c) { cardBy[c.name] = c; names[c.name] = names[c.name] || { name: c.name }; });
     d.enrollments.forEach(function (e) { names[e.name] = e; });
     d.submissions.forEach(function (s) { if (!names[s.name]) names[s.name] = { name: s.name, challengeId: s.challengeId }; });
     Object.keys(names).forEach(function (n) {
-      var s = subBy[n] || {}, cd = cardBy[n] || {}, L = {};
-      (MK.sorterLines ? MK.sorterLines(cd) : []).forEach(function (r) { L[r[0]] = r[1]; });
-      rows.push([n, cd.team, cd.title, cd.model, L['알아보는 것'], L['분류 방법'], cd.servo1, cd.servo2, s.title, s.desc, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
+      var s = subBy[n] || {}, cd = cardBy[n] || {};
+      var P = cd.model || cd.sense ? (MK.planRows ? MK.planRows(cd) : []).map(function (x) { var l = MK.planLine(x); return l ? x.tag + ' ' + l : ''; }) : [];
+      rows.push([n, cd.team, cd.model, cd.act, P[0] || '', P[1] || '', P[2] || '', s.title, s.desc, s.makecodeUrl, s.videoUrl, s.id ? (s.include && !s.hidden ? 'O' : 'X') : '']);
     });
     return rows.map(function (r) { return r.map(q).join(','); }).join('\r\n');
   }

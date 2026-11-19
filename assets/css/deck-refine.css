@@ -386,3 +386,24 @@
 #s-make .mw-reminder .pw { display: inline-block; margin-left: 10px; padding: 0 16px; border-radius: 999px; color: #fff; font-size: 23px; font-weight: 800; letter-spacing: .04em; line-height: 1.55; }
 #s-make .mw-reminder .pw--off { background: var(--red); }
 #s-make .mw-reminder .pw--on { background: var(--green-deep); }
+
+/* ---------- 코딩 전에 정하기 (my-card, 2026-11-19) ----------
+   ② 나누는 방법 힌트 칩 · ③ 줄마다 「받는 값 | AI가 알아볼 것 | 받으면 서보가 할 일」 (기본 두 줄, + 줄 추가) */
+.mc-ways { display: flex; flex-wrap: wrap; gap: 6px; }
+.mc .mc-way { height: 34px; padding: 0 12px; background: var(--paper); font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; transition: background-color .12s, filter .12s; }
+.mc .mc-way:hover { filter: brightness(.96); }
+.mc .mc-way.is-on { background: var(--yellow-mid); }
+.mc--plan .mc-line input { flex: none; width: 100%; }
+.mc--plan .mc-k small { margin-left: 6px; font-size: 15px; font-weight: 600; color: var(--muted); }
+.mc-plan-head { display: flex; gap: 16px; padding: 0 14px; font-size: 15px; font-weight: 800; color: var(--muted); }
+.mc-plan-head span:nth-child(1) { flex: none; width: 54px; }
+.mc-plan-head span:nth-child(2) { flex: none; width: 150px; }
+.mc--plan.is-noid .mc-plan-head span:nth-child(1) { display: none; }
+.mc--plan.is-noid .mc-plan-head span:nth-child(2) { width: 220px; }
+.mc .mc-do { flex: 1; min-width: 0; height: 40px; padding: 0 10px; border: 2px solid #B7C7DC; border-radius: 8px; background: #fff; font-size: 20px; font-weight: 700; }
+.mc .mc-do:focus { border-color: var(--blue); }
+.mc-del { flex: none; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; }
+.mc-del:hover { background: #fff; color: var(--navy); }
+.mc-del .i { width: 18px; height: 18px; }
+.mc-add { align-self: flex-start; font-size: 18px; }
+.mc-add[hidden] { display: none; }
