@@ -6,11 +6,11 @@
 <title>7~8차시 · 피지컬 AI 작품 설계</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230B57D8%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2715%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27%3EAI%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/Paperlogy-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=5ebe5a3dd2">
-<link rel="stylesheet" href="assets/css/components.css?v=5ebe5a3dd2">
-<link rel="stylesheet" href="assets/css/deck.css?v=5ebe5a3dd2">
-<link rel="stylesheet" href="assets/css/ui.css?v=5ebe5a3dd2">
-<link rel="stylesheet" href="assets/css/idea-bridge.css?v=5ebe5a3dd2">
+<link rel="stylesheet" href="assets/css/tokens.css?v=ced474190a">
+<link rel="stylesheet" href="assets/css/components.css?v=ced474190a">
+<link rel="stylesheet" href="assets/css/deck.css?v=ced474190a">
+<link rel="stylesheet" href="assets/css/ui.css?v=ced474190a">
+<link rel="stylesheet" href="assets/css/idea-bridge.css?v=ced474190a">
 </head>
 <body class="deck-page">
 
@@ -36,10 +36,27 @@
   </div>
 </section>
 
+<section class="slide slide--body" id="s-open-video" data-section="시작" data-title="여는 영상">
+  <div class="slide__head">
+    <div class="slide__kicker">여는 영상</div>
+    <h2 class="slide__title">이런 문제를, 이렇게 해결했습니다</h2>
+  </div>
+  <div class="slide__body">
+    <div class="vpair">
+      <div class="vpair__txt is-l c-yellow"><span class="circle">1</span><b class="vpair__name">문제 상황</b></div>
+      <!-- 문제 상황 영상 자리: 유튜브 영상이 정해지면 아래 div를 오른쪽 button처럼 바꿉니다 (data-yt-play와 썸네일 주소의 영상 id만 바꾸기) -->
+      <div class="vslot is-empty c-yellow"><svg class="i"><use href="#i-video"></use></svg><span>영상 넣을 자리</span></div>
+      <span class="vpair__arrow" aria-hidden="true"><svg class="i"><use href="#i-right"></use></svg></span>
+      <button type="button" class="vslot" data-yt-play="3QMxuYi6Ee8" data-yt-title="마이크로비트 프로젝트1" aria-label="해결한 도구 영상 재생" style="background-image:url(https://i.ytimg.com/vi/3QMxuYi6Ee8/oar2.jpg)"><span class="vslot__play"><svg class="i"><use href="#i-play"></use></svg></span></button>
+      <div class="vpair__txt is-r c-green"><span class="circle">2</span><b class="vpair__name">해결한 도구</b><span class="vpair__src">마이크로비트 프로젝트1<br>YouTube Shorts</span></div>
+    </div>
+  </div>
+</section>
+
 <section class="slide slide--body" id="s-demo" data-section="시작" data-title="여는 시연">
   <div class="slide__head">
     <div class="slide__kicker">여는 시연</div>
-    <h2 class="slide__title">도움이 필요할 때, 손을 대신 들어 줍니다</h2>
+    <h2 class="slide__title">멀리서 손 신호만으로, 원하는 횟수만큼 종을 칩니다</h2>
   </div>
   <div class="slide__body">
     <div class="demo">
@@ -85,7 +102,7 @@
         <ul class="cmp__list"><li>생활 속 문제에서 출발한다</li><li>정해진 도구와 시간 안에서 궁리한다</li><li>모두 다른 해결이 나온다</li></ul>
       </div>
     </div>
-    <div class="callout c-row mt-l" data-reveal><span class="circle c-yellow"><svg class="i"><use href="#i-target"></use></svg></span><div><span class="t-muted">오늘의 기준 —</span> 이 작품은 <b class="t-blue">누구의, 어떤 불편</b>을 줄이는가?</div></div>
+    <div class="callout c-row mt-l" data-reveal><span class="circle c-yellow"><svg class="i"><use href="#i-target"></use></svg></span><div><span class="t-muted">오늘의 목표 —</span> 작품 완성보다 <b class="t-blue">서보모터·마이크로비트·AI 모델</b>의 기능을 익힙니다</div></div>
     <p class="src mt-m"></p>
   </div>
 </section>
@@ -1079,22 +1096,22 @@
 
 <div class="demo-flag ui" id="demo-flag">데모 모드 · 이 브라우저에만 저장됩니다</div>
 
-<script src="assets/js/config.js?v=5ebe5a3dd2"></script>
+<script src="assets/js/config.js?v=ced474190a"></script>
 <script>
   /* 이 교안만의 값: 꼬리말, 마지막으로 본 쪽 기억, 신청 기능 없음 (나머지는 config.js 그대로) */
   MK.page = { session: '7~8차시', title: '링비트와 바운더리 AI를 활용한 문제해결 작품 설계', key: 'mk78', enroll: false,
     next: 'deck-9-10.html#1', nextLabel: '9~10차시 교안' }; // 마지막 쪽에서 넘기면 9~10차시 표지로
 </script>
-<script src="assets/js/icons.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/challenges.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/store.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/deck.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/widgets.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/showcase.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/interact.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/admin.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/editor.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/review.js?v=5ebe5a3dd2"></script>
-<script src="assets/js/app.js?v=5ebe5a3dd2"></script>
+<script src="assets/js/icons.js?v=ced474190a"></script>
+<script src="assets/js/challenges.js?v=ced474190a"></script>
+<script src="assets/js/store.js?v=ced474190a"></script>
+<script src="assets/js/deck.js?v=ced474190a"></script>
+<script src="assets/js/widgets.js?v=ced474190a"></script>
+<script src="assets/js/showcase.js?v=ced474190a"></script>
+<script src="assets/js/interact.js?v=ced474190a"></script>
+<script src="assets/js/admin.js?v=ced474190a"></script>
+<script src="assets/js/editor.js?v=ced474190a"></script>
+<script src="assets/js/review.js?v=ced474190a"></script>
+<script src="assets/js/app.js?v=ced474190a"></script>
 </body>
 </html>

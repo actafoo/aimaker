@@ -790,6 +790,25 @@ window.MK = window.MK || {};
     d.showModal();
   });
 
+  /* 슬라이드 안 영상 — <button class="vslot" data-yt-play="유튜브 id"> 를 누르면 그 자리에서 재생
+     슬라이드를 넘기면 영상을 지우고 썸네일로 돌아감 (소리도 멈춤) */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-yt-play]'); if (!b || editing()) return;
+    var id = String(b.getAttribute('data-yt-play') || ''); if (!/^[A-Za-z0-9_-]{6,20}$/.test(id)) return;
+    var box = document.createElement('div'); box.className = 'vslot__frame';
+    box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1" title="' + esc(b.getAttribute('data-yt-title') || '영상') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    b.parentNode.insertBefore(box, b);
+    b.hidden = true;
+  });
+  document.addEventListener('deck:leave', function (e) {
+    var sl = e.detail && e.detail.slide; if (!sl) return;
+    $$('.vslot__frame', sl).forEach(function (box) {
+      var b = box.nextElementSibling;
+      box.remove();
+      if (b) b.hidden = false;
+    });
+  });
+
   /* =========================================================
      위젯을 그릴 때마다: 내 과제 강조 + 타이머 칩
      ========================================================= */
