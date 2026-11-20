@@ -98,6 +98,7 @@ MK.generators = MK.generators || {};
   function backward() {
     var s = slides[cur] && !editing() ? $$('[data-reveal]:not(.is-covered)', slides[cur]) : [];
     if (s.length) { var last = s[s.length - 1]; last.classList.remove('is-popped'); last.classList.add('is-covered'); return; }
+    if (PAGE.prev && cur <= 0) { location.href = PAGE.prev; return; } // 첫 쪽에서 이전 → 이전 교안(MK.page.prev)
     show(cur - 1);
   }
   function show(i, opts) {
@@ -114,6 +115,7 @@ MK.generators = MK.generators || {};
     sl.classList.add('is-active');
     $('#dock-count').textContent = (i + 1) + ' / ' + slides.length;
     if (PAGE.next) $('#dock-next').title = i >= slides.length - 1 ? (PAGE.nextLabel || '다음 교안') + '으로 (→)' : '다음 (→)';
+    if (PAGE.prev) $('#dock-prev').title = i <= 0 ? (PAGE.prevLabel || '이전 교안') + '으로 (←)' : '이전 (←)';
     var hash = '#' + (i + 1);
     if (!(opts && opts.noHash) && location.hash !== hash) history.replaceState(null, '', hash);
     try { localStorage.setItem(POS_KEY, String(i + 1)); } catch (e) {}
@@ -130,6 +132,7 @@ MK.generators = MK.generators || {};
   function fromHash() {
     var h = decodeURIComponent(location.hash.replace(/^#/, ''));
     if (!h || h === 'admin') return false;
+    if (h === 'end') { show(slides.length - 1); return true; } // 이전 교안의 마지막 쪽으로 올 때 (MK.page.prev)
     if (/^\d+$/.test(h)) { show(parseInt(h, 10) - 1, { noHash: true }); return true; }
     var i = indexOfId(h); if (i >= 0) { show(i); return true; }
     return false;
