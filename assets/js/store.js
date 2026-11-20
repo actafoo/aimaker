@@ -480,13 +480,14 @@ window.MK = window.MK || {};
     this.state = normalize(cached);
     if (cached) this.lastJson = JSON.stringify(this.state);
     window.addEventListener('storage', function (e) { if (e.key === ME_KEY) self._emit(); });
-    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') self.refresh(); });
-    // 살아 있는 현황을 보여 주는 쪽에서는 자주(기본 10초), 나머지는 20초마다 받아 옵니다
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && isLiveView() && Date.now() - self.lastFetch > 5000) self.refresh(); });
+    // 살아 있는 현황을 보여 주는 쪽(설계 정리하기·모두의 계획·제출·제출 현황·발표회)에서만 10초마다 받아 옵니다.
+    // 2026-11-20: 타이머를 빼면서 다른 쪽의 20초 받기를 없앰 → 7~8차시처럼 현황 쪽이 없는 교안은 열 때 한 번만 받음
     this.lastFetch = 0;
     var every = Math.max(4, cfg.pollSeconds || 10) * 1000;
     setInterval(function () {
       if (document.visibilityState !== 'visible') return;
-      if (isLiveView() || Date.now() - self.lastFetch > 20000) self.refresh(); // 다른 쪽에서도 20초 안에 타이머 시작을 앎
+      if (isLiveView()) self.refresh();
     }, every);
     document.addEventListener('deck:enter', function () { if (isLiveView() && Date.now() - self.lastFetch > 5000) self.refresh(); });
     setTimeout(function () { self.refresh(); }, 0);

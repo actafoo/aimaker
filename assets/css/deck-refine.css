@@ -238,7 +238,7 @@
 /* 개별 제작 시간: 한 화면에서 자료를 꺼내 보고 돌아오는 작업 화면 */
 #s-make .making-workspace { top: 245px; bottom: 145px; display: flex; flex-direction: column; gap: 18px; }
 #s-make .mw-status { display: grid; grid-template-columns: 1fr 390px; gap: 36px; align-items: center; }
-#s-make .mw-status:has(.mw-timer[hidden]) { grid-template-columns: 1fr; }
+#s-make .mw-status:not(:has(.mw-timer:not([hidden]))) { grid-template-columns: 1fr; } /* 타이머 없음(2026-11-20 뺌) 또는 숨김 */
 #s-make .mw-reminder > b { color: var(--navy); font-size: 30px; }
 #s-make .mw-reminder p { margin: 12px 0 8px; color: var(--ink); font-size: 22px; line-height: 1.5; }
 #s-make .mw-reminder .linkish { font-size: 20px; }
@@ -346,7 +346,7 @@
 
 /* 만들기: 연결 목록에서 찾을 장치 이름을 눈에 잘 보이는 이름표로 표시 */
 #s-make .mw-status { grid-template-columns: minmax(0, 1fr) 360px; gap: 30px; align-items: center; }
-#s-make .mw-status:has(.mw-timer[hidden]) { grid-template-columns: minmax(0, 1fr); }
+#s-make .mw-status:not(:has(.mw-timer:not([hidden]))) { grid-template-columns: minmax(0, 1fr); }
 #s-make .mw-reminder > b { font-size: 29px; }
 #s-make .mw-reminder p { margin: 10px 0; font-size: 22px; }
 #s-make .device-badge { padding: 22px 24px; background: var(--paper); border: 3px solid var(--navy); border-radius: 20px; }

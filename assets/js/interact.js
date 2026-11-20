@@ -212,7 +212,7 @@ window.MK = window.MK || {};
       document.body.appendChild(chip);
     }
     var on = false;
-    if (MK.timerMode() === 'shared') {
+    if (MK.timerMode() === 'shared' && timerSlide()) {
       var t = st().settings.timer || {}, l = MK.timerLeft(t);
       var active = t.total > 0 && (t.running || l < t.total);
       if (t.running && lastLeft != null && lastLeft > 0 && l <= 0) MK.ui.toast((t.label || '타이머') + ' 시간이 끝났어요!');
