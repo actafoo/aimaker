@@ -627,32 +627,61 @@ window.MK = window.MK || {};
   /* =========================================================
      7. 작품 하트 · 발표 순서 뽑기
      ========================================================= */
+  /* 하트 묶어 보내기 (2026-11-20): 누르면 화면에는 바로 보이고, 서버에는 손을 멈춘 뒤(1.2초) 마지막 상태만 한 번 보냄.
+     연타해도 쓰기는 한 번, 원래대로 돌아오면 안 보냄. 붐빌 때 다시 보내기는 store.js(_call)가 맡음.
+     기다리는 동안 현황이 새로 와서 다시 그려도, 보낼 상태(heartWant)를 먼저 보여 줌 */
+  var heartWant = {}; // 작품 id → { on, timer, busy, again }
+  var HEART_WAIT = 1200;
+  function heartOnServer(id, s, m) { return !!m && (((s || st()).hearts || {})[id] || []).indexOf(m.name) >= 0; }
+  function heartCount(id, s, m) { // 서버 수에 내가 보낼 상태를 더함
+    var n = ((s.hearts || {})[id] || []).length;
+    if (m && heartWant[id]) n += (heartWant[id].on ? 1 : 0) - (heartOnServer(id, s, m) ? 1 : 0);
+    return Math.max(0, n);
+  }
   function heartBtn(id, s) {
     var names = (s.hearts || {})[id] || [], m = me();
     var sub = s.submissions.filter(function (x) { return x.id === id; })[0];
     if (!sub) return '';
-    var own = !!m && sub.name === m.name, on = !!m && names.indexOf(m.name) >= 0;
+    var own = !!m && sub.name === m.name, on = !!m && !own && (heartWant[id] ? heartWant[id].on : names.indexOf(m.name) >= 0);
     var who = names.length ? names.slice(0, 12).join(', ') + (names.length > 12 ? ' 외 ' + (names.length - 12) + '명' : '') : '';
     return '<button type="button" class="heart' + (on ? ' is-on' : '') + (own ? ' is-own' : '') + '" data-heart="' + esc(id) + '"' + (own ? ' disabled' : '') +
-      ' title="' + esc(own ? '내 작품에는 하트를 누를 수 없어요' + (who ? ' · ' + who : '') : on ? '하트 취소' : '이 작품에 하트' + (who ? ' · ' + who : '')) + '">' + ic('heart') + '<span>' + names.length + '</span>' + (own ? '<small>내 작품</small>' : '') + '</button>';
+      ' title="' + esc(own ? '내 작품에는 하트를 누를 수 없어요' + (who ? ' · ' + who : '') : on ? '하트 취소' : '이 작품에 하트' + (who ? ' · ' + who : '')) + '">' + ic('heart') + '<span>' + heartCount(id, s, m) + '</span>' + (own ? '<small>내 작품</small>' : '') + '</button>';
   }
   MK.widgets.hearts = function (el, s) { el.innerHTML = has('hearts') ? heartBtn(el.getAttribute('data-sub'), s) : ''; };
   MK.widgets['heart-count'] = function (el, s) {
-    var n = has('hearts') ? ((s.hearts || {})[el.getAttribute('data-sub')] || []).length : 0;
+    var n = has('hearts') ? heartCount(el.getAttribute('data-sub'), s, me()) : 0;
     el.innerHTML = n ? ic('heart') + n : '';
   };
+  function paintHeart(id) { // 이 작품의 하트 버튼·숫자만 지금 상태로 다시 그림
+    $$('[data-widget="hearts"], [data-widget="heart-count"]').forEach(function (el) {
+      if (el.getAttribute('data-sub') === id) MK.widgets[el.getAttribute('data-widget')](el, st());
+    });
+  }
+  function sendHeart(id, m) {
+    var w = heartWant[id]; if (!w) return;
+    clearTimeout(w.timer); w.timer = null;
+    if (w.busy) { w.again = true; return; } // 보내는 중이면 끝난 뒤 한 번 더
+    if (w.on === heartOnServer(id, null, m)) { delete heartWant[id]; paintHeart(id); return; } // 서버와 같으면 안 보냄
+    var on = w.on; w.busy = true; w.again = false;
+    MK.store.setHeart({ name: m.name, pin: m.pin, submissionId: id, on: on }).then(function () {
+      w.busy = false;
+      if (w.again || w.on !== on) { sendHeart(id, m); return; } // 보내는 사이 또 눌렀으면 마지막 상태로
+      if (!w.timer) { delete heartWant[id]; paintHeart(id); }
+    }, function (err) { // 붐빌 때 다시 보내기는 store.js(_call)가 이미 4번까지 함. 그래도 안 되면 알리고 서버 상태로
+      w.busy = false; clearTimeout(w.timer);
+      delete heartWant[id]; bad(err); paintHeart(id);
+    });
+  }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-heart]'); if (!b || b.disabled) return;
     e.stopPropagation();
     var id = b.getAttribute('data-heart');
     withMe(function (m) {
-      var names = (st().hearts || {})[id] || [], on = names.indexOf(m.name) < 0;
-      // 먼저 화면에 바로 보여 주고, 서버 답을 받으면 맞춤
-      $$('[data-heart="' + id + '"]').forEach(function (x) {
-        x.classList.toggle('is-on', on); var n = x.querySelector('span'); if (n) n.textContent = Math.max(0, names.length + (on ? 1 : -1));
-        if (on) { x.classList.remove('is-pop'); void x.offsetWidth; x.classList.add('is-pop'); }
-      });
-      MK.store.setHeart({ name: m.name, pin: m.pin, submissionId: id, on: on }).catch(function (err) { bad(err); MK.renderWidgets(); });
+      var w = heartWant[id] || (heartWant[id] = { on: heartOnServer(id, null, m) });
+      w.on = !w.on;
+      paintHeart(id); // 먼저 화면에 바로
+      if (w.on) $$('[data-heart="' + id + '"]').forEach(function (x) { x.classList.remove('is-pop'); void x.offsetWidth; x.classList.add('is-pop'); });
+      clearTimeout(w.timer); w.timer = setTimeout(function () { sendHeart(id, m); }, HEART_WAIT);
     }, '하트를 누르려면 별명이 필요해요.');
   });
 
