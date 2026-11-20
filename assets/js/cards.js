@@ -1,8 +1,8 @@
 /* =========================================================
-   코딩 전에 정하기 (9~10차시 공통과제: 섞인 바둑돌을 검은돌·흰돌끼리 나누기)
+   설계 정리하기 (9~10차시 공통과제: 섞인 바둑돌을 검은돌·흰돌끼리 나누기)
    - tick-list    : 눌러서 체크하는 목록 (이 브라우저에만)
    - my-card      : 슬라이드 위에서 인식 설정·분류 방법·서보 동작을 채우고 등록
-   - card-board   : 우리 반 계획 보드 (나누는 방법·줄마다 알아볼 것, 누르면 크게)
+   - card-board   : 모두의 계획 보드 (나누는 방법·줄마다 알아볼 것, 누르면 크게)
    - idea-gallery : 도전과제 예시 7가지 = 원래 오늘 하려다 접은 도전과제 (PART 5 덤. 누르면 자세히, 내 도전과제로 가져오기)
    데이터: 서버의 카드 탭(한 사람에 한 장). 제출물은 카드와 이름으로 이어집니다.
    ========================================================= */
@@ -37,7 +37,7 @@ window.MK = window.MK || {};
     if (/기$/.test(a)) return a.slice(0, -1) + '도록';  // 깃발 올리기 → 깃발 올리도록
     return a + '하도록';
   }
-  /* ---------- 공통과제(바둑돌 나누기) · 코딩 전에 정하기 ----------
+  /* ---------- 공통과제(바둑돌 나누기) · 설계 정리하기 ----------
      블록 코딩 전에, 받는 값(ID)마다 AI가 알아볼 것과 그때 서보가 할 일을 한 줄씩 정합니다(「만약 ID1이면 → …」 한 줄과 같은 모양).
      기본 ID1·ID2 두 줄, 필요하면 「+ 줄 추가」로 ID3까지. 모션인식은 ID 없이 손 높이를 보내므로 ID 표시를 숨깁니다.
      서버 카드 탭의 칸을 그대로 씁니다(서버 코드는 바꾸지 않음):
@@ -150,7 +150,7 @@ window.MK = window.MK || {};
   document.addEventListener('click', function (e) { if (e.target.closest('[data-act="submit"]')) setTimeout(paintReady, 120); }); // 제출 창이 열리면 미리 채워진 칸도 바로 체크
 
   /* =========================================================
-     2. 코딩 전에 정하기 (공통과제: 섞인 바둑돌을 검은돌·흰돌끼리 나누기) — 칸을 채우고 저장
+     2. 설계 정리하기 (공통과제: 섞인 바둑돌을 검은돌·흰돌끼리 나누기) — 칸을 채우고 저장
         ① AI 모델 ② 나누는 방법(힌트 칩) ③ 받는 값마다 알아볼 것 → 서보가 할 일 (기본 두 줄, + 줄 추가로 세 줄까지)
      ========================================================= */
   var DRAFT_KEY = MK.config.storageKey + '-carddraft';
@@ -173,10 +173,11 @@ window.MK = window.MK || {};
               return '<button type="button" class="tag mc-model c-' + cat.color + '" data-mc-model="' + esc(k) + '" aria-pressed="false">' + ic(cat.icon) + ' ' + esc(k) + '</button>';
             }).join('') + '</span></div>' +
             '<div class="mc-hint" data-mc-hint></div></div>' +
-          '<div class="mc-sec mc-line"><div class="mc-sec__h"><span class="mc-k">② 나누는 방법</span><span class="mc-ways">' + WAYS.map(function (w) {
-              return '<button type="button" class="tag mc-way" data-mc-way="' + esc(w[0]) + '" aria-pressed="false">' + esc(w[0]) + '</button>';
-            }).join('') + '</span></div>' +
-            '<input data-k="act" maxlength="30" placeholder="위에서 고르거나 직접 적기 · 예: 시소형 · 판을 기울여 미끄러뜨리기" autocomplete="off" spellcheck="false"></div>' +
+          '<div class="mc-sec mc-line"><span class="mc-k">② 나누는 방법 <small>정해진 답은 없습니다</small></span>' +
+            '<input data-k="act" maxlength="30" placeholder="내 방법을 자유롭게 한 줄로 · 예: 판을 기울여 미끄러뜨리기" autocomplete="off" spellcheck="false">' +
+            '<div class="mc-ways"><span class="mc-ways__k">막히면 참고</span>' + WAYS.map(function (w) {
+              return '<button type="button" class="mc-way" data-mc-way="' + esc(w[0]) + '" title="' + esc(w[1]) + '">' + esc(w[0]) + '</button>';
+            }).join('') + '</div></div>' +
           '<div class="mc-sec"><span class="mc-k">③ 받으면 할 일 <small>블록 코드의 「만약 ~이면」 한 줄씩</small></span>' +
             '<div class="mc-plan-head"><span>받는 값</span><span>AI가 알아볼 것</span><span>받으면 서보가 할 일</span></div>' +
             '<div class="mc-ids">' + ids + '</div>' +
@@ -187,7 +188,7 @@ window.MK = window.MK || {};
           '<div class="mc-status" data-mc-status></div>' +
           '<button type="button" class="btn btn--green mc-save" data-mc-save>' + ic('check') + ' 저장</button>' +
           '<div class="mc-preview"><div class="mc-k">한눈에 보기</div><dl class="mc-sum" data-mc-preview></dl></div>' +
-          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-goto="s-cardboard">우리 반 계획 보기 ' + ic('right') + '</button></div>' +
+          '<div class="mc-links"><button type="button" class="btn btn--ghost btn--sm" data-goto="s-cardboard">모두의 계획 보기 ' + ic('right') + '</button></div>' +
         '</div>' +
       '</div>';
     var iv = initialValues(); fill(iv.v, iv.dirty);
@@ -231,12 +232,6 @@ window.MK = window.MK || {};
       sig.setAttribute('aria-label', name + ' · AI가 알아볼 것'); dd.setAttribute('aria-label', name + ' · 받으면 서보가 할 일');
     });
     var add = $('[data-mc-add]', form.el); if (add) add.hidden = form.rows >= ROWS.length;
-    paintWay();
-  }
-  function paintWay() { // 나누는 방법 칸이 칩 이름으로 시작하면 그 칩을 켬
-    if (!form.el) return;
-    var a = $('[data-k="act"]', form.el), v = a ? a.value.trim() : '';
-    $$('.mc-way', form.el).forEach(function (b) { var on = !!v && v.indexOf(b.getAttribute('data-mc-way')) === 0; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on); });
   }
   function fill(v, dirty) {
     if (!form.el) return;
@@ -288,7 +283,7 @@ window.MK = window.MK || {};
       var btn = $('[data-mc-save]', form.el); if (btn) btn.disabled = true;
       MK.store.saveCard({ name: m.name, pin: m.pin, card: v }).then(function (r) {
         form.dirty = false; writeDraft(null);
-        MK.ui.toast(r && r.updated ? '고친 내용을 저장했어요.' : '저장했어요! 우리 반 보드에 올라갔어요.');
+        MK.ui.toast(r && r.updated ? '고친 내용을 저장했어요.' : '저장했어요! 모두의 계획에 올라갔어요.');
         paintStatus();
       }, bad).then(function () { if (btn) btn.disabled = false; });
     }, '내 계획을 저장할 별명과 비밀번호 4자리를 적어 주세요.');
@@ -300,7 +295,6 @@ window.MK = window.MK || {};
     var t = e.target;
     if (!t.hasAttribute('data-k')) return;
     touched();
-    if (t.getAttribute('data-k') === 'act') paintWay();
   });
   document.addEventListener('keydown', function (e) {
     if (form.el && form.el.contains(e.target) && e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); save(); }
@@ -310,9 +304,14 @@ window.MK = window.MK || {};
     if (mb && form.el && form.el.contains(mb)) { form.model = mb.getAttribute('data-mc-model'); paintModel(); touched(); return; }
     var inForm = form.el && form.el.contains(e.target);
     var wb = inForm && e.target.closest('.mc-way');
-    if (wb) { // 나누는 방법 힌트 칩: 칸에 넣고 이어서 고쳐 쓰게
+    if (wb) { // 나누는 방법 참고 예시: 칸이 비었거나 다른 예시만 있을 때만 넣음. 직접 적은 글은 지우지 않음
       var w = WAYS.filter(function (x) { return x[0] === wb.getAttribute('data-mc-way'); })[0], a = $('[data-k="act"]', form.el);
-      if (w && a) { a.value = w[0] + ' · ' + w[1]; touched(); paintWay(); a.focus(); }
+      if (w && a) {
+        var cur = a.value.trim(), onlyHint = !cur || WAYS.some(function (x) { return cur === x[0] + ' · ' + x[1]; });
+        if (onlyHint) { a.value = w[0] + ' · ' + w[1]; touched(); }
+        else MK.ui.toast(w[0] + ' · ' + w[1] + ' (직접 적은 글은 그대로 둡니다)');
+        a.focus();
+      }
       return;
     }
     if (inForm && e.target.closest('[data-mc-add]')) { form.rows = Math.min(ROWS.length, form.rows + 1); paintModel(); var nx = $('[data-row="' + form.rows + '"] .mc-sig', form.el); if (nx) nx.focus(); return; }
@@ -383,10 +382,10 @@ window.MK = window.MK || {};
   }
 
   /* =========================================================
-     3. 우리 반 계획 보드 — 나누는 방법과 줄마다 알아볼 것을 한눈에 (공통과제라 모델 거르기는 없음)
+     3. 모두의 계획 보드 — 나누는 방법과 줄마다 알아볼 것을 한눈에 (공통과제라 모델 거르기는 없음)
      ========================================================= */
   MK.widgets['card-board'] = function (el, s) {
-    if (!has('cards')) { el.innerHTML = '<div class="dashed t-md">서버 코드가 예전 버전이라 우리 반 보드를 볼 수 없어요. 강사에게 알려 주세요.</div>'; return; }
+    if (!has('cards')) { el.innerHTML = '<div class="dashed t-md">서버 코드가 예전 버전이라 모두의 계획을 볼 수 없어요. 강사에게 알려 주세요.</div>'; return; }
     var all = cardsOf(s), m = me(), subBy = {};
     (s.submissions || []).forEach(function (x) { subBy[x.name] = x; });
     var list = all.slice().sort(function (a, b) { var am = m && a.name === m.name ? -1 : 0, bm = m && b.name === m.name ? -1 : 0; return am - bm || (a.at || 0) - (b.at || 0); });
@@ -396,7 +395,7 @@ window.MK = window.MK || {};
       '<span class="cb-bar__sp"></span><span class="cb-bar__n">' + ic('users') + ' 등록 ' + all.filter(function (c) { return !c.hidden; }).length + '명 · 제출 ' + all.filter(function (c) { return subBy[c.name]; }).length + '명</span></div>';
     if (!list.length) {
       h += '<div class="cb-empty dashed"><div class="t-lg">아직 저장한 계획이 없어요.</div>' +
-        '<div class="t-sm t-muted">앞 쪽 「코딩 전에 정하기」에서 칸을 채워 저장하면 여기에 바로 나타납니다.</div><button class="btn btn--sm" data-goto="s-mycard">' + ic('edit') + ' 코딩 전에 정하기로 가기</button></div>';
+        '<div class="t-sm t-muted">앞 쪽 「설계 정리하기」에서 칸을 채워 저장하면 여기에 바로 나타납니다.</div><button class="btn btn--sm" data-goto="s-mycard">' + ic('edit') + ' 설계 정리하기로 가기</button></div>';
     } else {
       h += '<div class="cb-grid">' + list.map(function (c) {
         var mine = m && c.name === m.name, sub = subBy[c.name];
@@ -418,7 +417,7 @@ window.MK = window.MK || {};
       '<h3 class="modal__title">' + esc(c.act || c.title) + '</h3>' +
       '<div class="cd-tags">' + (c.model ? '<span class="tag tag--solid c-' + catOf(c.model).color + '">' + ic(catOf(c.model).icon) + ' ' + esc(c.model) + '</span>' : '') + (sub ? '<span class="tag c-green">' + ic('check') + ' 제출 완료</span>' : '<span class="tag">만드는 중</span>') + '</div>' +
       '<dl class="cd-servo cd-sort">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + (r[1] ? esc(r[1]) : '<span class="t-muted">비어 있음</span>') + '</dd></div>'; }).join('') + '</dl>' +
-      (sub ? '<div class="cd-sub"><b>제출한 결과물</b> · ' + esc(sub.title) + (MK.isHttpUrl(sub.videoUrl) ? ' · <a class="link" href="' + esc(sub.videoUrl) + '" target="_blank" rel="noopener">영상 ↗</a>' : '') + (sub.makecodeUrl ? ' · <a class="link" href="' + esc(sub.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode ↗</a>' : '') + '</div>' : '');
+      (sub ? '<div class="cd-sub"><b>제출한 결과물</b> · ' + esc(sub.title || '제목 없음') + (MK.isHttpUrl(sub.videoUrl) ? ' · <a class="link" href="' + esc(sub.videoUrl) + '" target="_blank" rel="noopener">영상 ↗</a>' : '') + (sub.makecodeUrl ? ' · <a class="link" href="' + esc(sub.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode ↗</a>' : '') + '</div>' : '');
   }
   function openCard(id) {
     var s = st(), c = (s.cards || []).filter(function (x) { return x.id === id; })[0]; if (!c) return;

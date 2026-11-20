@@ -781,7 +781,7 @@ window.MK = window.MK || {};
     var d = document.createElement('dialog'); d.className = 'modal ui';
     d.innerHTML = '<div class="modal__box yt-modal"><button type="button" class="icon-btn modal__close" aria-label="닫기">' + ic('x') + '</button>' +
       '<div class="modal__kicker">참고 영상</div><h3 class="modal__title">' + esc(title) + '</h3>' +
-      '<div class="yt-modal__frame"><iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1" title="' + esc(title) + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>' +
+      '<div class="yt-modal__frame"><iframe src="' + MK.ytEmbed(id, true) + '" title="' + esc(title) + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>' +
       '<a class="link" href="https://www.youtube.com/shorts/' + id + '" target="_blank" rel="noopener">YouTube에서 열기 ↗</a></div>';
     document.body.appendChild(d);
     d.querySelector('.modal__close').onclick = function () { d.close(); };
@@ -796,9 +796,17 @@ window.MK = window.MK || {};
     var b = e.target.closest('[data-yt-play]'); if (!b || editing()) return;
     var id = String(b.getAttribute('data-yt-play') || ''); if (!/^[A-Za-z0-9_-]{6,20}$/.test(id)) return;
     var box = document.createElement('div'); box.className = 'vslot__frame';
-    box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1" title="' + esc(b.getAttribute('data-yt-title') || '영상') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    box.innerHTML = '<iframe src="' + MK.ytEmbed(id, true) + '" title="' + esc(b.getAttribute('data-yt-title') || '영상') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
     b.parentNode.insertBefore(box, b);
     b.hidden = true;
+  });
+  /* 강사 구글 드라이브 폴더 버튼 — <a data-drive-link>. 주소는 config.js의 driveUrl (비어 있으면 누를 수 없게) */
+  document.addEventListener('DOMContentLoaded', function () {
+    var u = MK.config && MK.config.driveUrl;
+    $$('[data-drive-link]').forEach(function (a) {
+      if (u) { a.href = u; a.removeAttribute('aria-disabled'); }
+      else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); a.title = '폴더 주소를 아직 넣지 않았어요 (config.js driveUrl)'; }
+    });
   });
   document.addEventListener('deck:leave', function (e) {
     var sl = e.detail && e.detail.slide; if (!sl) return;
@@ -1209,7 +1217,7 @@ window.MK = window.MK || {};
     pic.classList.add('zoom-pic'); pic.style.width = width + 'px';
     var d = document.createElement('dialog'); d.className = 'modal ui';
     d.innerHTML = '<div class="modal__box zoom-box"><button type="button" class="icon-btn modal__close" aria-label="닫기">' + ic('x') + '</button>' +
-      '<h3 class="modal__title">' + esc(bar ? bar.textContent.trim() : '') + '</h3></div>';
+      '<h3 class="modal__title">' + esc(bar ? bar.textContent.trim() : (b.getAttribute('data-zoom-title') || '')) + '</h3></div>';
     $('.zoom-box', d).appendChild(pic);
     document.body.appendChild(d);
     $('.modal__close', d).onclick = function () { d.close(); };

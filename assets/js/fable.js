@@ -5,7 +5,7 @@
    - pace        : (지금은 쓰지 않음) 시각별 체크포인트
    - self-test   : 「내 작품 시험해 보기」 줄마다 됨·가끔·안 됨 표시, 안 된 줄은 「안 된 곳 고치기」로
    - peer-result : 시험하며 고친 곳(AI 인식·코드·구조)을 고름 (제출 설명 문장에 들어감)
-   - class-stats : 오늘 우리 반 숫자 (카드·모델·제출)
+   - class-stats : 오늘 연수 숫자 (카드·모델·제출)
    기록은 모두 이 브라우저에만 남습니다(localStorage). 서버는 바꾸지 않았습니다.
    ========================================================= */
 window.MK = window.MK || {};
@@ -231,7 +231,7 @@ MK.widgets = MK.widgets || {};
       btn.classList.toggle('is-wait', left > 0);
       btn.innerHTML = left ? '네 칸 중 ' + left + '칸 남았어요' : ic('check') + (c ? (d ? ' 고친 내용 저장' : ' 등록됐어요') : ' 내 도전과제 등록');
       box.className = 'fb-qc__st' + (c && !d ? ' is-ok' : '');
-      box.innerHTML = c && !d ? '<b>우리 반 보드에 올라갔어요.</b> 다음 쪽(→)에서 볼 수 있습니다. 고치면 다시 저장하세요.'
+      box.innerHTML = c && !d ? '<b>모두의 계획에 올라갔어요.</b> 다음 쪽(→)에서 볼 수 있습니다. 고치면 다시 저장하세요.'
         : c ? '<b>고친 내용이 있어요.</b> 저장을 눌러야 보드에 반영됩니다.'
         : left ? '왼쪽의 노란 칸부터 채워 주세요.' : (m ? '<b>' + esc(m.name) + '</b> 별명으로 등록합니다.' : '누르면 별명과 비밀번호 4자리를 먼저 묻습니다.');
     }
@@ -255,7 +255,7 @@ MK.widgets = MK.widgets || {};
       withMe(function (m) {
         busy = true; paintStatus();
         MK.store.saveCard({ name: m.name, pin: m.pin, card: v }).then(function (r) {
-          toast(r && r.updated ? '내 도전과제를 고쳤어요.' : '등록했어요! 우리 반 보드에 올라갔어요.');
+          toast(r && r.updated ? '내 도전과제를 고쳤어요.' : '등록했어요! 모두의 계획에 올라갔어요.');
         }, function (err) { toast((err && err.message) || '등록하지 못했어요.', true); }).then(function () { busy = false; paint(); });
       });
     }
@@ -428,7 +428,7 @@ MK.widgets = MK.widgets || {};
   });
 
   /* =========================================================
-     4. 오늘 우리 반 숫자 — <div data-widget="class-stats">
+     4. 오늘 연수 숫자 — <div data-widget="class-stats">
      ========================================================= */
   MK.widgets['class-stats'] = function (el, st) {
     st = st || MK.store.getStateSync();
@@ -438,7 +438,7 @@ MK.widgets = MK.widgets || {};
     var models = (MK.cardModels || []).filter(function (k) { return by[k]; }).map(function (k) {
       var cat = MK.categories[k]; return '<span class="tag c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(k) + ' ' + by[k] + '</span>';
     }).join('');
-    if (!cards.length && !subs.length) { el.innerHTML = '<div class="fb-cs is-empty">카드와 결과물이 등록되면 오늘 우리 반 숫자가 여기에 나옵니다.</div>'; return; }
+    if (!cards.length && !subs.length) { el.innerHTML = '<div class="fb-cs is-empty">카드와 결과물이 등록되면 오늘 연수 숫자가 여기에 나옵니다.</div>'; return; }
     el.innerHTML = '<div class="fb-cs"><div class="fb-cs__n"><b>' + cards.length + '</b><span>장의 카드</span></div>' +
       '<div class="fb-cs__n"><b>' + subs.length + '</b><span>개의 작품</span></div>' +
       '<div class="fb-cs__m">' + (models || '') + '<small>같은 도구, 같은 기본 코드에서 나온 숫자입니다</small></div></div>';

@@ -116,7 +116,7 @@ window.MK = window.MK || {};
   function enrolledIn(state, id) { return state.enrollments.filter(function (e) { return e.challengeId === id; }).sort(function (a, b) { return a.at - b.at; }); }
   function capOf(state, id) { return state.settings.capacity[id] != null ? state.settings.capacity[id] : MK.config.defaultCapacity; }
   function isClosed(state, id) { return !state.settings.open || !!state.settings.closed[id]; }
-  /* 내 계획 카드 (공통과제 · 코딩 전에 정하기) */
+  /* 내 계획 카드 (공통과제 · 설계 정리하기) */
   function cardOf(state, name) { return (state.cards || []).filter(function (c) { return c.name === name; })[0] || null; }
   function myCard(state) { var m = me(); return m ? cardOf(state, m.name) : null; }
   MK.state = { me: me, myEnrollment: myEnrollment, mySubmission: mySubmission, enrolledIn: enrolledIn, capOf: capOf, isClosed: isClosed, cardOf: cardOf, myCard: myCard };
@@ -157,17 +157,18 @@ window.MK = window.MK || {};
     },
     submit: function () {
       var st = MK.store.getStateSync(), m = me(), card = myCard(st), sub = mySubmission(st), dr = subDraft();
-      if (!card) { MK.ui.toast('먼저 「코딩 전에 정하기」에서 저장해 주세요.', true); if (MK.deck) MK.deck.goto('s-mycard'); return; }
-      // 설명 초안: 나누는 방법 + 줄마다 「알아볼 것 → 서보가 할 일」 (코딩 전에 정하기에서)
+      if (!card) { MK.ui.toast('먼저 「설계 정리하기」에서 저장해 주세요.', true); if (MK.deck) MK.deck.goto('s-mycard'); return; }
+      // 설명 초안: 나누는 방법 + 줄마다 「알아볼 것 → 서보가 할 일」 (설계 정리하기에서)
       var descDraft = [card.act].concat(MK.planRows ? MK.planRows(card).map(MK.planLine) : []).filter(Boolean).map(function (x) { x = String(x).trim(); return /[.!?。]$/.test(x) ? x : x + '.'; }).join(' ');
       MK.ui.form({ wide: true, kicker: '공통과제 · 바둑돌 나누기', title: sub ? '내 결과물 수정' : '내 결과물 제출', desc: '30초 이내 영상으로 검은돌과 흰돌이 각각 제자리로 가는 모습을 보여 주세요. 다시 제출하면 새 내용으로 바뀝니다.',
         fields: personFields(m).concat([
           { name: 'title', label: '작품 제목', value: dr ? dr.title : sub ? sub.title : '', placeholder: '예: 기우뚱 시소로 바둑돌 나누기', maxlength: 40 },
           { name: 'desc', label: '간단한 설명', small: '어떻게 나누는지 2~3문장', type: 'textarea', value: dr ? dr.desc : sub ? sub.desc : descDraft, maxlength: MK.config.descMax, placeholder: '예: 검은돌이면 판이 왼쪽으로, 흰돌이면 오른쪽으로 기울어 통에 떨어집니다.' },
           { name: 'makecodeUrl', label: 'MakeCode 공유 주소', value: dr ? dr.makecodeUrl : sub ? sub.makecodeUrl : '', placeholder: 'https://makecode.microbit.org/_…', help: 'MakeCode 오른쪽 위 <b>공유</b> → 공유 링크 만들기 → 주소 복사' },
-          { name: 'videoUrl', label: '작동 영상 주소', value: dr ? dr.videoUrl : sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '얼굴·목소리가 나오지 않게 손과 작품만 찍어 주세요. 영상은 연수 뒤에도 공유됩니다. 구글 드라이브 영상은 <b>링크가 있는 모든 사용자</b>로 공유해야 발표 때 재생됩니다.' }
+          { name: 'videoUrl', label: '작동 영상 주소', value: dr ? dr.videoUrl : sub ? sub.videoUrl : '', placeholder: 'https://drive.google.com/… 또는 https://youtu.be/…', help: '얼굴·목소리가 나오지 않게 손과 작품만 찍어 주세요. 영상은 연수 뒤에도 공유됩니다. 구글 드라이브는 <b>강사 폴더</b>에 올린 영상의 링크를 넣어 주세요.' +
+            (MK.config.driveUrl ? ' <a class="link" href="' + esc(MK.config.driveUrl) + '" target="_blank" rel="noopener">강사 폴더 열기 ↗</a>' : '') }
         ]), submitText: sub ? '수정한 내용 제출' : '결과물 제출하기', cancelText: '닫기',
-        note: '쓰던 내용은 이 노트북에 <b>저절로 저장</b>됩니다. 주소를 가지러 창을 닫았다가 다시 열어도 그대로 남아 있어요.',
+        note: '<b>빈 칸이 있어도 제출됩니다.</b> 쓰던 내용은 이 노트북에 저절로 저장되어, 주소를 가지러 창을 닫았다가 다시 열어도 그대로 남아 있어요.',
         onOpen: function (d) { // 쓰는 대로 초안 저장 (제출에 성공하면 지움)
           var f = d.querySelector('form');
           f.addEventListener('input', function () {
@@ -279,11 +280,11 @@ window.MK = window.MK || {};
     };
     var h = '<div class="window fill"><div class="window__bar">내 결과물' + (dr ? ' · 쓰는 중 (아직 제출 전)' : sub ? ' · 제출 완료' : '') + '</div><div class="window__body" style="display:flex;flex-direction:column;gap:22px">';
     if (!m) {
-      h += '<div class="t-lg">먼저 별명을 등록하고 「코딩 전에 정하기」에서 저장해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 별명 등록</button><button class="btn btn--ghost" data-goto="s-mycard">코딩 전에 정하기로 가기</button></div>';
+      h += '<div class="t-lg">먼저 별명을 등록하고 「설계 정리하기」에서 저장해 주세요.</div><div class="row"><button class="btn" data-act="identify">' + ic('user') + ' 별명 등록</button><button class="btn btn--ghost" data-goto="s-mycard">설계 정리하기로 가기</button></div>';
     } else if (!card) {
-      h += '<div class="t-lg">' + esc(m.name) + ' 님, 아직 저장한 계획이 없어요.</div><div class="t-sm t-muted">결과물은 내 계획에 이어서 제출합니다.</div><div class="row"><button class="btn" data-goto="s-mycard">코딩 전에 정하기로 가기</button></div>';
+      h += '<div class="t-lg">' + esc(m.name) + ' 님, 아직 저장한 계획이 없어요.</div><div class="t-sm t-muted">결과물은 내 계획에 이어서 제출합니다.</div><div class="row"><button class="btn" data-goto="s-mycard">설계 정리하기로 가기</button></div>';
     } else {
-      // 내 계획(코딩 전에 정하기)을 위에 보여 주고, 결과물은 이 계획에 이어서 제출
+      // 내 계획(설계 정리하기)을 위에 보여 주고, 결과물은 이 계획에 이어서 제출
       var cur = dr || sub || {};
       var cat = MK.categories[card.model] || MK.catOf(null);
       h += '<div class="mine-card c-' + cat.color + '"><div class="mine-card__top"><span class="kk">내 계획</span><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(card.model) + '</span>' +

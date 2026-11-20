@@ -192,15 +192,13 @@ window.MK = window.MK || {};
       try { p = this._checkPerson(d, o.name, o.pin); } catch (e) { return fail(e.message); }
       var card = d.cards.filter(function (c) { return c.name === p.name; })[0];
       var en = d.enrollments.filter(function (e) { return e.name === p.name; })[0];
-      if (!card && !en) return fail('먼저 내 분류기를 등록해 주세요.');
+      if (!card && !en) return fail('먼저 「설계 정리하기」에서 저장해 주세요.');
       var chId = card ? 'card' : en.challengeId;
       var title = clean(o.title), desc = String(o.desc || '').trim(), mc = clean(o.makecodeUrl), video = clean(o.videoUrl);
-      if (!title) return fail('작품 제목을 적어 주세요.');
+      // 2026-11-20: 빈 칸이 있거나 주소 모양이 달라도 제출됨 (Code.gs와 같게). 글자 수만 봄
       if (title.length > 40) return fail('작품 제목은 40자 이내로 적어 주세요.');
-      if (!desc) return fail('간단한 설명을 적어 주세요.');
       if (desc.length > cfg.descMax) return fail('설명은 ' + cfg.descMax + '자 이내로 적어 주세요.');
-      if (!MK.parseMakecode(mc)) return fail('MakeCode 공유 주소를 확인해 주세요. https://makecode.microbit.org/_ 로 시작하는 주소입니다.');
-      if (!MK.isHttpUrl(video)) return fail('작동 영상 주소를 확인해 주세요. https:// 로 시작하는 주소입니다.');
+      if (mc.length > 500 || video.length > 500) return fail('주소가 너무 길어요. 공유 주소를 다시 복사해 주세요.');
       var now = Date.now();
       var s = d.submissions.filter(function (x) { return x.name === p.name; })[0];
       if (s) {

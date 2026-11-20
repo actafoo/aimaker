@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex">
+<title>영상</title>
+<!--
+  유튜브 중계 페이지 — 교안을 파일로 직접 열었을 때(file://) 영상을 띄우는 곳
+  유튜브는 영상을 띄운 페이지 주소(Referer)가 없으면 「오류 153」을 냅니다. 파일로 연 화면은 이 주소를 보내지 못하므로,
+  교안은 이 페이지(배포한 https 주소)를 띄우고, 이 페이지가 유튜브를 띄웁니다. 주소: yt.html?v=영상id&a=1(자동 재생)
+-->
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  iframe { display: block; width: 100%; height: 100%; border: 0; }
+  p { margin: 0; padding: 24px; color: #fff; font: 600 18px/1.5 sans-serif; }
+</style>
+</head>
+<body>
+<script>
+  (function () {
+    var q = new URLSearchParams(location.search), id = q.get('v') || '';
+    if (!/^[A-Za-z0-9_-]{6,20}$/.test(id)) { document.body.innerHTML = '<p>영상 주소가 올바르지 않아요.</p>'; return; }
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&playsinline=1' + (q.get('a') === '1' ? '&autoplay=1' : '');
+    f.title = 'YouTube 영상';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    document.body.appendChild(f);
+  })();
+</script>
+</body>
+</html>

@@ -40,7 +40,7 @@
 
 
 
-/* ---------- 수업으로: 세 갈래와 우리 반 숫자 ---------- */
+/* ---------- 수업으로: 세 갈래와 연수 숫자 ---------- */
 .fb-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .fb-three__c { padding: 24px 28px; border: var(--stroke) solid var(--navy); border-radius: var(--r-lg); background: var(--c-soft); }
 .fb-three__k { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border: var(--stroke) solid var(--navy); border-radius: 999px; background: var(--c-tab); font-size: 21px; font-weight: 800; color: var(--navy); }

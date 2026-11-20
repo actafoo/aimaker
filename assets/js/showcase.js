@@ -16,16 +16,28 @@ window.MK = window.MK || {};
       .sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
   };
 
+  /* 유튜브 플레이어 주소 (교안 어디서나 이것만 씀)
+     유튜브는 띄운 페이지 주소(Referer)가 없으면 「오류 153」을 냄. 파일로 직접 연 교안(file://)은 주소를 보내지 못하므로
+     배포한 사이트의 중계 페이지(config.js ytRelay, yt.html)를 거쳐 띄움. autoplay가 true면 바로 재생 */
+  MK.ytEmbed = function (id, autoplay) {
+    var relay = MK.config && MK.config.ytRelay;
+    if (location.protocol === 'file:' && relay) return relay + '?v=' + encodeURIComponent(id) + (autoplay ? '&a=1' : '');
+    return 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&playsinline=1' + (autoplay ? '&autoplay=1' : '');
+  };
+
   /* 영상 주소 → 넣을 수 있는 형태 */
   MK.showcase.video = function (url) {
     var u = String(url || '').trim(), m;
     if (!u) return null;
-    if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{6,})/))) return { kind: 'iframe', src: 'https://www.youtube-nocookie.com/embed/' + m[1] + '?rel=0', label: 'YouTube' };
+    if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{6,})/))) return { kind: 'iframe', src: MK.ytEmbed(m[1], false), label: 'YouTube' };
     if ((m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:.*&)?id=)([A-Za-z0-9_-]{10,})/))) return { kind: 'iframe', src: 'https://drive.google.com/file/d/' + m[1] + '/preview', label: 'Google Drive' };
     if (/\.(mp4|webm|mov)(\?|$)/i.test(u)) return { kind: 'video', src: u, label: '영상 파일' };
     if (/^https?:\/\//.test(u)) return { kind: 'link', src: u, label: '영상 링크' };
     return null;
   };
+
+  /* 화면에 보일 작품 제목: 제목 없이 제출했으면 「별명의 작품」 (2026-11-20: 빈 칸이 있어도 제출됨) */
+  function showTitle(s) { return String(s.title || '').trim() || (s.name ? s.name + '의 작품' : '작품'); }
 
   /* 작품의 도전과제 정보: 아이디어 카드가 있으면 카드(모델·문장), 없으면 예전 도전과제 */
   function infoOf(s, st) {
@@ -42,7 +54,7 @@ window.MK = window.MK || {};
   function media(s) {
     var v = MK.showcase.video(s.videoUrl);
     var img = infoOf(s).img;
-    if (v && v.kind === 'iframe') return '<iframe data-src="' + esc(v.src) + '" title="' + esc(s.title) + ' 작동 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    if (v && v.kind === 'iframe') return '<iframe data-src="' + esc(v.src) + '" title="' + esc(showTitle(s)) + ' 작동 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
     if (v && v.kind === 'video') return '<video data-src="' + esc(v.src) + '" controls playsinline></video>';
     return '<div class="sv-media__fallback"' + (img ? ' style="background-image:url(' + img + ')"' : '') + '>' +
       (v ? '<a class="btn" href="' + esc(v.src) + '" target="_blank" rel="noopener">' + ic('play') + ' 영상 열기</a><div class="sv-media__note">새 창에서 재생됩니다</div>'
@@ -62,7 +74,7 @@ window.MK = window.MK || {};
       h += '<div class="show-grid">';
       items.slice(0, 25).forEach(function (s, i) {
         var cat = infoOf(s, st).cat;
-        h += '<button class="show-tile c-' + cat.color + '" data-goto="show-' + s.id + '"><span class="show-tile__n">' + (i + 1) + ' · ' + esc(s.name) + '</span><span class="show-tile__t">' + esc(s.title) + '</span>' +
+        h += '<button class="show-tile c-' + cat.color + '" data-goto="show-' + s.id + '"><span class="show-tile__n">' + (i + 1) + ' · ' + esc(s.name) + '</span><span class="show-tile__t">' + esc(showTitle(s)) + '</span>' +
           '<span class="show-tile__heart" data-widget="heart-count" data-sub="' + esc(s.id) + '"></span></button>';
       });
       if (N > 25) h += '<div class="show-tile" style="background:#fff"><span class="show-tile__t">외 ' + (N - 25) + '개</span></div>';
@@ -76,16 +88,16 @@ window.MK = window.MK || {};
       var inf = infoOf(s, st), cat = inf.cat;
       var mcId = MK.parseMakecode(s.makecodeUrl);
       var long = (s.desc || '').length > 170;
-      h += '<section class="slide slide--body c-' + cat.color + '" id="show-' + s.id + '" data-section="' + sec + '" data-title="' + (i + 1) + '. ' + esc(s.title) + '">' +
+      h += '<section class="slide slide--body c-' + cat.color + '" id="show-' + s.id + '" data-section="' + sec + '" data-title="' + (i + 1) + '. ' + esc(showTitle(s)) + '">' +
         '<div class="sv-head"><div class="sv-head__tags"><span class="tag tag--solid c-' + cat.color + '">' + ic(cat.icon) + ' ' + esc(inf.label) + '</span><span class="tag">작품 ' + (i + 1) + ' / ' + N + '</span><span class="tag sv-ask">끝에 한 문장 · 학생과 한다면 바꿀 조건 하나</span>' + (s.sample ? '<span class="sample-flag">샘플</span>' : '') + '</div>' +
-        '<h2 class="sv-head__title">' + esc(s.title) + '</h2><p class="sv-head__who">' + esc(inf.sub) + '</p>' + (inf.sentence ? '<p class="sv-head__card">' + esc(inf.sentence) + '</p>' : '') + '</div>' +
+        '<h2 class="sv-head__title">' + esc(showTitle(s)) + '</h2><p class="sv-head__who">' + esc(inf.sub) + '</p>' + (inf.sentence ? '<p class="sv-head__card">' + esc(inf.sentence) + '</p>' : '') + '</div>' +
         '<div class="sv-heart" data-widget="hearts" data-sub="' + esc(s.id) + '"></div>' +
         '<div class="sv-grid">' +
           '<div class="window sv-media"><div class="window__bar">작동 영상' + (MK.isHttpUrl(s.videoUrl) ? '<a class="sv-open" href="' + esc(s.videoUrl) + '" target="_blank" rel="noopener">새 창에서 열기 ' + ic('external') + '</a>' : '') + '</div><div class="window__body window__body--flush" style="aspect-ratio:16/9">' + media(s) + '</div></div>' +
           '<div class="window sv-code"><div class="window__bar">MakeCode 블록' +
             (mcId ? '<a class="sv-open" href="' + esc(s.makecodeUrl) + '" target="_blank" rel="noopener">MakeCode에서 열기 ' + ic('external') + '</a>' : '') + '</div>' +
             '<div class="window__body window__body--flush sv-code__body">' +
-              (mcId ? '<button class="sv-code__view" data-mc="' + esc(mcId) + '" data-title="' + esc(s.title) + '" title="눌러서 크게 보기"><span class="sv-code__msg">블록을 불러오는 중…</span></button>'
+              (mcId ? '<button class="sv-code__view" data-mc="' + esc(mcId) + '" data-title="' + esc(showTitle(s)) + '" title="눌러서 크게 보기"><span class="sv-code__msg">블록을 불러오는 중…</span></button>'
                     : '<div class="sv-code__view is-empty"><span class="sv-code__msg">' + (s.sample ? '샘플 결과물 · MakeCode 주소가 없습니다' : 'MakeCode 주소가 없습니다') + '</span></div>') +
             '</div></div>' +
           '<div class="callout sv-desc"' + (long ? ' style="font-size:19px !important"' : '') + '>' + esc(s.desc || '') + '</div>' +

@@ -387,12 +387,13 @@
 #s-make .mw-reminder .pw--off { background: var(--red); }
 #s-make .mw-reminder .pw--on { background: var(--green-deep); }
 
-/* ---------- 코딩 전에 정하기 (my-card, 2026-11-19) ----------
-   ② 나누는 방법 힌트 칩 · ③ 줄마다 「받는 값 | AI가 알아볼 것 | 받으면 서보가 할 일」 (기본 두 줄, + 줄 추가) */
-.mc-ways { display: flex; flex-wrap: wrap; gap: 6px; }
-.mc .mc-way { height: 34px; padding: 0 12px; background: var(--paper); font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; transition: background-color .12s, filter .12s; }
-.mc .mc-way:hover { filter: brightness(.96); }
-.mc .mc-way.is-on { background: var(--yellow-mid); }
+/* ---------- 설계 정리하기 (my-card, 2026-11-19) ----------
+   ② 나누는 방법: 자유롭게 적는 칸이 먼저, 그 아래 「막히면 참고」 예시(고르는 칩처럼 보이지 않게 흐린 점선)
+   ③ 줄마다 「받는 값 | AI가 알아볼 것 | 받으면 서보가 할 일」 (기본 두 줄, + 줄 추가) */
+.mc-ways { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; }
+.mc-ways__k { margin-right: 4px; font-size: 15px; font-weight: 700; color: var(--muted); }
+.mc .mc-way { height: 28px; padding: 0 10px; border: 1.5px dashed #9AA6C4; border-radius: 999px; background: transparent; font: inherit; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; transition: color .12s, border-color .12s; }
+.mc .mc-way:hover { border-style: solid; border-color: var(--navy); color: var(--navy); }
 .mc--plan .mc-line input { flex: none; width: 100%; }
 .mc--plan .mc-k small { margin-left: 6px; font-size: 15px; font-weight: 600; color: var(--muted); }
 .mc-plan-head { display: flex; gap: 16px; padding: 0 14px; font-size: 15px; font-weight: 800; color: var(--muted); }
@@ -407,3 +408,17 @@
 .mc-del .i { width: 18px; height: 18px; }
 .mc-add { align-self: flex-start; font-size: 18px; }
 .mc-add[hidden] { display: none; }
+
+/* ---------- 제출용 동영상 찍기 (#s-video, 2026-11-20): 강사 드라이브 폴더 · 유튜브 업로드 그림 ---------- */
+#s-video .up-card { padding: 18px 26px; }
+#s-video .up-card__h { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+#s-video .up-card__h .btn[aria-disabled="true"] { opacity: .55; pointer-events: none; }
+#s-video .up-steps { margin: 8px 0 0; padding-left: 28px; display: grid; gap: 4px; font-size: 21px; font-weight: 500; line-height: 1.4; }
+#s-video .up-shots { display: grid; grid-template-columns: auto auto; justify-content: start; gap: 24px; margin-top: 10px; }
+#s-video .up-shot { display: grid; gap: 8px; align-content: start; }
+#s-video .up-shot__img { width: max-content; height: 128px; border: 2px solid var(--navy); border-radius: 12px; overflow: hidden; background: #0f0f0f; }
+#s-video .up-shot__img img { display: block; width: auto; height: 100%; }
+#s-video .up-shot__cap { max-width: 330px; font-size: 20px; font-weight: 500; line-height: 1.35; }
+#s-video .up-step3 { max-width: none; margin-top: 10px; }
+#s-video .zoom-chip { right: 6px; bottom: 6px; padding: 5px 10px; font-size: 14px; }
+#s-video .zoom-chip .i { width: 14px; height: 14px; }

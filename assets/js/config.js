@@ -16,6 +16,13 @@ MK.config = {
   // 연수생이 노트북에서 열 주소. 배포 뒤 짧은 주소를 적으면 5쪽에 크게 보입니다.
   shareUrl: 'https://joo.is/aimaker',
 
+  // 교안을 파일로 직접 열었을 때 유튜브 영상을 띄우는 중계 페이지(배포한 사이트의 yt.html). 이게 없으면 「오류 153」이 납니다.
+  ytRelay: 'https://actafoo.github.io/aimaker/yt.html',
+
+  // 「제출용 동영상 찍기」에서 연수생이 영상을 올릴 강사 구글 드라이브 폴더 주소.
+  // 폴더 공유를 「링크가 있는 모든 사용자 · 편집자」로 해 두어야 올릴 수 있고, 올린 영상도 발표 때 재생됩니다.
+  driveUrl: 'https://drive.google.com/drive/folders/1NhHnVNdrR8g_KZvnkLBVkenE6UbFVPl1?usp=sharing',
+
   // 온라인 저장소(구글 시트 Apps Script 웹 앱) 주소. 비워 두면 이 브라우저에만 저장하는 데모 모드입니다.
   apiUrl: 'https://script.google.com/macros/s/AKfycbw7sm3uzVGkmfLkHtfmGcurtYaklgWFF4taYoBIDclS43XbxbH3VceRWc6_gtGQABCE/exec',
   pollSeconds: 10,                     // 현황판·도전과제 쪽을 보고 있을 때 다시 받아 오는 간격(초)
