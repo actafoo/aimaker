@@ -422,3 +422,20 @@
 #s-video .up-step3 { max-width: none; margin-top: 10px; }
 #s-video .zoom-chip { right: 6px; bottom: 6px; padding: 5px 10px; font-size: 14px; }
 #s-video .zoom-chip .i { width: 14px; height: 14px; }
+
+/* ---------- 정해진 키트로 수업하기 (#s-kits, 2026-11-21) ----------
+   위: 한 줄 제목 + 한 줄 설명 · 아래: 키트 6개를 3열×2줄(사진 210px + 이름 + 「무엇으로 알아보고 → 무엇이 움직이는지」)로 넓게 */
+#s-kits .kits { display: flex; flex-direction: column; }
+#s-kits .kits__head h3 { font-size: 36px; font-weight: 800; line-height: 1.3; letter-spacing: -0.02em; color: var(--navy); }
+#s-kits .kits__head p { margin-top: 8px; font-size: 26px; line-height: 1.5; color: var(--navy); }
+#s-kits .kits__grid { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 34px 28px; }
+#s-kits .kits__grid figure { margin: 0; display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 18px; align-items: center; }
+#s-kits .kits__grid img { display: block; width: 210px; height: 210px; object-fit: cover; border: 2px solid var(--line); border-radius: 16px; background: #fff; }
+#s-kits .kits__grid figcaption { display: grid; gap: 6px; }
+#s-kits .kits__grid figcaption b { font-size: 26px; font-weight: 800; color: var(--navy); }
+#s-kits .kits__grid figcaption span { font-size: 20px; line-height: 1.45; color: var(--ink); word-break: keep-all; }
+#s-kits .nw { white-space: nowrap; } /* 「얼굴·색·QR을」처럼 가운뎃점 묶음은 끊지 않음 */
+#s-kits .kits > .tp-source { margin-top: 20px; font-size: 16px; color: var(--muted); }
+
+/* 메이커 활동에서 피지컬 AI의 역할(#s-levels): 「블록 코딩」「컴퓨팅 사고력」 강조 (2026-11-21) */
+#s-levels .cr-tool-detail p b { color: var(--blue); }

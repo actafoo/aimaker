@@ -1553,3 +1553,6 @@ body:not(.is-editing) .pai [data-reveal]:not([data-reveal="fade"]).is-covered:ho
 .mc-id__to { flex: none; width: 150px; font-size: 18px; font-weight: 700; color: var(--muted); }
 .mc-id[hidden], .mc-id__f[hidden] { display: none !important; }
 .mc-models .mc-model { height: 44px; padding: 0 16px; font-size: 20px; }
+
+/* 퀵 프로토타입(#s-quick) 아래 상자 둘째 줄: 오늘의 목표 (2026-11-21, 5번에서 옮김) */
+#s-quick .qp-goal { display: block; margin-top: 8px; font-size: 25px; font-weight: 500; }
