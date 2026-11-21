@@ -123,6 +123,18 @@ MK.generators = MK.generators || {};
     updateBar(i);
     document.dispatchEvent(new CustomEvent('deck:enter', { detail: { slide: sl, index: i } }));
   }
+  /* ---------- 강사 위치: 강사가 보고 있는 쪽을 아래 막대에 빨갛게, 오른쪽에 「강사 N쪽」 (interact.js 18이 알려 줌) ---------- */
+  var presenterId = null;
+  function setPresenter(pos) {
+    var i = pos && pos.id ? indexOfId(pos.id) : -1;
+    presenterId = i >= 0 ? pos.id : null;
+    var b = $('#dock-presenter');
+    if (b) {
+      b.hidden = i < 0;
+      if (i >= 0) { b.innerHTML = '강사 <b>' + (i + 1) + '</b>쪽'; b.title = '강사가 보고 있는 쪽으로 가기 · ' + titleOf(slides[i]); }
+    }
+    updateBar(cur);
+  }
   function indexOfId(id) { for (var i = 0; i < slides.length; i++) if (slides[i].id === id) return i; return -1; }
   function goto(target) {
     if (typeof target === 'number') return show(target);
@@ -176,7 +188,9 @@ MK.generators = MK.generators || {};
       var k = +t.dataset.i;
       t.classList.toggle('is-current', k === i);
       t.classList.toggle('is-past', k < i);
+      t.classList.toggle('is-presenter', !!presenterId && !!slides[k] && slides[k].id === presenterId);
     });
+    var pb = $('#dock-presenter'); if (pb) pb.classList.toggle('is-same', !!presenterId && !!slides[i] && slides[i].id === presenterId);
     $$('.sbar__sec').forEach(function (sec) {
       sec.classList.toggle('is-current', !!sec.querySelector('.sbar__tick.is-current'));
     });
@@ -238,6 +252,7 @@ MK.generators = MK.generators || {};
         '<button id="dock-toc" title="목차 (M)">' + ic('list') + '<span>목차</span></button>' +
         '<button id="dock-prev" title="이전 (←)" aria-label="이전">' + ic('left') + '</button>' +
         '<div class="sbar__track" id="sbar-track"></div>' +
+        '<button id="dock-presenter" class="dock__presenter" hidden></button>' +
         '<span class="dock__count" id="dock-count">1 / 1</span>' +
         '<button id="dock-next" class="dock__primary" title="다음 (→)" aria-label="다음">' + ic('right') + '</button>' +
         '<button id="dock-full" title="전체화면 (F)" aria-label="전체화면">' + ic('expand') + '</button>' +
@@ -249,6 +264,7 @@ MK.generators = MK.generators || {};
         '<div class="toc__keys"><kbd>←</kbd> <kbd>→</kbd> 넘기기 · <kbd>F</kbd> 전체화면 · <kbd>M</kbd> 목차</div>' +
       '</aside>');
     $('#dock-prev').onclick = backward;
+    $('#dock-presenter').onclick = function () { if (presenterId) goto(presenterId); };
     $('#dock-next').onclick = forward;
     $('#dock-full').onclick = toggleFull;
     $('#dock-toc').onclick = function () { toggleToc(); };
@@ -312,6 +328,7 @@ MK.generators = MK.generators || {};
     next: forward,
     prev: backward,
     current: function () { return slides[cur]; },
+    setPresenter: setPresenter,
     slides: function () { return slides; },
     titleOf: titleOf
   };

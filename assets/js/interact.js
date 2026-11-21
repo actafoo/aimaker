@@ -1255,4 +1255,57 @@ window.MK = window.MK || {};
     d.showModal();
   });
 
+  /* =========================================================
+     18. 강사 위치 — 관리자(강사) 화면이 보고 있는 쪽을 서버에 알리고(시트에 안 씀),
+         연수생 교안은 15초마다 받아 아래 막대에 「강사 N쪽」으로 표시(deck.js setPresenter).
+         같은 교안 파일일 때만, 90분 넘게 소식이 없으면 숨김. 강사 화면에는 표시하지 않음.
+         발표하지 않는 기기는 관리자 화면의 「강사 위치 알리기」를 끔(이 브라우저에 기억).
+         관리자 기기가 둘이어도: 실제로 쪽을 넘긴 기기만 알림(열기·로그인만으로는 안 보냄). 서버는 교안 파일마다 따로 기억
+     ========================================================= */
+  var DECK_FILE = (location.pathname.split('/').pop() || '').toLowerCase();
+  var PRES_OFF = MK.config.storageKey + '-present-off', PRES_MAX_AGE = 90 * 60 * 1000;
+  function presentOn() { try { return localStorage.getItem(PRES_OFF) !== '1'; } catch (e) { return true; } }
+  function presenting() { return presentOn() && !!MK.store.isAdmin && MK.store.isAdmin() && has('presenter') && !!MK.store.setPresenter; }
+  var presT = null, presLast = '', presLoadedAt = Date.now(), presFlipAt = 0;
+  function sendPos(now) {
+    if (!presenting() || !MK.deck || !MK.deck.current) return;
+    clearTimeout(presT);
+    presT = setTimeout(function () {
+      var sl = MK.deck.current(); if (!sl) return;
+      var key = DECK_FILE + '#' + sl.id;
+      if (!now && key === presLast) return;
+      presLast = key;
+      MK.store.setPresenter({ deck: DECK_FILE, id: sl.id, n: MK.deck.slides().indexOf(sl) + 1, title: MK.deck.titleOf(sl) })
+        .catch(function () { presLast = ''; });
+    }, now ? 0 : 1200); // 넘기는 중에는 멈춘 뒤 한 번만
+  }
+  function pullPos() {
+    if (document.visibilityState !== 'visible' || !MK.deck || !MK.deck.setPresenter) return;
+    if (presenting() || !has('presenter') || !MK.store.getPresenter) { MK.deck.setPresenter(null); return; }
+    MK.store.getPresenter(DECK_FILE).then(function (p) {
+      var ok = p && p.deck === DECK_FILE && p.id && Date.now() - (p.at || 0) < PRES_MAX_AGE;
+      MK.deck.setPresenter(ok ? p : null);
+    }, function () {});
+  }
+  MK.presenter = {
+    on: presentOn,
+    set: function (on) {
+      try { if (on) localStorage.removeItem(PRES_OFF); else localStorage.setItem(PRES_OFF, '1'); } catch (e) {}
+      if (on) { presLast = ''; presFlipAt = Date.now(); sendPos(true); } // 켜는 기기 = 지금 발표하는 기기
+      else if (MK.store.isAdmin() && MK.store.setPresenter) MK.store.setPresenter({ off: true, deck: DECK_FILE }).catch(function () {});
+      pullPos();
+    }
+  };
+  document.addEventListener('deck:enter', function () { // 강사가 실제로 넘길 때만 (처음 열 때 보여 주는 쪽은 빼고)
+    if (Date.now() - presLoadedAt < 3000) return;
+    presFlipAt = Date.now(); sendPos(false);
+  });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') setTimeout(pullPos, Math.random() * 3000); }); // 돌아올 때도 0~3초 흩어서 받기만
+  // 받는 시계를 사람마다 0~15초 무작위로 어긋나게 → 50명이 같은 순간 교안을 열어도 요청이 한 초에 몰리지 않음
+  var PULL_EVERY = 15000;
+  setTimeout(function () { pullPos(); setInterval(pullPos, PULL_EVERY); }, 2500 + Math.random() * PULL_EVERY); // 처음은 서버 기능 목록을 받은 뒤
+  setInterval(function () { // 한 쪽에 오래 머물러도 표시 유지 — 최근 90분 안에 쪽을 넘긴 기기만
+    if (document.visibilityState === 'visible' && Date.now() - presFlipAt < PRES_MAX_AGE) sendPos(true);
+  }, 10 * 60 * 1000);
+
 })();

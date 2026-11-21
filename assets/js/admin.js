@@ -51,6 +51,8 @@ window.MK = window.MK || {};
     else if (!MK.store.isShared) h += '<div class="admin__notice"><b>데모 모드</b> · 모든 데이터가 <b>이 브라우저에만</b> 저장됩니다. 다른 연수생의 신청·제출은 여기 보이지 않습니다. 연수 전에 온라인 저장소를 연결해야 합니다.</div>';
     else if (MK.store.loaded && !MK.store.supports('help')) h += '<div class="admin__notice"><b>서버 코드가 예전 버전</b>입니다. 도움 요청·모두 같은 타이머·작품 하트·수업 아이디어가 꺼져 있어요. <b>backend/Code.gs</b>를 Apps Script에 새로 붙여 넣고 <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</div>';
 
+    if (!editorOnly && MK.store.isShared && MK.store.supports('presenter') && MK.presenter) h += '<div class="admin__present"><span><b>강사 위치 알리기</b> · 이 화면이 보는 쪽을 연수생 아래 막대에 「강사 N쪽」으로 보여 줍니다. 발표하지 않는 기기에서는 끄세요.</span><button class="ubtn' + (MK.presenter.on() ? '' : ' ubtn--ghost') + '" data-present-toggle>' + (MK.presenter.on() ? '켜짐' : '꺼짐') + '</button></div>';
+
     if (tab === 'help') {
       var q = (st.help || []).slice().sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
       h += '<p class="small">연수생이 「안 될 때 다섯 가지 확인」 쪽에서 보낸 요청입니다. 도와준 뒤 <b>처리</b>를 누르면 줄에서 빠집니다. 연수생이 스스로 「해결됐어요」를 눌러도 빠집니다.</p>';
@@ -198,6 +200,7 @@ window.MK = window.MK || {};
     else if (t.hasAttribute('data-ed-discard')) MK.editor.discard();
     else if (t.hasAttribute('data-show-go')) { MK.deck.refresh(true); MK.deck.goto('s-show'); MK.admin.close(); }
     else if (t.hasAttribute('data-shuffle')) { /* interact.js가 처리 */ }
+    else if (t.hasAttribute('data-present-toggle')) { MK.presenter.set(!MK.presenter.on()); render(); }
     else if (t.hasAttribute('data-export-html')) MK.showcase.exportHtml().then(ok('발표 파일을 저장했어요.'), bad);
     else if (t.hasAttribute('data-export-json')) MK.store.exportAll().then(function (data) { download('연수기록-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json'); }, bad);
     else if (t.hasAttribute('data-export-csv')) MK.store.exportAll().then(function (data) { download('연수기록-' + today() + '.csv', '﻿' + toCsv(data), 'text/csv'); }, bad);

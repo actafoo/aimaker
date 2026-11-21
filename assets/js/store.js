@@ -308,6 +308,9 @@ window.MK = window.MK || {};
     /* =========================================================
        관리자
        ========================================================= */
+    // 강사 위치 (데모: 이 브라우저에만)
+    setPresenter: function (pos) { try { if (pos && !pos.off) localStorage.setItem(cfg.storageKey + '-presenter', JSON.stringify(Object.assign({}, pos, { at: Date.now() }))); else localStorage.removeItem(cfg.storageKey + '-presenter'); } catch (e) {} return Promise.resolve({}); },
+    getPresenter: function () { try { return Promise.resolve(JSON.parse(localStorage.getItem(cfg.storageKey + '-presenter'))); } catch (e) { return Promise.resolve(null); } },
     isAdmin: function () { try { return sessionStorage.getItem(ADMIN_KEY) === '1'; } catch (e) { return false; } },
     isEditor: function () { return false; },          // 데모 모드에는 편집자 비밀번호가 없음
     canEdit: function () { return this.isAdmin(); },
@@ -597,6 +600,14 @@ window.MK = window.MK || {};
     },
     cancelHelp: function (o) { return this._call('helpCancel', { name: o.name, pin: o.pin }); },
     setHeart: function (o) { return this._call('setHeart', { name: o.name, pin: o.pin, submissionId: o.submissionId, on: !!o.on }); },
+    // 강사 위치: 관리자 화면이 보고 있는 쪽을 알림(서버는 시트에 쓰지 않고 캐시에만) · 연수생은 작은 요청(action=pos)으로 받음
+    setPresenter: function (pos) { return this._call('presenter', { pos: pos }, true); },
+    getPresenter: function (deck) {
+      var u = this.url;
+      return fetch(u + (u.indexOf('?') < 0 ? '?' : '&') + 'action=pos&deck=' + encodeURIComponent(deck || '') + '&t=' + Date.now(), { redirect: 'follow' })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (j) { return j && j.ok ? j.presenter || null : null; });
+    },
     postIdea: function (o) {
       var self = this;
       return this._call('ideaPost', { name: o.name, pin: o.pin, grade: o.grade, text: o.text })

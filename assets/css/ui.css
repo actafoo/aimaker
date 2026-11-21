@@ -282,3 +282,16 @@
 .timer-chip .i { font-size: 20px; }
 /* 슬라이드 밖 UI를 슬라이드 배율에 맞춰 (deck.js fit()이 --ui-scale을 정함). 노트북·데스크톱에서 슬라이드와의 비율이 같게 */
 .dock.sbar, #me, .demo-flag, #timer-chip, .toast { zoom: var(--ui-scale, 1); }
+
+/* 강사 위치 (interact.js 18, deck.js setPresenter): 강사가 보고 있는 쪽 칸을 빨갛게, 오른쪽에 「강사 N쪽」 */
+.sbar__tick.is-presenter::before { background: var(--red); border-color: var(--red); top: 1px; height: 16px; }
+.sbar__tick.is-presenter.is-current::before { background: var(--navy); border-color: var(--navy); box-shadow: 0 0 0 2px var(--red); }
+.dock .dock__presenter { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: #FDE8E6; color: #A8322A; font: inherit; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+.dock .dock__presenter::before { content: ''; width: 8px; height: 8px; margin-right: 2px; border-radius: 50%; background: var(--red); }
+.dock .dock__presenter b { font-weight: 800; }
+.dock .dock__presenter:hover { background: #FBD3CF; }
+.dock .dock__presenter.is-same { background: #EEF1F7; color: var(--muted); }
+.dock .dock__presenter.is-same::before { background: var(--muted); }
+.dock .dock__presenter[hidden] { display: none; }
+.admin__present { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 13px; line-height: 1.5; }
+.admin__present .ubtn { flex: none; }
